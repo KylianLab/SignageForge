@@ -1,0 +1,23 @@
+{# One row of the playing order. Used for existing items and, via <template>, for new ones. #}
+{% import 'components/icons.html.twig' as ui %}
+<li class="card flex items-center gap-3 p-3" draggable="true" data-playlist-editor-target="item"
+    data-action="dragstart->playlist-editor#dragStart dragover->playlist-editor#dragOver drop->playlist-editor#drop dragend->playlist-editor#dragEnd">
+    <span class="cursor-grab text-gray-300" title="Drag to reorder">{{ ui.icon('grip') }}</span>
+    <span class="w-5 text-center text-xs text-gray-400" data-role="position"></span>
+    <input type="hidden" data-field="media" value="{{ media.id }}">
+    <span class="min-w-0 flex-1 truncate text-sm">{{ media.name }}</span>
+    <span class="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500 uppercase">{{ media.type.value }}</span>
+    {% if media.type.value == 'VIDEO' %}
+        <input type="hidden" data-field="duration" value="0">
+        <span class="w-20 text-right text-xs text-gray-400" title="Videos play to the end">full</span>
+    {% else %}
+        <label class="flex items-center gap-1 text-xs text-gray-400" title="Seconds on screen (empty = {{ (media.durationMs / 1000)|round }}s)">
+            <input type="number" min="0" max="3600" data-field="duration"
+                   value="{{ duration_ms is defined and duration_ms > 0 ? (duration_ms / 1000)|round : '' }}"
+                   placeholder="{{ (media.durationMs / 1000)|round }}" class="input w-16 px-2 py-1 text-xs">s
+        </label>
+    {% endif %}
+    <button type="button" class="text-gray-400 hover:text-gray-800" data-action="playlist-editor#moveUp" title="Move up">{{ ui.icon('up') }}<span class="sr-only">Move up</span></button>
+    <button type="button" class="text-gray-400 hover:text-gray-800" data-action="playlist-editor#moveDown" title="Move down">{{ ui.icon('down') }}<span class="sr-only">Move down</span></button>
+    <button type="button" class="text-gray-400 hover:text-red-600" data-action="playlist-editor#remove" title="Remove">{{ ui.icon('x') }}<span class="sr-only">Remove</span></button>
+</li>

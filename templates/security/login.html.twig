@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+{% import 'components/icons.html.twig' as ui %}
+
+{% block title %}Sign in · Signage Forge{% endblock %}
+
+{% block body %}
+    <main class="flex min-h-screen items-center justify-center px-4">
+        <div class="w-full max-w-sm">
+            <div class="mb-8 flex items-center justify-center gap-2 text-lg font-semibold">
+                {{ ui.icon('cast', 'h-6 w-6 text-brand') }} Signage Forge
+            </div>
+            <div class="card space-y-5 p-6">
+                <h1 class="text-center text-xl font-semibold">Sign in</h1>
+
+                {% if error %}
+                    <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
+                        {{ error.messageKey == 'Invalid credentials.' ? 'Sign-in failed. Check your credentials and try again.' : error.messageKey|trans(error.messageData, 'security') }}
+                    </p>
+                {% endif %}
+
+                {% if providers.microsoft %}
+                    <a href="{{ path('app_login_microsoft') }}" data-turbo="false" class="btn-secondary w-full py-2.5">
+                        <svg width="16" height="16" viewBox="0 0 21 21" aria-hidden="true"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+                        Sign in with Microsoft 365
+                    </a>
+                    {% if providers.localPassword or providers.ldap %}
+                        <div class="flex items-center gap-3 text-xs text-gray-400">
+                            <div class="h-px flex-1 bg-gray-200"></div>OR<div class="h-px flex-1 bg-gray-200"></div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+                {% if providers.localPassword %}
+                    <form method="post" action="{{ path('app_login_local') }}" class="space-y-3" data-turbo="false">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                        <div>
+                            <label class="label" for="email">Email</label>
+                            <input id="email" name="email" type="email" required autocomplete="username" value="{{ last_username }}" placeholder="you@example.com" class="input">
+                        </div>
+                        <div>
+                            <label class="label" for="password">Password</label>
+                            <input id="password" name="password" type="password" required autocomplete="current-password" class="input">
+                        </div>
+                        <button class="btn-primary w-full py-2.5">Sign in</button>
+                    </form>
+                {% endif %}
+
+                {% if providers.ldap %}
+                    <form method="post" action="{{ path('app_login_ldap') }}" class="space-y-3" data-turbo="false">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                        {% if providers.localPassword %}
+                            <p class="pt-2 text-center text-xs font-medium text-gray-400 uppercase">LDAP / Active Directory</p>
+                        {% endif %}
+                        <div>
+                            <label class="label" for="ldap-username">Username</label>
+                            <input id="ldap-username" name="username" required autocomplete="username" placeholder="jdoe" class="input">
+                        </div>
+                        <div>
+                            <label class="label" for="ldap-password">Password</label>
+                            <input id="ldap-password" name="password" type="password" required autocomplete="current-password" class="input">
+                        </div>
+                        <button class="btn-primary w-full py-2.5">Sign in with LDAP</button>
+                    </form>
+                {% endif %}
+
+                {% if not providers.any %}
+                    <p class="text-center text-sm text-gray-500">
+                        No sign-in method is configured. Enable one in your environment (see <code>.env</code>).
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+{% endblock %}

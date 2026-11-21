@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pair this screen · Signage Forge{% endblock %}
+{% block body_class %}min-h-screen bg-gray-950 text-white antialiased{% endblock %}
+
+{% block body %}
+    <main class="flex min-h-screen items-center justify-center p-6" data-turbo="false">
+        <div class="w-full max-w-md text-center"
+             data-controller="pair"
+             data-pair-start-url-value="{{ path('app_pair_start') }}"
+             data-pair-status-url-value="{{ path('app_pair_status') }}"
+             data-pair-player-url-value="{{ path('app_player', {token: 'DEVICE-TOKEN-PLACEHOLDER'}) }}">
+            <p class="mb-2 text-sm tracking-widest text-gray-400 uppercase">Signage Forge</p>
+            <h1 class="mb-8 text-2xl font-semibold">Pair this screen</h1>
+
+            <p class="animate-pulse text-gray-400" data-pair-target="loading">Requesting a code…</p>
+            <p class="hidden text-red-400" data-pair-target="error" role="alert"></p>
+
+            <div class="hidden" data-pair-target="ready">
+                <div class="mb-6 rounded-2xl bg-white p-8">
+                    <div class="font-mono text-6xl font-bold tracking-[0.3em] text-gray-900" data-pair-target="code"></div>
+                </div>
+                <p class="mb-6 text-gray-300">
+                    In your Signage Forge dashboard, choose <span class="font-semibold text-white">Add screen</span> and enter this code.
+                </p>
+                <div class="inline-flex flex-col items-center gap-2 rounded-xl bg-white/5 p-4">
+                    <img src="{{ qr_data_uri }}" alt="QR code linking to {{ dashboard_url }}" width="120" height="120" class="rounded bg-white">
+                    <span class="text-xs text-gray-400">Open the dashboard</span>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

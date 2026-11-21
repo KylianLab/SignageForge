@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale|default('fr') }}" class="h-full">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Signage Forge{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%2270%22 y=%2210%22 rx=%228%22 fill=%22%23111827%22/><rect x=%2240%22 y=%2282%22 width=%2220%22 height=%228%22 fill=%22%23111827%22/></svg>">
+        {# app.css (Tailwind) is imported by assets/app.js and emitted by importmap() #}
+        {% block stylesheets %}{% endblock %}
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body class="{% block body_class %}min-h-full bg-gray-50 text-gray-900 antialiased{% endblock %}">
+        {% block body %}{% endblock %}
+    </body>
+</html>

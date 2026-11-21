@@ -1,0 +1,28 @@
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> symfony/asset-mapper ###
+/public/assets/
+# assets/vendor/ (Stimulus, Turbo) is committed on purpose: installing
+# Signage Forge then needs no CDN access.
+###< symfony/asset-mapper ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
+
+###> signageforge ###
+# Uploaded media (local storage)
+/data/uploads/*
+!/data/uploads/.gitkeep
+/data/*.db
+###< signageforge ###

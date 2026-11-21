@@ -1,0 +1,13 @@
+knpu_oauth2_client:
+    clients:
+        # Microsoft 365 / Entra ID. Only offered when ENTRA_CLIENT_ID and
+        # ENTRA_CLIENT_SECRET are set (see App\Security\AuthProviders).
+        azure:
+            type: azure
+            client_id: '%env(ENTRA_CLIENT_ID)%'
+            client_secret: '%env(ENTRA_CLIENT_SECRET)%'
+            redirect_route: app_login_microsoft_check
+            redirect_params: {}
+            tenant: '%env(ENTRA_TENANT)%'
+            default_end_point_version: '2.0'
+            scope: ['openid', 'profile', 'email']

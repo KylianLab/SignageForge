@@ -1,0 +1,11 @@
+framework:
+    form:
+        csrf_protection:
+            token_id: submit
+
+    # Login forms use classic session tokens so they also work without JavaScript
+    # (some kiosk and locked-down browsers). Dashboard forms do the same.
+    csrf_protection:
+        stateless_token_ids:
+            - submit
+            - logout

@@ -1,0 +1,31 @@
+{% extends 'dashboard/layout.html.twig' %}
+{% import 'components/icons.html.twig' as ui %}
+
+{% block page_title %}Playlists{% endblock %}
+
+{% block content %}
+    <h1 class="mb-6 text-2xl font-bold">Playlists</h1>
+
+    <form method="post" action="{{ path('app_playlists_create') }}" class="mb-8 flex gap-3">
+        <input type="hidden" name="_token" value="{{ csrf_token('playlist-create') }}">
+        <input name="name" required maxlength="80" placeholder="New playlist name" class="input flex-1" aria-label="New playlist name">
+        <button class="btn-primary">{{ ui.icon('plus') }} Create</button>
+    </form>
+
+    <div class="grid gap-3">
+        {% for playlist in playlists %}
+            <a href="{{ path('app_playlists_edit', {id: playlist.id}) }}" class="card flex items-center gap-4 p-4 hover:border-brand">
+                {{ ui.icon('list', 'h-5 w-5 text-brand') }}
+                <div class="flex-1">
+                    <div class="font-medium">{{ playlist.name }}</div>
+                    <div class="text-xs text-gray-500">
+                        {{ playlist.items|length }} item{{ playlist.items|length == 1 ? '' : 's' }}
+                        · {{ playlist.screens|length }} screen{{ playlist.screens|length == 1 ? '' : 's' }}
+                    </div>
+                </div>
+            </a>
+        {% else %}
+            <p class="text-gray-500">No playlists yet.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

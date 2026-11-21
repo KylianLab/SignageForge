@@ -1,0 +1,26 @@
+# systemd unit for the Mercure hub (only with SIGNAGEFORGE_REALTIME=mercure).
+# Download the "mercure" binary for your platform from
+# https://github.com/dunglas/mercure/releases into /usr/local/bin and the
+# Caddyfile from the same archive into /etc/mercure/, then:
+#   cp deploy/mercure.service /etc/systemd/system/
+#   systemctl daemon-reload && systemctl enable --now mercure
+[Unit]
+Description=Mercure hub for Signage Forge
+After=network.target
+
+[Service]
+User=mercure
+Group=mercure
+# Same value as MERCURE_JWT_SECRET in Signage Forge's .env.local.
+Environment=MERCURE_PUBLISHER_JWT_KEY=change-me
+Environment=MERCURE_SUBSCRIBER_JWT_KEY=change-me
+# Listen locally only; the reverse proxy exposes /.well-known/mercure.
+Environment=SERVER_NAME=:3000
+ExecStart=/usr/local/bin/mercure run --config /etc/mercure/Caddyfile
+Restart=on-failure
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

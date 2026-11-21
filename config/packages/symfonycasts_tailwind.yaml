@@ -1,0 +1,4 @@
+symfonycasts_tailwind:
+    # Standalone Tailwind binary (no Node.js), downloaded once into var/tailwind/
+    # and checked against the release's sha256sums.
+    binary_version: 'v4.3.4'

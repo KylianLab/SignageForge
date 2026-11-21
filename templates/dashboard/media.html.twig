@@ -1,0 +1,62 @@
+{% extends 'dashboard/layout.html.twig' %}
+{% import 'components/icons.html.twig' as ui %}
+
+{% block page_title %}Media{% endblock %}
+
+{% block content %}
+    <h1 class="mb-6 text-2xl font-bold">Media library</h1>
+
+    <div class="mb-8 grid gap-4 sm:grid-cols-2">
+        <form method="post" action="{{ path('app_media_upload') }}" enctype="multipart/form-data"
+              data-controller="upload" class="contents">
+            <input type="hidden" name="_token" value="{{ csrf_token('media-upload') }}">
+            <label class="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 bg-white p-8 text-center hover:border-brand">
+                {{ ui.icon('upload', 'h-6 w-6 text-brand') }}
+                <span class="font-medium" data-upload-target="label">Upload images / videos</span>
+                <span class="text-xs text-gray-500">Click to choose files · up to {{ max_upload }} each</span>
+                <input type="file" name="files[]" accept="image/*,video/*" multiple class="sr-only"
+                       data-action="upload#submit">
+                <noscript><button class="btn-primary mt-2">Upload</button></noscript>
+            </label>
+        </form>
+
+        <form method="post" action="{{ path('app_media_url') }}" class="card flex flex-col gap-2 p-4">
+            <input type="hidden" name="_token" value="{{ csrf_token('media-url') }}">
+            <span class="flex items-center gap-2 font-medium">{{ ui.icon('link', 'h-4 w-4 text-brand') }} Add a web page</span>
+            <input name="url" type="url" required placeholder="https://example.com/dashboard" class="input" aria-label="Web page address">
+            <div class="flex gap-2">
+                <input name="name" maxlength="120" placeholder="Name (optional)" class="input" aria-label="Name">
+                <input name="duration" type="number" min="1" max="3600" value="8" class="input w-24" aria-label="Seconds on screen" title="Seconds on screen">
+            </div>
+            <button class="btn-primary">Add URL</button>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+        {% for item in media %}
+            <div class="card overflow-hidden">
+                <div class="flex aspect-video items-center justify-center bg-gray-100">
+                    {% if item.type.value == 'IMAGE' %}
+                        <img src="{{ path('app_media_file', {id: item.id}) }}" alt="{{ item.name }}" loading="lazy" class="h-full w-full object-cover">
+                    {% elseif item.type.value == 'VIDEO' %}
+                        {{ ui.icon('video', 'h-8 w-8 text-gray-400') }}
+                    {% else %}
+                        {{ ui.icon('globe', 'h-8 w-8 text-gray-400') }}
+                    {% endif %}
+                </div>
+                <div class="flex items-center justify-between gap-2 p-2">
+                    <span class="truncate text-xs" title="{{ item.type.value == 'URL' ? item.storageKey : item.name }}">{{ item.name }}</span>
+                    <form method="post" action="{{ path('app_media_delete', {id: item.id}) }}"
+                          data-turbo-confirm="Delete {{ item.name }}? It will also leave every playlist.">
+                        <input type="hidden" name="_token" value="{{ csrf_token('media-' ~ item.id) }}">
+                        <button class="text-gray-400 hover:text-red-600" title="Delete">
+                            {{ ui.icon('trash', 'h-3.5 w-3.5') }}<span class="sr-only">Delete {{ item.name }}</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <p class="col-span-full text-gray-500">No media yet. Upload images or videos, or add a web page.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

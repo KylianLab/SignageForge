@@ -1,0 +1,50 @@
+{% import 'components/icons.html.twig' as ui %}
+<turbo-frame id="screen-list">
+    <div class="grid gap-3">
+        {% for screen in screens %}
+            {% set online = screen.online %}
+            <div class="card flex flex-wrap items-center gap-4 p-4">
+                <span class="h-3 w-3 shrink-0 rounded-full {{ online ? 'bg-green-500' : 'bg-gray-300' }}" aria-hidden="true"></span>
+                <div class="min-w-0 flex-1">
+                    <div class="truncate font-medium">{{ screen.name }}</div>
+                    <div class="text-xs text-gray-500">
+                        {% if online %}
+                            Online
+                        {% elseif screen.lastSeenAt %}
+                            Offline · last seen {{ screen.lastSeenAt|date('Y-m-d H:i') }}
+                        {% else %}
+                            Waiting for the screen to connect
+                        {% endif %}
+                    </div>
+                </div>
+                <form method="post" action="{{ path('app_screens_playlist', {id: screen.id}) }}" data-controller="autosubmit" data-turbo-frame="_top">
+                    <input type="hidden" name="_token" value="{{ csrf_token('screen-' ~ screen.id) }}">
+                    <label class="sr-only" for="playlist-{{ screen.id }}">Playlist for {{ screen.name }}</label>
+                    <select id="playlist-{{ screen.id }}" name="playlist" class="input w-auto" data-action="autosubmit#submit">
+                        <option value="">No playlist</option>
+                        {% for playlist in playlists %}
+                            <option value="{{ playlist.id }}" {{ screen.playlist and screen.playlist.id == playlist.id ? 'selected' }}>{{ playlist.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <noscript><button class="btn-secondary">Save</button></noscript>
+                </form>
+                <a href="{{ path('app_player', {token: screen.deviceToken}) }}" target="_blank" rel="noopener noreferrer"
+                   title="Preview in a new tab" class="btn-secondary" data-turbo="false">
+                    {{ ui.icon('external') }} Preview
+                </a>
+                <form method="post" action="{{ path('app_screens_delete', {id: screen.id}) }}" data-turbo-frame="_top"
+                      data-turbo-confirm="Remove {{ screen.name }}? The device will need to be paired again.">
+                    <input type="hidden" name="_token" value="{{ csrf_token('screen-' ~ screen.id) }}">
+                    <button title="Remove screen" class="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-600">
+                        {{ ui.icon('trash') }}<span class="sr-only">Remove {{ screen.name }}</span>
+                    </button>
+                </form>
+            </div>
+        {% else %}
+            <p class="text-gray-500">
+                No screens yet. Open <a href="{{ path('app_pair') }}" class="font-mono text-brand" data-turbo="false">/pair</a>
+                on a display, then enter its code above.
+            </p>
+        {% endfor %}
+    </div>
+</turbo-frame>
