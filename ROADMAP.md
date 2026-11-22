@@ -55,4 +55,4 @@ yet.
 
 - [ ] Several organizations on one install (multi-tenant)
 - [ ] S3 / MinIO storage for media
-- [ ] Interface translations, starting with French and Dutch
+- [x] Interface in English, French and Dutch (per-user choice, browser language by default)

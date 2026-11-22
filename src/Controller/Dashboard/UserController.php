@@ -66,7 +66,7 @@ final class UserController extends AbstractDashboardController
             default => null,
         };
         if (null === $role || null !== $error) {
-            $this->addFlash('error', $error);
+            $this->flash('error', $error);
 
             return $this->seeOther('app_users');
         }
@@ -79,7 +79,7 @@ final class UserController extends AbstractDashboardController
         $this->tenant->ensureMembership($user, $role);
         $this->em->flush();
 
-        $this->addFlash('success', \sprintf('%s can now sign in. Give them their password in person.', $email));
+        $this->flash('success', '%email% can now sign in. Give them their password in person.', ['%email%' => $email]);
 
         return $this->seeOther('app_users');
     }
@@ -98,7 +98,7 @@ final class UserController extends AbstractDashboardController
         $membership = $this->tenant->ensureMembership($user);
         $membership->setRole($role);
         $this->em->flush();
-        $this->addFlash('success', \sprintf('%s is now %s.', $user->getEmail(), strtolower($role->label())));
+        $this->flash('success', '%email% is now %role%.', ['%email%' => $user->getEmail(), '%role%' => $this->translator->trans($role->label())]);
 
         return $this->seeOther('app_users');
     }
@@ -115,7 +115,7 @@ final class UserController extends AbstractDashboardController
 
         $this->em->remove($user);
         $this->em->flush();
-        $this->addFlash('success', \sprintf('%s was removed. With LDAP or Microsoft 365 they can still sign in again, as a new member.', $user->getEmail()));
+        $this->flash('success', '%email% was removed. With LDAP or Microsoft 365 they can still sign in again, as a new member.', ['%email%' => $user->getEmail()]);
 
         return $this->seeOther('app_users');
     }

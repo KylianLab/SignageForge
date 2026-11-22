@@ -1,15 +1,15 @@
 {% extends 'install/layout.html.twig' %}
 
 {% block step %}
-    <h1>Database</h1>
+    <h1>{{ 'Database'|trans }}</h1>
     <form method="post" class="stack" id="database-form">
         <input type="hidden" name="_token" value="{{ csrf_token('install') }}">
         <fieldset>
-            <legend class="label">Where should Signage Forge keep its data?</legend>
+            <legend class="label">{{ 'Where should Signage Forge keep its data?'|trans }}</legend>
             {% for value, label in {
-                sqlite: 'SQLite: a file on this server, nothing to install. Fine for most sites.',
-                mysql: 'MariaDB or MySQL',
-                postgresql: 'PostgreSQL',
+                sqlite: 'SQLite: a file on this server, nothing to install. Fine for most sites.'|trans,
+                mysql: 'MariaDB or MySQL'|trans,
+                postgresql: 'PostgreSQL'|trans,
             } %}
                 <label class="choice">
                     <input type="radio" name="engine" value="{{ value }}" {{ db.engine == value ? 'checked' }}>
@@ -18,14 +18,14 @@
             {% endfor %}
         </fieldset>
         <div class="grid-2 {{ db.engine == 'sqlite' ? 'hidden' }}" id="server-fields">
-            <div><label class="label" for="host">Host</label><input id="host" name="host" value="{{ db.host }}" class="input"></div>
-            <div><label class="label" for="port">Port</label><input id="port" name="port" value="{{ db.port }}" placeholder="default" class="input"></div>
-            <div><label class="label" for="name">Database name</label><input id="name" name="name" value="{{ db.name }}" class="input"></div>
-            <div><label class="label" for="user">User</label><input id="user" name="user" value="{{ db.user }}" class="input"></div>
-            <div><label class="label" for="password">Password</label><input id="password" name="password" type="password" class="input"></div>
-            <div><label class="label" for="server_version">Server version</label><input id="server_version" name="server_version" value="{{ db.serverVersion }}" placeholder="10.11.2-MariaDB, 8.0.36, 16" class="input"></div>
+            <div><label class="label" for="host">{{ 'Host'|trans }}</label><input id="host" name="host" value="{{ db.host }}" class="input"></div>
+            <div><label class="label" for="port">{{ 'Port'|trans }}</label><input id="port" name="port" value="{{ db.port }}" placeholder="{{ 'default'|trans }}" class="input"></div>
+            <div><label class="label" for="name">{{ 'Database name'|trans }}</label><input id="name" name="name" value="{{ db.name }}" class="input"></div>
+            <div><label class="label" for="user">{{ 'User'|trans }}</label><input id="user" name="user" value="{{ db.user }}" class="input"></div>
+            <div><label class="label" for="password">{{ 'Password'|trans }}</label><input id="password" name="password" type="password" class="input"></div>
+            <div><label class="label" for="server_version">{{ 'Server version'|trans }}</label><input id="server_version" name="server_version" value="{{ db.serverVersion }}" placeholder="10.11.2-MariaDB, 8.0.36, 16" class="input"></div>
         </div>
-        <button class="btn-primary">Test the connection and continue</button>
+        <button class="btn-primary">{{ 'Test the connection and continue'|trans }}</button>
     </form>
 {% endblock %}
 

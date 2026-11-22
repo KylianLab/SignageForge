@@ -9,6 +9,7 @@ export default class extends Controller {
     static targets = ['list', 'item', 'template', 'empty', 'saveLabel'];
 
     connect() {
+        this.saveText = this.saveLabelTarget.textContent;
         this.renumber();
     }
 
@@ -63,7 +64,7 @@ export default class extends Controller {
     }
 
     markDirty() {
-        this.saveLabelTarget.textContent = 'Save';
+        this.saveLabelTarget.textContent = this.saveText;
         this.element.dataset.dirty = 'true';
     }
 

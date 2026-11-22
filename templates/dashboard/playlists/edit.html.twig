@@ -5,7 +5,7 @@
 
 {% block content %}
     <a href="{{ path('app_playlists') }}" class="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800">
-        {{ ui.icon('back') }} Playlists
+        {{ ui.icon('back') }} {{ 'Playlists'|trans }}
     </a>
 
     {% if not is_granted('ROLE_EDITOR') %}
@@ -15,11 +15,11 @@
                 <li class="card flex items-center gap-3 p-3 text-sm">
                     <span class="w-5 text-center text-xs text-gray-400">{{ loop.index }}</span>
                     <span class="min-w-0 flex-1 truncate">{{ item.media.name }}</span>
-                    <span class="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500 uppercase">{{ item.media.type.value }}</span>
-                    <span class="text-xs text-gray-400">{{ item.media.type.value == 'VIDEO' ? 'full' : (item.effectiveDurationMs / 1000)|round ~ 's' }}</span>
+                    <span class="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500 uppercase">{{ item.media.type.label|trans }}</span>
+                    <span class="text-xs text-gray-400">{{ item.media.type.value == 'VIDEO' ? 'full'|trans : (item.effectiveDurationMs / 1000)|round ~ 's' }}</span>
                 </li>
             {% else %}
-                <li class="text-sm text-gray-500">This playlist is empty.</li>
+                <li class="text-sm text-gray-500">{{ 'This playlist is empty.'|trans }}</li>
             {% endfor %}
         </ol>
     {% else %}
@@ -28,16 +28,16 @@
         <input type="hidden" name="_token" value="{{ csrf_token('playlist-' ~ playlist.id) }}">
 
         <div class="mb-6 flex items-center gap-3">
-            <input name="name" value="{{ playlist.name }}" required maxlength="80" aria-label="Playlist name"
+            <input name="name" value="{{ playlist.name }}" required maxlength="80" aria-label="{{ 'Playlist name'|trans }}"
                    class="input flex-1 text-lg font-semibold" data-action="input->playlist-editor#markDirty">
-            <button class="btn-primary">{{ ui.icon('save') }} <span data-playlist-editor-target="saveLabel">Save</span></button>
+            <button class="btn-primary">{{ ui.icon('save') }} <span data-playlist-editor-target="saveLabel">{{ 'Save'|trans }}</span></button>
         </div>
 
         <div class="grid gap-8 md:grid-cols-2">
             <section>
-                <h2 class="mb-3 text-sm font-semibold text-gray-500 uppercase">Playing order</h2>
+                <h2 class="mb-3 text-sm font-semibold text-gray-500 uppercase">{{ 'Playing order'|trans }}</h2>
                 <p class="text-sm text-gray-500 {{ playlist.items is empty ? '' : 'hidden' }}" data-playlist-editor-target="empty">
-                    Add media from the library.
+                    {{ 'Add media from the library.'|trans }}
                 </p>
                 <ol class="space-y-2" data-playlist-editor-target="list">
                     {% for item in playlist.items %}
@@ -47,21 +47,21 @@
             </section>
 
             <section>
-                <h2 class="mb-3 text-sm font-semibold text-gray-500 uppercase">Library</h2>
+                <h2 class="mb-3 text-sm font-semibold text-gray-500 uppercase">{{ 'Library'|trans }}</h2>
                 <div class="space-y-2">
                     {% for media in library %}
                         <button type="button" data-action="playlist-editor#add" data-playlist-editor-media-param="{{ media.id }}"
                                 class="card flex w-full items-center gap-3 p-3 text-left hover:border-brand">
                             {{ ui.icon('plus', 'h-4 w-4 text-brand') }}
                             <span class="min-w-0 flex-1 truncate text-sm">{{ media.name }}</span>
-                            <span class="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500 uppercase">{{ media.type.value }}</span>
+                            <span class="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500 uppercase">{{ media.type.label|trans }}</span>
                         </button>
                         <template data-playlist-editor-target="template" data-media="{{ media.id }}">
                             {{ include('dashboard/playlists/_item.html.twig', {media: media}) }}
                         </template>
                     {% else %}
                         <p class="text-sm text-gray-500">
-                            No media yet. Upload some in <a href="{{ path('app_media') }}" class="text-brand">Media</a>.
+                            {{ 'No media yet.'|trans }} <a href="{{ path('app_media') }}" class="text-brand">{{ 'Upload some in Media.'|trans }}</a>
                         </p>
                     {% endfor %}
                 </div>
@@ -70,9 +70,9 @@
     </form>
 
     <form method="post" action="{{ path('app_playlists_delete', {id: playlist.id}) }}" class="mt-12 border-t border-gray-200 pt-6"
-          data-turbo-confirm="Delete {{ playlist.name }}? Screens playing it will show nothing.">
+          data-turbo-confirm="{{ 'Delete %name%? Screens playing it will show nothing.'|trans({'%name%': playlist.name}) }}">
         <input type="hidden" name="_token" value="{{ csrf_token('playlist-' ~ playlist.id) }}">
-        <button class="btn border border-red-200 bg-white text-red-600 hover:bg-red-50">{{ ui.icon('trash') }} Delete playlist</button>
+        <button class="btn border border-red-200 bg-white text-red-600 hover:bg-red-50">{{ ui.icon('trash') }} {{ 'Delete playlist'|trans }}</button>
     </form>
     {% endif %}
 {% endblock %}

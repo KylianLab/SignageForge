@@ -1,0 +1,325 @@
+# Dutch translations. Keys are the English texts of the interface;
+# keep %placeholders% as they are, and the | between singular and plural.
+'"%name%" is paired. It will start playing in a few seconds.': '"%name%" is gekoppeld. Het begint over enkele seconden af te spelen.'
+'"%name%" was deleted.': '"%name%" is verwijderd.'
+'"%name%" was deleted. Its screens play their own playlist again.': '"%name%" is verwijderd. De schermen spelen weer hun eigen afspeellijst.'
+'"%name%" was removed.': '"%name%" is verwijderd.'
+'%count% file uploaded.|%count% files uploaded.': '%count% bestand geüpload.|%count% bestanden geüpload.'
+'%count% item|%count% items': '%count% item|%count% items'
+'%count% migration(s) pending: run signageforge:upgrade': '%count% migratie(s) in afwachting: voer signageforge:upgrade uit'
+'%count% schedule rule|%count% schedule rules': '%count% planningsregel|%count% planningsregels'
+'%count% screen added to the group.|%count% screens added to the group.': '%count% scherm aan de groep toegevoegd.|%count% schermen aan de groep toegevoegd.'
+'%count% screen|%count% screens': '%count% scherm|%count% schermen'
+'%email% can now sign in. Give them their password in person.': '%email% kan nu aanmelden. Geef het wachtwoord persoonlijk door.'
+'%email% is now %role%.': '%email% is nu %role%.'
+'%email% was removed. With LDAP or Microsoft 365 they can still sign in again, as a new member.': '%email% is verwijderd. Met LDAP of Microsoft 365 kan deze persoon opnieuw aanmelden, als nieuw lid.'
+'%file%: only images and videos are supported.': "%file%: alleen afbeeldingen en video's worden ondersteund."
+'%file%: the upload failed (%reason%).': '%file%: het uploaden is mislukt (%reason%).'
+'%name% is ready': '%name% is klaar'
+'(now in %name%)': '(nu in %name%)'
+(overnight): '(tot de volgende dag)'
+(you): (u)
+', with a schedule': ', met een planning'
+'Add URL': 'URL toevoegen'
+'Add a local account': 'Een lokaal account toevoegen'
+'Add a rule': 'Een regel toevoegen'
+'Add a web page': 'Een webpagina toevoegen'
+'Add media from the library.': 'Voeg media toe uit de bibliotheek.'
+'Add rule': 'Regel toevoegen'
+'Add screen': 'Scherm toevoegen'
+'Add screens': 'Schermen toevoegen'
+'Add to the group': 'Aan de groep toevoegen'
+Admin: Beheerder
+'Admin account %email% created': 'Beheerdersaccount %email% aangemaakt'
+'All day': 'Hele dag'
+'An account with this email already exists.': 'Er bestaat al een account met dit e-mailadres.'
+'An end before the start runs overnight, e.g. 22:00 to 06:00.': 'Een einde vóór het begin loopt door tot de volgende dag, bv. 22:00 tot 06:00.'
+'An update is already running.': 'Er loopt al een update.'
+'Assign a playlist from the dashboard to start playing.': 'Wijs een afspeellijst toe vanuit het dashboard om te beginnen.'
+'Bottom left': Linksonder
+'Bottom right': Rechtsonder
+'Browser language': 'Taal van de browser'
+'Change language': 'Taal wijzigen'
+'Check now': 'Nu controleren'
+'City, Country (e.g. Brussels, Belgium)': 'Stad, land (bv. Brussel, België)'
+'Click to choose files · up to %size% each': 'Klik om bestanden te kiezen · max. %size% per bestand'
+Clock: Klok
+Continue: Doorgaan
+'Could not connect: %error%': 'Verbinden mislukt: %error%'
+'Could not find "%place%". Try "City, Country".': '"%place%" niet gevonden. Probeer "Stad, land".'
+'Could not reach GitHub: %error%': 'GitHub is niet bereikbaar: %error%'
+'Could not reach the server': 'De server is niet bereikbaar'
+Create: Aanmaken
+'Current temperature and sky, refreshed every 15 minutes (data: Open-Meteo).': 'Huidige temperatuur en bewolking, elke 15 minuten vernieuwd (gegevens: Open-Meteo).'
+Dashboard: Dashboard
+Database: Database
+'Database name': 'Naam van de database'
+'Database schema': Databaseschema
+'Database tables created': 'Databasetabellen aangemaakt'
+'Default playlist': Standaardafspeellijst
+Delete: Verwijderen
+'Delete %name%': '%name% verwijderen'
+'Delete %name%? It will also leave every playlist.': '%name% verwijderen? Het wordt ook uit elke afspeellijst gehaald.'
+'Delete %name%? Its screens go back to their own playlist and schedule.': '%name% verwijderen? De schermen keren terug naar hun eigen afspeellijst en planning.'
+'Delete %name%? Screens playing it will show nothing.': '%name% verwijderen? Schermen die ze afspelen, tonen dan niets meer.'
+'Delete group': 'Groep verwijderen'
+'Delete playlist': 'Afspeellijst verwijderen'
+Device: Toestel
+Done: Klaar
+'Drag to reorder': 'Sleep om te herschikken'
+Editor: Redacteur
+Email: E-mail
+'Enter a place for the weather.': 'Geef een plaats op voor het weer.'
+'Enter a valid email address.': 'Geef een geldig e-mailadres op.'
+'Enter a valid http(s) address.': 'Geef een geldig http(s)-adres op.'
+'Enter full addresses starting with http:// or https://.': 'Geef volledige adressen op die beginnen met http:// of https://.'
+'Enter times as HH:MM, for example 08:30.': 'Geef tijden op als UU:MM, bijvoorbeeld 08:30.'
+'Every day': 'Elke dag'
+Fast: Snel
+'First admin': 'Eerste beheerder'
+'Free disk space': 'Vrije schijfruimte'
+Fri: Vr
+From: Van
+'Front-end assets NOT built: run "php bin/console tailwind:build --minify" and "php bin/console asset-map:compile" on the server': 'Front-end-bestanden NIET gebouwd: voer "php bin/console tailwind:build --minify" en "php bin/console asset-map:compile" uit op de server'
+'Front-end assets built': 'Front-end-bestanden gebouwd'
+'Give the group a name.': 'Geef de groep een naam.'
+'Give the playlist a name.': 'Geef de afspeellijst een naam.'
+'Give the screen a name.': 'Geef het scherm een naam.'
+'Group name': Groepsnaam
+'Group of %name%': 'Groep van %name%'
+Groups: Groepen
+Health: Status
+Host: Host
+'How do screens learn about changes?': 'Hoe vernemen de schermen wijzigingen?'
+'How is the display mounted?': 'Hoe is het scherm gemonteerd?'
+Image: Afbeelding
+'In your Signage Forge dashboard, choose "Add screen" and enter this code.': 'Kies in het Signage Forge-dashboard "Scherm toevoegen" en voer deze code in.'
+'Install %version%': '%version% installeren'
+'Install %version% now? The site shows a maintenance page for a minute; screens keep playing.': '%version% nu installeren? De site toont een minuut lang een onderhoudspagina; de schermen blijven afspelen.'
+'Install Signage Forge': 'Signage Forge installeren'
+LDAP: LDAP
+Landscape: Liggend
+'Landscape, upside down': 'Liggend, ondersteboven'
+Language: Taal
+'Last update failed': 'De laatste update is mislukt'
+'Last update finished': 'Laatste update voltooid'
+Library: Bibliotheek
+Loading…: Laden…
+'Lobby screen': 'Scherm in de inkomhal'
+Location: Locatie
+'Maintenance page': Onderhoudspagina
+'MariaDB or MySQL': 'MariaDB of MySQL'
+Media: Media
+'Media folder': Mediamap
+'Media library': Mediabibliotheek
+'Mercure hub': Mercure-hub
+'Mercure hub address (Mercure only)': 'Adres van de Mercure-hub (alleen Mercure)'
+'Mercure: instant updates through a Mercure hub you run on this server (see docs/deployment.md).': 'Mercure: onmiddellijke updates via een Mercure-hub die op deze server draait (zie docs/deployment.md).'
+'Microsoft 365': 'Microsoft 365'
+Mon: Ma
+'Move down': Omlaag
+'Move up': Omhoog
+Name: Naam
+'Name (optional)': 'Naam (optioneel)'
+'Never connected': 'Nooit verbonden'
+'New group name': 'Naam van de nieuwe groep'
+'New group, e.g. Lobby screens': 'Nieuwe groep, bv. Schermen inkomhal'
+'New playlist name': 'Naam van de nieuwe afspeellijst'
+'News ticker': Nieuwsticker
+'No file received. Files must be smaller than %size%.': 'Geen bestand ontvangen. Bestanden moeten kleiner zijn dan %size%.'
+'No group': 'Geen groep'
+'No groups yet.': 'Nog geen groepen.'
+'No media yet.': 'Nog geen media.'
+'No media yet. Upload images or videos, or add a web page.': "Nog geen media. Upload afbeeldingen of video's, of voeg een webpagina toe."
+'No playlist': 'Geen afspeellijst'
+'No playlists yet.': 'Nog geen afspeellijsten.'
+'No release published yet on %repository%.': 'Nog geen release gepubliceerd op %repository%.'
+'No rules: the default playlist always plays.': 'Geen regels: de standaardafspeellijst speelt altijd.'
+'No screens yet.': 'Nog geen schermen.'
+'No screens yet. Open /pair on a display, then ask an admin to add it.': 'Nog geen schermen. Open /pair op een scherm en vraag dan een beheerder om het toe te voegen.'
+'No screens yet. Open /pair on a display, then enter its code above.': 'Nog geen schermen. Open /pair op een scherm en voer de code hierboven in.'
+'No sign-in method is configured. Enable one in your environment (see .env).': 'Er is geen aanmeldmethode ingesteld. Schakel er een in via uw omgeving (zie .env).'
+Normal: Normaal
+OR: OF
+'Offline · last seen %date%': 'Offline · laatst gezien %date%'
+'Offline, last seen %date%': 'Offline, laatst gezien %date%'
+'On': Dagen
+'One message per line': 'Eén bericht per regel'
+'One-click update unavailable: %reason%': 'Update met één klik niet beschikbaar: %reason%'
+'One-click updates are off. Set SIGNAGEFORGE_WEB_UPDATES=true to allow them.': 'Updates met één klik staan uit. Stel SIGNAGEFORGE_WEB_UPDATES=true in om ze toe te staan.'
+Online: Online
+'Open /pair on this device to set it up.': 'Open /pair op dit toestel om het in te stellen.'
+'Open the dashboard': 'Het dashboard openen'
+'Open the group': 'De groep openen'
+"Open the group's widgets": 'De widgets van de groep openen'
+'Or with git:': 'Of met git:'
+'Outside these rules the screen plays %playlist% (the default playlist, chosen on the Screens page).': 'Buiten deze regels speelt het scherm %playlist% (de standaardafspeellijst, gekozen op de pagina Schermen).'
+'Outside these rules the screens of this group play %playlist% (the default playlist, chosen on the group page).': 'Buiten deze regels spelen de schermen van deze groep %playlist% (de standaardafspeellijst, gekozen op de groepspagina).'
+Owner: Eigenaar
+PHP: PHP
+'Pair this screen': 'Dit scherm koppelen'
+Paired: 'Gekoppeld op'
+'Pairing code': Koppelcode
+Password: Wachtwoord
+'Password (8 characters or more)': 'Wachtwoord (8 tekens of meer)'
+'Password again': 'Wachtwoord herhalen'
+'Pick a playlist.': 'Kies een afspeellijst.'
+'Pick at least one day.': 'Kies minstens één dag.'
+Place: Plaats
+Play: Afspelen
+'Playing order': Afspeelvolgorde
+'Playlist for %name%': 'Afspeellijst voor %name%'
+'Playlist name': 'Naam van de afspeellijst'
+'Playlist saved.': 'Afspeellijst opgeslagen.'
+Playlists: Afspeellijsten
+Plays: Speelt
+'Plays the group %name%': 'Speelt de groep %name%'
+'Polling: screens check every few seconds. Nothing else to install.': 'Polling: de schermen kijken om de paar seconden na. Niets extra te installeren.'
+Port: Poort
+'Portrait (turned left)': 'Staand (naar links gedraaid)'
+'Portrait (turned right)': 'Staand (naar rechts gedraaid)'
+Position: Positie
+PostgreSQL: PostgreSQL
+Preview: Voorbeeld
+'Preview in a new tab': 'Voorbeeld in een nieuw tabblad'
+'Prove you run this server': 'Bewijs dat u deze server beheert'
+'Public address of this site': 'Publiek adres van deze site'
+'QR code linking to %url%': 'QR-code naar %url%'
+'Real-time updates': Realtime-updates
+Remove: Verwijderen
+'Remove %email%': '%email% verwijderen'
+'Remove %email%?': '%email% verwijderen?'
+'Remove %name%': '%name% verwijderen'
+'Remove %name%? The device will need to be paired again.': '%name% verwijderen? Het toestel moet dan opnieuw gekoppeld worden.'
+'Remove from group': 'Uit de groep halen'
+'Remove rule': 'Regel verwijderen'
+'Remove screen': 'Scherm verwijderen'
+Rename: 'Naam wijzigen'
+'Requesting a code…': 'Code aanvragen…'
+Role: Rol
+'Role of %email%': 'Rol van %email%'
+'SQLite: a file on this server, nothing to install. Fine for most sites.': 'SQLite: een bestand op deze server, niets te installeren. Volstaat voor de meeste sites.'
+Sat: Za
+Save: Opslaan
+Schedule: Planning
+'Schedule of %name%': 'Planning van %name%'
+'Schedule of the group %name%': 'Planning van de groep %name%'
+'Schedule rule added.': 'Planningsregel toegevoegd.'
+'Screen saved.': 'Scherm opgeslagen.'
+Screens: Schermen
+"Screens in a group show the same content: the group's playlist and schedule.": 'Schermen in een groep tonen dezelfde inhoud: de afspeellijst en planning van de groep.'
+'Screens in this group': 'Schermen in deze groep'
+'Seconds on screen': 'Seconden op het scherm'
+'Seconds on screen (empty = %seconds%s)': 'Seconden op het scherm (leeg = %seconds% s)'
+'Server version': Serverversie
+'Set up': Installatie
+'Settings saved to %file%': 'Instellingen opgeslagen in %file%'
+'Setup token': Installatietoken
+'Show the date': 'De datum tonen'
+'Shown over the content, on every screen of the group.': 'Getoond boven de inhoud, op elk scherm van de groep.'
+'Shown over the content, on this screen.': 'Getoond boven de inhoud, op dit scherm.'
+'Sign in': Aanmelden
+'Sign in with LDAP': 'Aanmelden met LDAP'
+'Sign in with Microsoft 365': 'Aanmelden met Microsoft 365'
+'Sign out': Afmelden
+'Sign-in failed. Check your credentials and try again.': 'Aanmelden mislukt. Controleer uw gegevens en probeer opnieuw.'
+'Signage Forge is being updated': 'Signage Forge wordt bijgewerkt'
+'Signage Forge is ready': 'Signage Forge is klaar'
+'Signage Forge player': 'Signage Forge-speler'
+'Signage Forge setup': 'Installatie van Signage Forge'
+Site: Site
+Slow: Traag
+'So that nobody else can set up this site before you, a setup token was written on the server. Read it there and paste it below:': 'Zodat niemand anders deze site vóór u kan installeren, is er een installatietoken op de server geschreven. Lees het daar en plak het hieronder:'
+'Something went wrong': 'Er ging iets mis'
+Speed: Snelheid
+'Start and end are the same. Tick "All day" instead.': 'Begin en einde zijn gelijk. Vink in plaats daarvan "Hele dag" aan.'
+Status: Status
+Sun: Zo
+System: Systeem
+'Test the connection and continue': 'Verbinding testen en doorgaan'
+'The PHP zip extension is missing.': 'De PHP-extensie zip ontbreekt.'
+'The default playlist, unless a schedule rule says otherwise.': 'De standaardafspeellijst, tenzij een planningsregel iets anders zegt.'
+'The installation failed:': 'De installatie is mislukt:'
+'The password must have at least 8 characters.': 'Het wachtwoord moet minstens 8 tekens hebben.'
+'The setup page is now closed. Sign in as %email%, then open /pair on a screen.': 'De installatiepagina is nu gesloten. Meld u aan als %email% en open dan /pair op een scherm.'
+'The two passwords differ.': 'De twee wachtwoorden verschillen.'
+'The weather is turned off on this server (SIGNAGEFORGE_WEATHER=false).': 'Het weer staat uit op deze server (SIGNAGEFORGE_WEATHER=false).'
+'The web server cannot write %file%, so the setup will fail at this step. Make the project folder writable, or use "php bin/console signageforge:install".': 'De webserver kan %file% niet schrijven, dus de installatie zal bij deze stap mislukken. Maak de projectmap beschrijfbaar, of gebruik "php bin/console signageforge:install".'
+'The web server cannot write %file%. Make the project folder writable for the setup, or use "php bin/console signageforge:install" on the server instead.': 'De webserver kan %file% niet schrijven. Maak de projectmap beschrijfbaar tijdens de installatie, of gebruik in plaats daarvan "php bin/console signageforge:install" op de server.'
+'The web server cannot write the project folder.': 'De webserver kan niet in de projectmap schrijven.'
+'There is no update to install.': 'Er is geen update om te installeren.'
+'This code has expired. Reload /pair on the screen to get a new one.': 'Deze code is verlopen. Herlaad /pair op het scherm voor een nieuwe.'
+'This code was already used.': 'Deze code is al gebruikt.'
+"This creates the database tables and builds the site's styles; it can take a minute.": 'Dit maakt de databasetabellen aan en bouwt de stijlen van de site; dat kan een minuut duren.'
+'This is not the setup token.': 'Dit is niet het installatietoken.'
+'This is the latest version.': 'Dit is de nieuwste versie.'
+'This playlist is empty.': 'Deze afspeellijst is leeg.'
+'This release has no ready-to-install package.': 'Deze release heeft geen installatieklaar pakket.'
+"This screen is in the group %name% and plays the group's schedule. The rules below apply again if it leaves the group.": 'Dit scherm zit in de groep %name% en volgt de planning van de groep. De regels hieronder gelden opnieuw als het de groep verlaat.'
+"This screen is in the group %name% and shows the group's widgets. The settings below apply again if it leaves the group.": 'Dit scherm zit in de groep %name% en toont de widgets van de groep. De instellingen hieronder gelden opnieuw als het de groep verlaat.'
+'This screen isn’t paired': 'Dit scherm is niet gekoppeld'
+'This takes a minute. The page reloads on its own. Screens keep playing in the meantime.': 'Dit duurt een minuut. De pagina herlaadt vanzelf. De schermen blijven intussen afspelen.'
+Thu: Do
+'Ticker messages': Tickerberichten
+To: Tot
+'To add a screen, open /pair on that screen.': 'Om een scherm toe te voegen, open /pair op dat scherm.'
+'To update, run on the server:': 'Voer op de server uit om bij te werken:'
+'Top left': Linksboven
+'Top right': Rechtsboven
+Tue: Di
+'Unknown code. Check the code shown on the screen.': 'Onbekende code. Controleer de code op het scherm.'
+'Update checks are off (SIGNAGEFORGE_UPDATE_REPOSITORY is empty).': 'Het zoeken naar updates staat uit (SIGNAGEFORGE_UPDATE_REPOSITORY is leeg).'
+'Update in progress…': 'Update bezig…'
+Updating: Bijwerken
+'Updating to %version%. Follow the progress below.': 'Bijwerken naar %version%. Volg de voortgang hieronder.'
+Upload: Uploaden
+'Upload images / videos': "Afbeeldingen / video's uploaden"
+'Upload limit': Uploadlimiet
+'Upload some in Media.': 'Upload er enkele in Media.'
+Uploading…: Uploaden…
+User: Gebruiker
+Username: Gebruikersnaam
+Users: Gebruikers
+'Version %version%': 'Versie %version%'
+'Version %version% is available, published %date%.': 'Versie %version% is beschikbaar, gepubliceerd op %date%.'
+'Version %version% is available.': 'Versie %version% is beschikbaar.'
+Video: Video
+'Videos play to the end': "Video's spelen tot het einde"
+Viewer: Kijker
+'Viewers see everything; editors also manage media, playlists, schedules and widgets; admins also pair screens, manage groups and users; owners also manage admins and owners.': 'Kijkers zien alles; redacteurs beheren ook media, afspeellijsten, planningen en widgets; beheerders koppelen ook schermen en beheren groepen en gebruikers; eigenaars beheren ook beheerders en eigenaars.'
+'Waiting for the network…': 'Wachten op het netwerk…'
+'Waiting for the screen to connect': 'Wachten tot het scherm verbinding maakt'
+Weather: Weer
+'Web page': Webpagina
+'Web page added.': 'Webpagina toegevoegd.'
+'Web page address': 'Adres van de webpagina'
+Wed: Wo
+Weekdays: Weekdagen
+Weekends: Weekends
+'What the group plays': 'Wat de groep speelt'
+"What's new": 'Wat is er nieuw'
+'When a display is turned on its side but its device still sends a landscape picture, pick how it is turned and the content is rotated to read upright.': 'Als een scherm op zijn kant hangt maar het toestel nog een liggend beeld stuurt, kies hoe het gedraaid is en de inhoud wordt rechtop gedraaid.'
+'When several rules match, the first one wins.': 'Als meerdere regels passen, wint de eerste.'
+'Where should Signage Forge keep its data?': 'Waar moet Signage Forge zijn gegevens bewaren?'
+Widgets: Widgets
+'Widgets of %name%': 'Widgets van %name%'
+'Widgets of the group %name%': 'Widgets van de groep %name%'
+'Widgets saved.': 'Widgets opgeslagen.'
+'You cannot give this role.': 'U kunt deze rol niet toekennen.'
+'all day': 'hele dag'
+default: standaard
+'e.g. K7P2QX': 'bv. K7P2QX'
+'e.g. Main entrance, 1st floor': 'bv. Hoofdingang, 1e verdieping'
+full: volledig
+'local account': 'lokaal account'
+'no playlist': 'geen afspeellijst'
+'not writable by the web server': 'niet beschrijfbaar door de webserver'
+nothing: niets
+'off': uit
+'offline · playing cached content': 'offline · speelt inhoud uit de cache'
+'on': aan
+polling: polling
+'the group': 'de groep'
+unknown: onbekend
+'up to date': up-to-date
+writable: beschrijfbaar

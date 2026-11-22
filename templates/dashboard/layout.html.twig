@@ -1,25 +1,26 @@
 {% extends 'base.html.twig' %}
 {% import 'components/icons.html.twig' as ui %}
 
-{% block title %}{% block page_title %}Dashboard{% endblock %} · Signage Forge{% endblock %}
+{% block title %}{% block page_title %}{{ 'Dashboard'|trans }}{% endblock %} · Signage Forge{% endblock %}
 
 {% block body %}
     {% set route = app.current_route %}
+    {% set kind = app.request.attributes.get('kind') %}
     {% set nav = [
-        {route: 'app_dashboard', label: 'Screens', icon: 'monitor', active: route starts with 'app_dashboard' or route starts with 'app_screens' or ((route starts with 'app_schedule' or route starts with 'app_widgets') and app.request.attributes.get('kind') == 'screens')},
-        {route: 'app_groups', label: 'Groups', icon: 'group', active: route starts with 'app_groups' or ((route starts with 'app_schedule' or route starts with 'app_widgets') and app.request.attributes.get('kind') == 'groups')},
-        {route: 'app_media', label: 'Media', icon: 'image', active: route starts with 'app_media'},
-        {route: 'app_playlists', label: 'Playlists', icon: 'list', active: route starts with 'app_playlists'},
+        {route: 'app_dashboard', label: 'Screens'|trans, icon: 'monitor', active: route starts with 'app_dashboard' or route starts with 'app_screens' or ((route starts with 'app_schedule' or route starts with 'app_widgets') and kind == 'screens')},
+        {route: 'app_groups', label: 'Groups'|trans, icon: 'group', active: route starts with 'app_groups' or ((route starts with 'app_schedule' or route starts with 'app_widgets') and kind == 'groups')},
+        {route: 'app_media', label: 'Media'|trans, icon: 'image', active: route starts with 'app_media'},
+        {route: 'app_playlists', label: 'Playlists'|trans, icon: 'list', active: route starts with 'app_playlists'},
     ]|merge(is_granted('ROLE_ADMIN') ? [
-        {route: 'app_users', label: 'Users', icon: 'users', active: route starts with 'app_users'},
-        {route: 'app_system', label: 'System', icon: 'system', active: route starts with 'app_system'},
+        {route: 'app_users', label: 'Users'|trans, icon: 'users', active: route starts with 'app_users'},
+        {route: 'app_system', label: 'System'|trans, icon: 'system', active: route starts with 'app_system'},
     ] : []) %}
     <div class="flex min-h-screen flex-col md:flex-row">
         <aside class="flex shrink-0 flex-col border-b border-gray-200 bg-white p-4 md:w-60 md:border-r md:border-b-0 md:p-5">
             <a href="{{ path('app_dashboard') }}" class="mb-4 flex items-center gap-2 font-semibold md:mb-8">
                 {{ ui.icon('cast', 'h-5 w-5 text-brand') }} Signage Forge
             </a>
-            <nav class="flex gap-1 md:flex-col md:space-y-1">
+            <nav class="flex flex-wrap gap-1 md:flex-col md:space-y-1">
                 {% for item in nav %}
                     <a href="{{ path(item.route) }}"
                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm {{ item.active ? 'bg-brand/10 font-medium text-brand' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -27,12 +28,23 @@
                     </a>
                 {% endfor %}
             </nav>
-            <div class="mt-4 flex items-center justify-between gap-2 border-t border-gray-100 pt-4 md:mt-auto md:block">
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-4 md:mt-auto md:block md:space-y-2">
                 {% if app.user %}
-                    <div class="truncate px-3 text-xs text-gray-500 md:mb-2" title="{{ app.user.email }}">{{ app.user.displayName }}{% if app.user.role %} · {{ app.user.role.label }}{% endif %}</div>
+                    <div class="truncate px-3 text-xs text-gray-500" title="{{ app.user.email }}">{{ app.user.displayName }}{% if app.user.role %} · {{ app.user.role.label|trans }}{% endif %}</div>
+                    <form method="post" action="{{ path('app_account_language') }}" data-controller="autosubmit" data-turbo="false" class="px-3">
+                        <input type="hidden" name="_token" value="{{ csrf_token('language') }}">
+                        <label class="sr-only" for="interface-language">{{ 'Language'|trans }}</label>
+                        <select id="interface-language" name="locale" class="w-full rounded-md border border-gray-200 bg-white px-2 py-1 text-xs text-gray-600" data-action="autosubmit#submit">
+                            <option value="" {{ app.user.locale is null ? 'selected' }}>{{ 'Browser language'|trans }}</option>
+                            {% for code, name in {en: 'English', fr: 'Français', nl: 'Nederlands'} %}
+                                <option value="{{ code }}" {{ app.user.locale == code ? 'selected' }}>{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                        <noscript><button class="btn-secondary mt-1">{{ 'Change language'|trans }}</button></noscript>
+                    </form>
                 {% endif %}
                 <a href="{{ path('app_logout') }}" data-turbo="false" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100">
-                    {{ ui.icon('logout') }} Sign out
+                    {{ ui.icon('logout') }} {{ 'Sign out'|trans }}
                 </a>
             </div>
         </aside>

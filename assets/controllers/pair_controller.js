@@ -9,7 +9,13 @@ const TOKEN_KEY = 'signageforge.deviceToken';
  */
 export default class extends Controller {
     static targets = ['loading', 'error', 'ready', 'code'];
-    static values = { startUrl: String, statusUrl: String, playerUrl: String };
+    static values = {
+        startUrl: String,
+        statusUrl: String,
+        playerUrl: String,
+        unreachable: { type: String, default: 'Could not reach the server' },
+        failed: { type: String, default: 'Something went wrong' },
+    };
 
     connect() {
         const existing = localStorage.getItem(TOKEN_KEY);
@@ -27,14 +33,14 @@ export default class extends Controller {
     async start() {
         try {
             const res = await fetch(this.startUrlValue, { method: 'POST', headers: { Accept: 'application/json' } });
-            if (!res.ok) throw new Error('Could not reach the server');
+            if (!res.ok) throw new Error(this.unreachableValue);
             const { code, deviceToken } = await res.json();
             localStorage.setItem(TOKEN_KEY, deviceToken);
             this.codeTarget.textContent = code;
             this.show('ready');
             this.timer = setInterval(() => this.poll(deviceToken), 3000);
         } catch (e) {
-            this.errorTarget.textContent = e instanceof Error ? e.message : 'Something went wrong';
+            this.errorTarget.textContent = e instanceof Error && e.message ? e.message : this.failedValue;
             this.show('error');
             // Retry: the server may just be starting up.
             this.timer = setTimeout(() => window.location.reload(), 15000);

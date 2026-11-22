@@ -5,15 +5,15 @@
 
 {% block content %}
     <a href="{{ path('app_dashboard') }}" class="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800">
-        {{ ui.icon('back') }} Screens
+        {{ ui.icon('back') }} {{ 'Screens'|trans }}
     </a>
     <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1 class="text-2xl font-bold">{{ screen.name }}</h1>
         <div class="flex gap-2">
             {% if not screen.group %}
-                <a href="{{ path('app_schedule', {kind: 'screens', id: screen.id}) }}" class="btn-secondary">{{ ui.icon('calendar') }} Schedule</a>
+                <a href="{{ path('app_schedule', {kind: 'screens', id: screen.id}) }}" class="btn-secondary">{{ ui.icon('calendar') }} {{ 'Schedule'|trans }}</a>
             {% endif %}
-            <a href="{{ path('app_widgets', {kind: 'screens', id: screen.id}) }}" class="btn-secondary">{{ ui.icon('widgets') }} Widgets</a>
+            <a href="{{ path('app_widgets', {kind: 'screens', id: screen.id}) }}" class="btn-secondary">{{ ui.icon('widgets') }} {{ 'Widgets'|trans }}</a>
         </div>
     </div>
 
@@ -22,20 +22,19 @@
         {% set readonly = not is_granted('ROLE_ADMIN') %}
         <div class="grid gap-4 sm:grid-cols-2">
             <div>
-                <label class="label" for="screen-name">Name</label>
+                <label class="label" for="screen-name">{{ 'Name'|trans }}</label>
                 <input id="screen-name" name="name" value="{{ screen.name }}" required maxlength="80" class="input" {{ readonly ? 'disabled' }}>
             </div>
             <div>
-                <label class="label" for="screen-location">Location</label>
-                <input id="screen-location" name="location" value="{{ screen.location }}" maxlength="120" placeholder="e.g. Main entrance, 1st floor" class="input" {{ readonly ? 'disabled' }}>
+                <label class="label" for="screen-location">{{ 'Location'|trans }}</label>
+                <input id="screen-location" name="location" value="{{ screen.location }}" maxlength="120" placeholder="{{ 'e.g. Main entrance, 1st floor'|trans }}" class="input" {{ readonly ? 'disabled' }}>
             </div>
         </div>
 
         <fieldset>
-            <legend class="label">How is the display mounted?</legend>
+            <legend class="label">{{ 'How is the display mounted?'|trans }}</legend>
             <p class="mb-3 text-xs text-gray-500">
-                When a display is turned on its side but its device still sends a landscape picture,
-                pick how it is turned and the content is rotated to read upright.
+                {{ 'When a display is turned on its side but its device still sends a landscape picture, pick how it is turned and the content is rotated to read upright.'|trans }}
             </p>
             <div class="grid gap-3 sm:grid-cols-4">
                 {% for orientation in orientations %}
@@ -47,29 +46,40 @@
                                 <span class="inline-block font-semibold" style="transform: rotate({{ orientation.rotation }}deg)">A</span>
                             </span>
                         </span>
-                        {{ orientation.label }}
+                        {{ orientation.label|trans }}
                     </label>
                 {% endfor %}
             </div>
         </fieldset>
 
         {% if not readonly %}
-            <button class="btn-primary">{{ ui.icon('save') }} Save</button>
+            <button class="btn-primary">{{ ui.icon('save') }} {{ 'Save'|trans }}</button>
         {% endif %}
     </form>
 
     <section class="card divide-y divide-gray-100 text-sm">
-        <div class="flex justify-between gap-4 px-4 py-3"><span class="text-gray-500">Status</span><span>{{ screen.online ? 'Online' : (screen.lastSeenAt ? 'Offline, last seen ' ~ screen.lastSeenAt|date('Y-m-d H:i') : 'Never connected') }}</span></div>
-        <div class="flex justify-between gap-4 px-4 py-3"><span class="text-gray-500">Plays</span>
+        <div class="flex justify-between gap-4 px-4 py-3">
+            <span class="text-gray-500">{{ 'Status'|trans }}</span>
             <span>
-                {% if screen.group %}
-                    the group <a href="{{ path('app_groups_edit', {id: screen.group.id}) }}" class="text-brand hover:underline">{{ screen.group.name }}</a>
+                {% if screen.online %}
+                    {{ 'Online'|trans }}
+                {% elseif screen.lastSeenAt %}
+                    {{ 'Offline, last seen %date%'|trans({'%date%': screen.lastSeenAt|date('Y-m-d H:i')}) }}
                 {% else %}
-                    {{ screen.playlist ? screen.playlist.name : 'no playlist' }}{% if screen.scheduleRules|length %}, with a schedule{% endif %}
+                    {{ 'Never connected'|trans }}
                 {% endif %}
             </span>
         </div>
-        <div class="flex justify-between gap-4 px-4 py-3"><span class="text-gray-500">Device</span><span class="truncate text-right text-xs text-gray-500" title="{{ screen.userAgent }}">{{ screen.userAgent ?? '-' }}</span></div>
-        <div class="flex justify-between gap-4 px-4 py-3"><span class="text-gray-500">Paired</span><span>{{ screen.createdAt|date('Y-m-d') }}</span></div>
+        <div class="flex justify-between gap-4 px-4 py-3"><span class="text-gray-500">{{ 'Plays'|trans }}</span>
+            <span>
+                {% if screen.group %}
+                    {{ 'the group'|trans }} <a href="{{ path('app_groups_edit', {id: screen.group.id}) }}" class="text-brand hover:underline">{{ screen.group.name }}</a>
+                {% else %}
+                    {{ screen.playlist ? screen.playlist.name : 'no playlist'|trans }}{% if screen.scheduleRules|length %}{{ ', with a schedule'|trans }}{% endif %}
+                {% endif %}
+            </span>
+        </div>
+        <div class="flex justify-between gap-4 px-4 py-3"><span class="text-gray-500">{{ 'Device'|trans }}</span><span class="truncate text-right text-xs text-gray-500" title="{{ screen.userAgent }}">{{ screen.userAgent ?? '-' }}</span></div>
+        <div class="flex justify-between gap-4 px-4 py-3"><span class="text-gray-500">{{ 'Paired'|trans }}</span><span>{{ screen.createdAt|date('Y-m-d') }}</span></div>
     </section>
 {% endblock %}

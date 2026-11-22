@@ -50,7 +50,7 @@ final class GroupController extends AbstractDashboardController
         $this->requireCsrf($request, 'group-create');
         $name = mb_substr(trim($request->getPayload()->getString('name')), 0, 80);
         if ('' === $name) {
-            $this->addFlash('error', 'Give the group a name.');
+            $this->flash('error', 'Give the group a name.');
 
             return $this->seeOther('app_groups');
         }
@@ -127,7 +127,7 @@ final class GroupController extends AbstractDashboardController
         $this->em->flush();
         $this->notifier->notifyScheduled($group);
         if ($added > 0) {
-            $this->addFlash('success', 1 === $added ? 'Screen added to the group.' : \sprintf('%d screens added to the group.', $added));
+            $this->flash('success', '%count% screen added to the group.|%count% screens added to the group.', ['%count%' => $added]);
         }
 
         return $this->seeOther('app_groups_edit', ['id' => $group->getId()]);
@@ -166,7 +166,7 @@ final class GroupController extends AbstractDashboardController
         foreach ($screens as $screen) {
             $this->notifier->notifyScreen($screen, ScreenNotifier::EVENT_PLAYLIST_CHANGED);
         }
-        $this->addFlash('success', \sprintf('"%s" was deleted. Its screens play their own playlist again.', $group->getName()));
+        $this->flash('success', '"%name%" was deleted. Its screens play their own playlist again.', ['%name%' => $group->getName()]);
 
         return $this->seeOther('app_groups');
     }

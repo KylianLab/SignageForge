@@ -1,24 +1,22 @@
 {% extends 'install/layout.html.twig' %}
 
 {% block step %}
-    <h1>Prove you run this server</h1>
+    <h1>{{ 'Prove you run this server'|trans }}</h1>
     <p class="muted">
-        So that nobody else can set up this site before you, a setup token was written on the server.
-        Read it there and paste it below:
+        {{ 'So that nobody else can set up this site before you, a setup token was written on the server. Read it there and paste it below:'|trans }}
     </p>
     <pre>cat {{ token_file }}</pre>
     {% if not env_writable %}
         <p class="alert alert-warning">
-            The web server cannot write <code>{{ env_file }}</code>. Make the project folder writable for the setup,
-            or use <code>php bin/console signageforge:install</code> on the server instead.
+            {{ 'The web server cannot write %file%. Make the project folder writable for the setup, or use "php bin/console signageforge:install" on the server instead.'|trans({'%file%': env_file}) }}
         </p>
     {% endif %}
     <form method="post" class="stack">
         <input type="hidden" name="_token" value="{{ csrf_token('install') }}">
         <div>
-            <label class="label" for="token">Setup token</label>
+            <label class="label" for="token">{{ 'Setup token'|trans }}</label>
             <input id="token" name="token" required autocomplete="off" class="input font-mono">
         </div>
-        <button class="btn-primary">Continue</button>
+        <button class="btn-primary">{{ 'Continue'|trans }}</button>
     </form>
 {% endblock %}

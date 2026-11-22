@@ -5,14 +5,14 @@
 
 {% block content %}
     <a href="{{ path('app_groups') }}" class="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800">
-        {{ ui.icon('back') }} Groups
+        {{ ui.icon('back') }} {{ 'Groups'|trans }}
     </a>
 
     {% if is_granted('ROLE_ADMIN') %}
         <form method="post" action="{{ path('app_groups_rename', {id: group.id}) }}" class="mb-6 flex gap-3">
             <input type="hidden" name="_token" value="{{ csrf_token('group-' ~ group.id) }}">
-            <input name="name" value="{{ group.name }}" required maxlength="80" class="input flex-1 text-lg font-semibold" aria-label="Group name">
-            <button class="btn-secondary">Rename</button>
+            <input name="name" value="{{ group.name }}" required maxlength="80" class="input flex-1 text-lg font-semibold" aria-label="{{ 'Group name'|trans }}">
+            <button class="btn-secondary">{{ 'Rename'|trans }}</button>
         </form>
     {% else %}
         <h1 class="mb-6 text-2xl font-bold">{{ group.name }}</h1>
@@ -20,33 +20,32 @@
 
     <section class="card mb-6 flex flex-wrap items-center gap-4 p-4">
         <div class="min-w-0 flex-1">
-            <h2 class="font-semibold">What the group plays</h2>
-            <p class="text-xs text-gray-500">
-                The default playlist, unless a schedule rule says otherwise
-                {%- if group.scheduleRules|length %} ({{ group.scheduleRules|length }} rule{{ group.scheduleRules|length == 1 ? '' : 's' }}){% endif %}.
-            </p>
+            <h2 class="font-semibold">{{ 'What the group plays'|trans }}</h2>
+            <p class="text-xs text-gray-500">{{ 'The default playlist, unless a schedule rule says otherwise.'|trans }}</p>
         </div>
         {% if is_granted('ROLE_EDITOR') %}
             <form method="post" action="{{ path('app_groups_playlist', {id: group.id}) }}" data-controller="autosubmit">
                 <input type="hidden" name="_token" value="{{ csrf_token('group-' ~ group.id) }}">
-                <label class="sr-only" for="group-playlist">Default playlist</label>
+                <label class="sr-only" for="group-playlist">{{ 'Default playlist'|trans }}</label>
                 <select id="group-playlist" name="playlist" class="input w-auto" data-action="autosubmit#submit">
-                    <option value="">No playlist</option>
+                    <option value="">{{ 'No playlist'|trans }}</option>
                     {% for playlist in playlists %}
                         <option value="{{ playlist.id }}" {{ group.playlist and group.playlist.id == playlist.id ? 'selected' }}>{{ playlist.name }}</option>
                     {% endfor %}
                 </select>
-                <noscript><button class="btn-secondary">Save</button></noscript>
+                <noscript><button class="btn-secondary">{{ 'Save'|trans }}</button></noscript>
             </form>
         {% else %}
-            <span class="text-sm text-gray-600">{{ group.playlist ? group.playlist.name : 'No playlist' }}</span>
+            <span class="text-sm text-gray-600">{{ group.playlist ? group.playlist.name : 'No playlist'|trans }}</span>
         {% endif %}
-        <a href="{{ path('app_schedule', {kind: 'groups', id: group.id}) }}" class="btn-secondary">{{ ui.icon('calendar') }} Schedule</a>
-        <a href="{{ path('app_widgets', {kind: 'groups', id: group.id}) }}" class="btn-secondary">{{ ui.icon('widgets') }} Widgets</a>
+        <a href="{{ path('app_schedule', {kind: 'groups', id: group.id}) }}" class="btn-secondary">
+            {{ ui.icon('calendar') }} {{ 'Schedule'|trans }}{% if group.scheduleRules|length %} ({{ group.scheduleRules|length }}){% endif %}
+        </a>
+        <a href="{{ path('app_widgets', {kind: 'groups', id: group.id}) }}" class="btn-secondary">{{ ui.icon('widgets') }} {{ 'Widgets'|trans }}</a>
     </section>
 
     <section class="card mb-6">
-        <h2 class="border-b border-gray-100 p-4 font-semibold">Screens in this group</h2>
+        <h2 class="border-b border-gray-100 p-4 font-semibold">{{ 'Screens in this group'|trans }}</h2>
         <div class="divide-y divide-gray-100">
             {% for screen in group.screens %}
                 <div class="flex items-center gap-4 px-4 py-3">
@@ -55,38 +54,38 @@
                     {% if is_granted('ROLE_ADMIN') %}
                         <form method="post" action="{{ path('app_groups_remove_screen', {id: group.id, screen: screen.id}) }}">
                             <input type="hidden" name="_token" value="{{ csrf_token('group-' ~ group.id) }}">
-                            <button class="text-sm text-gray-500 hover:text-red-600">Remove from group</button>
+                            <button class="text-sm text-gray-500 hover:text-red-600">{{ 'Remove from group'|trans }}</button>
                         </form>
                     {% endif %}
                 </div>
             {% else %}
-                <p class="p-4 text-sm text-gray-500">No screens yet.</p>
+                <p class="p-4 text-sm text-gray-500">{{ 'No screens yet.'|trans }}</p>
             {% endfor %}
         </div>
 
         {% if is_granted('ROLE_ADMIN') and other_screens is not empty %}
             <form method="post" action="{{ path('app_groups_add_screens', {id: group.id}) }}" class="space-y-3 border-t border-gray-100 p-4">
                 <input type="hidden" name="_token" value="{{ csrf_token('group-' ~ group.id) }}">
-                <p class="text-sm font-medium">Add screens</p>
+                <p class="text-sm font-medium">{{ 'Add screens'|trans }}</p>
                 <div class="grid gap-2 sm:grid-cols-2">
                     {% for screen in other_screens %}
                         <label class="flex items-center gap-2 text-sm">
                             <input type="checkbox" name="screens[]" value="{{ screen.id }}">
                             <span class="truncate">{{ screen.name }}</span>
-                            {% if screen.group %}<span class="text-xs text-gray-400">(now in {{ screen.group.name }})</span>{% endif %}
+                            {% if screen.group %}<span class="text-xs text-gray-400">{{ '(now in %name%)'|trans({'%name%': screen.group.name}) }}</span>{% endif %}
                         </label>
                     {% endfor %}
                 </div>
-                <button class="btn-primary">{{ ui.icon('plus') }} Add to the group</button>
+                <button class="btn-primary">{{ ui.icon('plus') }} {{ 'Add to the group'|trans }}</button>
             </form>
         {% endif %}
     </section>
 
     {% if is_granted('ROLE_ADMIN') %}
         <form method="post" action="{{ path('app_groups_delete', {id: group.id}) }}" class="border-t border-gray-200 pt-6"
-              data-turbo-confirm="Delete {{ group.name }}? Its screens go back to their own playlist and schedule.">
+              data-turbo-confirm="{{ 'Delete %name%? Its screens go back to their own playlist and schedule.'|trans({'%name%': group.name}) }}">
             <input type="hidden" name="_token" value="{{ csrf_token('group-' ~ group.id) }}">
-            <button class="btn border border-red-200 bg-white text-red-600 hover:bg-red-50">{{ ui.icon('trash') }} Delete group</button>
+            <button class="btn border border-red-200 bg-white text-red-600 hover:bg-red-50">{{ ui.icon('trash') }} {{ 'Delete group'|trans }}</button>
         </form>
     {% endif %}
 {% endblock %}

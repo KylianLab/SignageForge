@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app.request.locale }}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="turbo-visit-control" content="reload">
         <meta name="robots" content="noindex">
-        <title>Signage Forge player</title>
+        <title>{{ 'Signage Forge player'|trans }}</title>
         {{ importmap('app') }}
     </head>
     <body data-turbo="false">
@@ -15,12 +15,19 @@
              data-player-cache-key-value="signageforge.config.{{ token }}"
              data-player-service-worker-value="{{ app.request.basePath }}/sw.js"
              data-player-poll-interval-value="{{ poll_interval_ms }}"
+             data-player-texts-value="{{ {
+                 notPaired: 'This screen isn’t paired'|trans,
+                 openPair: 'Open /pair on this device to set it up.'|trans,
+                 ready: '%name% is ready'|trans,
+                 assignPlaylist: 'Assign a playlist from the dashboard to start playing.'|trans,
+                 waiting: 'Waiting for the network…'|trans,
+             }|json_encode }}"
              {% if mercure_topic %}data-player-hub-url-value="{{ mercure(mercure_topic, {subscribe: mercure_topic}) }}"{% endif %}>
-            <div class="text-center text-gray-400" data-player-target="message">Loading…</div>
+            <div class="text-center text-gray-400" data-player-target="message">{{ 'Loading…'|trans }}</div>
             <div class="absolute inset-0 flex items-center justify-center" data-player-target="stage"></div>
             <div class="overlay-layer" data-player-target="overlays" aria-hidden="true"></div>
             <div class="absolute right-3 bottom-3 hidden rounded-full bg-amber-500/90 px-3 py-1 text-xs font-medium text-black" data-player-target="offline">
-                offline · playing cached content
+                {{ 'offline · playing cached content'|trans }}
             </div>
         </div>
     </body>

@@ -1,10 +1,10 @@
 {% extends 'install/layout.html.twig' %}
 
 {% block step %}
-    <h1>Signage Forge is ready</h1>
+    <h1>{{ 'Signage Forge is ready'|trans }}</h1>
     <ul>
-        {% for line in done %}<li>{{ line }}</li>{% endfor %}
+        {% for line in done %}<li>{{ line|trans }}</li>{% endfor %}
     </ul>
-    <p class="muted">The setup page is now closed. Sign in as <strong>{{ email }}</strong>, then open <code>/pair</code> on a screen.</p>
-    <a href="{{ path('app_login') }}" class="btn-primary">Sign in</a>
+    <p class="muted">{{ 'The setup page is now closed. Sign in as %email%, then open /pair on a screen.'|trans({'%email%': email}) }}</p>
+    <a href="{{ path('app_login') }}" class="btn-primary">{{ 'Sign in'|trans }}</a>
 {% endblock %}

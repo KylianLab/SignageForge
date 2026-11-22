@@ -1,24 +1,24 @@
 {% extends 'dashboard/layout.html.twig' %}
 {% import 'components/icons.html.twig' as ui %}
 
-{% block page_title %}Screens{% endblock %}
+{% block page_title %}{{ 'Screens'|trans }}{% endblock %}
 
 {% block content %}
-    <h1 class="mb-6 text-2xl font-bold">Screens</h1>
+    <h1 class="mb-6 text-2xl font-bold">{{ 'Screens'|trans }}</h1>
 
     {% if is_granted('ROLE_ADMIN') %}
     <form method="post" action="{{ path('app_screens_claim') }}" class="card mb-8 flex flex-wrap items-end gap-3 p-4">
         <input type="hidden" name="_token" value="{{ csrf_token('screen-claim') }}">
         <div>
-            <label class="label" for="claim-code">Pairing code</label>
+            <label class="label" for="claim-code">{{ 'Pairing code'|trans }}</label>
             <input id="claim-code" name="code" required minlength="4" maxlength="12" autocomplete="off"
-                   placeholder="e.g. K7P2QX" class="input w-36 font-mono tracking-widest uppercase">
+                   placeholder="{{ 'e.g. K7P2QX'|trans }}" class="input w-36 font-mono tracking-widest uppercase">
         </div>
         <div>
-            <label class="label" for="claim-name">Name</label>
-            <input id="claim-name" name="name" maxlength="80" placeholder="Lobby screen" class="input w-48">
+            <label class="label" for="claim-name">{{ 'Name'|trans }}</label>
+            <input id="claim-name" name="name" maxlength="80" placeholder="{{ 'Lobby screen'|trans }}" class="input w-48">
         </div>
-        <button class="btn-primary">{{ ui.icon('plus') }} Add screen</button>
+        <button class="btn-primary">{{ ui.icon('plus') }} {{ 'Add screen'|trans }}</button>
     </form>
     {% endif %}
 

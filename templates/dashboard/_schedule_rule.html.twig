@@ -1,0 +1,11 @@
+{# "Weekdays · 08:00–12:00", in the current language. #}
+{%- set days = {1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat', 7: 'Sun'} -%}
+{%- if rule.days == 127 -%}{{ 'Every day'|trans }}
+{%- elseif rule.days == 31 -%}{{ 'Weekdays'|trans }}
+{%- elseif rule.days == 96 -%}{{ 'Weekends'|trans }}
+{%- else -%}{{ days|filter((name, number) => rule.hasDay(number))|map(name => name|trans)|join(', ') }}
+{%- endif %} · {% if rule.startMinute == rule.endMinute -%}
+    {{ 'all day'|trans }}
+{%- else -%}
+    {{ rule.formatMinute(rule.startMinute) }}–{{ rule.formatMinute(rule.endMinute) }}{% if rule.endMinute < rule.startMinute %} {{ '(overnight)'|trans }}{% endif %}
+{%- endif -%}

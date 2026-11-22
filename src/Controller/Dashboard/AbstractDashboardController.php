@@ -13,16 +13,34 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Service\Attribute\Required;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[IsGranted('ROLE_VIEWER')]
 abstract class AbstractDashboardController extends AbstractController
 {
     protected TenantContext $tenant;
+    protected TranslatorInterface $translator;
 
     #[Required]
     public function setTenantContext(TenantContext $tenant): void
     {
         $this->tenant = $tenant;
+    }
+
+    #[Required]
+    public function setTranslator(TranslatorInterface $translator): void
+    {
+        $this->translator = $translator;
+    }
+
+    /**
+     * A message for the next page, in the user's language.
+     *
+     * @param array<string, string|int> $parameters
+     */
+    protected function flash(string $type, string $message, array $parameters = []): void
+    {
+        $this->addFlash($type, $this->translator->trans($message, $parameters));
     }
 
     protected function organization(): Organization

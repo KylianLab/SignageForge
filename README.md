@@ -22,6 +22,11 @@ mini-PC, an Android TV/Fire Stick, a smart TV, or just any browser.
   and **LDAP/Active Directory**, each toggled by environment variables.
 - **No Node.js** — front-end assets use AssetMapper and the standalone Tailwind
   binary.
+- **English, French and Dutch** — each user picks a language in the dashboard,
+  otherwise the browser's language is used. The catalogs are in
+  `translations/`; to add a language, copy `messages.fr.yaml` and add its code
+  to `enabled_locales` in `config/packages/translation.yaml` and to the
+  language menu in `templates/dashboard/layout.html.twig`.
 
 ## Authentication
 
@@ -95,6 +100,7 @@ src/Security/             local, LDAP and Microsoft 365 sign-in
 src/Service/              tenancy, storage, player config, screen notifications
 src/Command/              signageforge:install, signageforge:user:create
 templates/                Twig templates
+translations/             French and Dutch catalogs (keys are the English texts)
 assets/controllers/       Stimulus controllers (player, pairing, playlist editor)
 migrations/               portable Doctrine migrations (Schema API)
 deploy/                   Apache, nginx, PHP and Mercure configs
@@ -106,7 +112,7 @@ docs/                     deployment guide
 
 This is an early MVP focused on the core loop: **pair → upload → playlist →
 play (offline-safe)**, with roles, schedules, screen groups, widgets, a web installer
-and updates. Next up: translations. The full list is in
+and updates, in English, French and Dutch. The full list is in
 [ROADMAP.md](ROADMAP.md).
 
 ## License

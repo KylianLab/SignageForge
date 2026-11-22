@@ -1,28 +1,28 @@
 {% extends 'install/layout.html.twig' %}
 
 {% block step %}
-    <h1>Site</h1>
+    <h1>{{ 'Site'|trans }}</h1>
     <form method="post" class="stack">
         <input type="hidden" name="_token" value="{{ csrf_token('install') }}">
         <div>
-            <label class="label" for="public_url">Public address of this site</label>
+            <label class="label" for="public_url">{{ 'Public address of this site'|trans }}</label>
             <input id="public_url" name="public_url" type="url" required value="{{ site.public_url }}" class="input">
         </div>
         <fieldset>
-            <legend class="label">How do screens learn about changes?</legend>
+            <legend class="label">{{ 'How do screens learn about changes?'|trans }}</legend>
             <label class="choice">
                 <input type="radio" name="realtime" value="polling" {{ site.realtime == 'polling' ? 'checked' }}>
-                <span><strong>Polling</strong>: screens check every few seconds. Nothing else to install.</span>
+                <span>{{ 'Polling: screens check every few seconds. Nothing else to install.'|trans }}</span>
             </label>
             <label class="choice">
                 <input type="radio" name="realtime" value="mercure" {{ site.realtime == 'mercure' ? 'checked' }}>
-                <span><strong>Mercure</strong>: instant updates through a Mercure hub you run on this server (see docs/deployment.md).</span>
+                <span>{{ 'Mercure: instant updates through a Mercure hub you run on this server (see docs/deployment.md).'|trans }}</span>
             </label>
         </fieldset>
         <div>
-            <label class="label" for="mercure_url">Mercure hub address (Mercure only)</label>
+            <label class="label" for="mercure_url">{{ 'Mercure hub address (Mercure only)'|trans }}</label>
             <input id="mercure_url" name="mercure_url" type="url" value="{{ site.mercure_url }}" placeholder="{{ site.public_url }}/.well-known/mercure" class="input">
         </div>
-        <button class="btn-primary">Continue</button>
+        <button class="btn-primary">{{ 'Continue'|trans }}</button>
     </form>
 {% endblock %}

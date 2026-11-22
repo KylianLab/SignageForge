@@ -20,6 +20,15 @@ enum MediaType: string
         };
     }
 
+    public function label(): string
+    {
+        return match ($this) {
+            self::Image => 'Image',
+            self::Video => 'Video',
+            self::Url => 'Web page',
+        };
+    }
+
     public function isFile(): bool
     {
         return self::Url !== $this;

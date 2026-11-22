@@ -1,34 +1,38 @@
 {% extends 'dashboard/layout.html.twig' %}
 {% import 'components/icons.html.twig' as ui %}
 
-{% block page_title %}System{% endblock %}
+{% block page_title %}{{ 'System'|trans }}{% endblock %}
 
 {% block content %}
-    <h1 class="mb-6 text-2xl font-bold">System</h1>
+    <h1 class="mb-6 text-2xl font-bold">{{ 'System'|trans }}</h1>
 
     <section class="card mb-8 space-y-4 p-5">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
-                <h2 class="font-semibold">Version {{ version }}</h2>
+                <h2 class="font-semibold">{{ 'Version %version%'|trans({'%version%': version}) }}</h2>
                 {% if not checks_enabled %}
-                    <p class="text-sm text-gray-500">Update checks are off (no <code>SIGNAGEFORGE_UPDATE_REPOSITORY</code>).</p>
+                    <p class="text-sm text-gray-500">{{ 'Update checks are off (SIGNAGEFORGE_UPDATE_REPOSITORY is empty).'|trans }}</p>
                 {% elseif check_error %}
-                    <p class="text-sm text-amber-700">Could not reach GitHub: {{ check_error }}</p>
+                    <p class="text-sm text-amber-700">{{ 'Could not reach GitHub: %error%'|trans({'%error%': check_error}) }}</p>
                 {% elseif release is null %}
-                    <p class="text-sm text-gray-500">No release published yet on {{ repository }}.</p>
+                    <p class="text-sm text-gray-500">{{ 'No release published yet on %repository%.'|trans({'%repository%': repository}) }}</p>
                 {% elseif update_available %}
                     <p class="text-sm text-green-700">
-                        Version <strong>{{ release.version }}</strong> is available{% if release.publishedAt %}, published {{ release.publishedAt|date('Y-m-d') }}{% endif %}.
-                        <a href="{{ release.pageUrl }}" target="_blank" rel="noopener noreferrer" class="underline">What's new</a>
+                        {% if release.publishedAt %}
+                            {{ 'Version %version% is available, published %date%.'|trans({'%version%': release.version, '%date%': release.publishedAt|date('Y-m-d')}) }}
+                        {% else %}
+                            {{ 'Version %version% is available.'|trans({'%version%': release.version}) }}
+                        {% endif %}
+                        <a href="{{ release.pageUrl }}" target="_blank" rel="noopener noreferrer" class="underline">{{ 'What\'s new'|trans }}</a>
                     </p>
                 {% else %}
-                    <p class="text-sm text-gray-500">This is the latest version.</p>
+                    <p class="text-sm text-gray-500">{{ 'This is the latest version.'|trans }}</p>
                 {% endif %}
             </div>
             {% if checks_enabled %}
                 <form method="post" action="{{ path('app_system_check') }}">
                     <input type="hidden" name="_token" value="{{ csrf_token('system') }}">
-                    <button class="btn-secondary">{{ ui.icon('refresh') }} Check now</button>
+                    <button class="btn-secondary">{{ ui.icon('refresh') }} {{ 'Check now'|trans }}</button>
                 </form>
             {% endif %}
         </div>
@@ -36,20 +40,20 @@
         {% if update_available %}
             {% if web_updates and release.hasPackage and web_update_blocker is null %}
                 <form method="post" action="{{ path('app_system_update') }}"
-                      data-turbo-confirm="Install {{ release.version }} now? The site shows a maintenance page for a minute; screens keep playing.">
+                      data-turbo-confirm="{{ 'Install %version% now? The site shows a maintenance page for a minute; screens keep playing.'|trans({'%version%': release.version}) }}">
                     <input type="hidden" name="_token" value="{{ csrf_token('system') }}">
-                    <button class="btn-primary">Install {{ release.version }}</button>
+                    <button class="btn-primary">{{ 'Install %version%'|trans({'%version%': release.version}) }}</button>
                 </form>
             {% else %}
                 <div class="space-y-2 text-sm">
                     {% if web_updates and web_update_blocker %}
-                        <p class="text-amber-700">One-click update unavailable: {{ web_update_blocker }}</p>
+                        <p class="text-amber-700">{{ 'One-click update unavailable: %reason%'|trans({'%reason%': web_update_blocker|trans}) }}</p>
                     {% elseif web_updates and not release.hasPackage %}
-                        <p class="text-amber-700">This release has no ready-to-install package.</p>
+                        <p class="text-amber-700">{{ 'This release has no ready-to-install package.'|trans }}</p>
                     {% endif %}
-                    <p class="text-gray-600">To update, run on the server:</p>
+                    <p class="text-gray-600">{{ 'To update, run on the server:'|trans }}</p>
                     <pre class="overflow-x-auto rounded-lg bg-gray-100 px-3 py-2 text-xs">php bin/console signageforge:self-update</pre>
-                    <p class="text-xs text-gray-500">Or with git: <code>git pull</code>, <code>composer install --no-dev -o</code>, then <code>php bin/console signageforge:upgrade</code>.</p>
+                    <p class="text-xs text-gray-500">{{ 'Or with git:'|trans }} <code>git pull</code>, <code>composer install --no-dev -o</code>, <code>php bin/console signageforge:upgrade</code></p>
                 </div>
             {% endif %}
         {% endif %}
@@ -60,7 +64,7 @@
                  data-update-status-state-value="{{ status.state }}"
                  class="rounded-lg border border-gray-200 p-3">
                 <p class="mb-2 text-sm font-medium" data-update-status-target="title">
-                    {{ {running: 'Update in progress…', done: 'Last update finished', failed: 'Last update failed'}[status.state] ?? status.state }}
+                    {{ {running: 'Update in progress…', done: 'Last update finished', failed: 'Last update failed'}[status.state]|default(status.state)|trans }}
                     {% if status.version %}({{ status.version }}){% endif %}
                 </p>
                 <ol class="space-y-1 font-mono text-xs whitespace-pre-wrap text-gray-600" data-update-status-target="log">
@@ -71,13 +75,13 @@
     </section>
 
     <section class="card divide-y divide-gray-100">
-        <h2 class="p-4 font-semibold">Health</h2>
+        <h2 class="p-4 font-semibold">{{ 'Health'|trans }}</h2>
         {% for check in health %}
             <div class="flex items-center justify-between gap-4 px-4 py-3 text-sm">
-                <span class="text-gray-600">{{ check.label }}</span>
+                <span class="text-gray-600">{{ check.label|trans }}</span>
                 <span class="flex items-center gap-2 {{ check.ok ? 'text-gray-900' : 'text-amber-700' }}">
                     <span class="h-2 w-2 rounded-full {{ check.ok ? 'bg-green-500' : 'bg-amber-500' }}" aria-hidden="true"></span>
-                    {{ check.value }}
+                    {{ check.value|trans }}
                 </span>
             </div>
         {% endfor %}

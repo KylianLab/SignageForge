@@ -44,7 +44,7 @@ final class PlaylistController extends AbstractDashboardController
 
         $name = mb_substr(trim($request->getPayload()->getString('name')), 0, 80);
         if ('' === $name) {
-            $this->addFlash('error', 'Give the playlist a name.');
+            $this->flash('error', 'Give the playlist a name.');
 
             return $this->seeOther('app_playlists');
         }
@@ -104,7 +104,7 @@ final class PlaylistController extends AbstractDashboardController
         $this->em->flush();
         $this->notifier->notifyPlaylist($playlist);
 
-        $this->addFlash('success', 'Playlist saved.');
+        $this->flash('success', 'Playlist saved.');
 
         return $this->seeOther('app_playlists_edit', ['id' => $playlist->getId()]);
     }
@@ -129,7 +129,7 @@ final class PlaylistController extends AbstractDashboardController
         $this->em->flush();
         $this->notifier->notifyDevices($deviceTokens);
 
-        $this->addFlash('success', \sprintf('"%s" was deleted.', $playlist->getName()));
+        $this->flash('success', '"%name%" was deleted.', ['%name%' => $playlist->getName()]);
 
         return $this->seeOther('app_playlists');
     }

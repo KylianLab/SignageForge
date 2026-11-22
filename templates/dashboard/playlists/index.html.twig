@@ -1,16 +1,16 @@
 {% extends 'dashboard/layout.html.twig' %}
 {% import 'components/icons.html.twig' as ui %}
 
-{% block page_title %}Playlists{% endblock %}
+{% block page_title %}{{ 'Playlists'|trans }}{% endblock %}
 
 {% block content %}
-    <h1 class="mb-6 text-2xl font-bold">Playlists</h1>
+    <h1 class="mb-6 text-2xl font-bold">{{ 'Playlists'|trans }}</h1>
 
     {% if is_granted('ROLE_EDITOR') %}
     <form method="post" action="{{ path('app_playlists_create') }}" class="mb-8 flex gap-3">
         <input type="hidden" name="_token" value="{{ csrf_token('playlist-create') }}">
-        <input name="name" required maxlength="80" placeholder="New playlist name" class="input flex-1" aria-label="New playlist name">
-        <button class="btn-primary">{{ ui.icon('plus') }} Create</button>
+        <input name="name" required maxlength="80" placeholder="{{ 'New playlist name'|trans }}" class="input flex-1" aria-label="{{ 'New playlist name'|trans }}">
+        <button class="btn-primary">{{ ui.icon('plus') }} {{ 'Create'|trans }}</button>
     </form>
     {% endif %}
 
@@ -21,13 +21,13 @@
                 <div class="flex-1">
                     <div class="font-medium">{{ playlist.name }}</div>
                     <div class="text-xs text-gray-500">
-                        {{ playlist.items|length }} item{{ playlist.items|length == 1 ? '' : 's' }}
-                        · {{ playlist.screens|length }} screen{{ playlist.screens|length == 1 ? '' : 's' }}
+                        {{ '%count% item|%count% items'|trans({'%count%': playlist.items|length}) }}
+                        · {{ '%count% screen|%count% screens'|trans({'%count%': playlist.screens|length}) }}
                     </div>
                 </div>
             </a>
         {% else %}
-            <p class="text-gray-500">No playlists yet.</p>
+            <p class="text-gray-500">{{ 'No playlists yet.'|trans }}</p>
         {% endfor %}
     </div>
 {% endblock %}

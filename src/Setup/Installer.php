@@ -6,6 +6,9 @@ namespace App\Setup;
 
 use App\Service\ConsoleRunner;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Translation\TranslatableMessage;
+
+use function Symfony\Component\Translation\t;
 
 /**
  * Applies a setup chosen in the web installer: writes .env.local, creates the
@@ -26,7 +29,7 @@ final class Installer
     /**
      * @param array<string, string> $settings values for .env.local
      *
-     * @return list<string> what was done, for the summary page
+     * @return list<TranslatableMessage> what was done, for the summary page
      *
      * @throws \RuntimeException when a required step fails
      */
@@ -39,7 +42,7 @@ final class Installer
         }
 
         $this->envFile->write($settings);
-        $done[] = 'Settings saved to '.$this->envFile->path();
+        $done[] = t('Settings saved to %file%', ['%file%' => $this->envFile->path()]);
 
         $output = '';
         $collect = static function (string $buffer) use (&$output): void {
@@ -52,14 +55,14 @@ final class Installer
         if (!$this->console->run(['doctrine:migrations:migrate', '--no-interaction', '--allow-no-migration'], output: $collect)) {
             throw new \RuntimeException("Creating the database tables failed:\n".self::tail($output));
         }
-        $done[] = 'Database tables created';
+        $done[] = t('Database tables created');
 
         if ('prod' === $this->environment) {
             if ($this->console->run(['tailwind:build', '--minify'], output: $collect)
                 && $this->console->run(['asset-map:compile'], output: $collect)) {
-                $done[] = 'Front-end assets built';
+                $done[] = t('Front-end assets built');
             } else {
-                $done[] = 'Front-end assets NOT built: run "php bin/console tailwind:build --minify" and "php bin/console asset-map:compile" on the server';
+                $done[] = t('Front-end assets NOT built: run "php bin/console tailwind:build --minify" and "php bin/console asset-map:compile" on the server');
             }
         }
 
@@ -72,7 +75,7 @@ final class Installer
         if (!$created) {
             throw new \RuntimeException("Creating the admin account failed:\n".self::tail($output));
         }
-        $done[] = 'Admin account '.$adminEmail.' created';
+        $done[] = t('Admin account %email% created', ['%email%' => $adminEmail]);
 
         $this->state->markInstalled();
         $this->token->remove();

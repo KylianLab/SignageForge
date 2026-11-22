@@ -71,7 +71,7 @@ final class WidgetController extends AbstractDashboardController
         if ($data['weather'] && '' !== $place && $place !== $previous->weatherLabel) {
             $found = $this->weather->findPlace($place);
             if (null === $found) {
-                $this->addFlash('error', \sprintf('Could not find "%s". Try "City, Country".', $place));
+                $this->flash('error', 'Could not find "%place%". Try "City, Country".', ['%place%' => $place]);
                 $data['weather'] = false;
             } else {
                 $data['weatherLabel'] = $found['label'];
@@ -79,14 +79,14 @@ final class WidgetController extends AbstractDashboardController
                 $data['longitude'] = $found['longitude'];
             }
         } elseif ($data['weather'] && '' === $place) {
-            $this->addFlash('error', 'Enter a place for the weather.');
+            $this->flash('error', 'Enter a place for the weather.');
             $data['weather'] = false;
         }
 
         $owner->setOverlays(Overlays::fromArray($data));
         $this->em->flush();
         $this->notifier->notifyScheduled($owner);
-        $this->addFlash('success', 'Widgets saved.');
+        $this->flash('success', 'Widgets saved.');
 
         return $this->seeOther('app_widgets', ['kind' => $kind, 'id' => $owner->getId()]);
     }

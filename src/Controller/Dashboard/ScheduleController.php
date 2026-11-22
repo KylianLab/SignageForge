@@ -71,7 +71,7 @@ final class ScheduleController extends AbstractDashboardController
             default => null,
         };
         if (null !== $error) {
-            $this->addFlash('error', $error);
+            $this->flash('error', $error);
 
             return $this->back($kind, $owner);
         }
@@ -79,7 +79,7 @@ final class ScheduleController extends AbstractDashboardController
         $owner->addScheduleRule($playlist, $days, $start, $end);
         $this->em->flush();
         $this->notifier->notifyScheduled($owner);
-        $this->addFlash('success', 'Schedule rule added.');
+        $this->flash('success', 'Schedule rule added.');
 
         return $this->back($kind, $owner);
     }

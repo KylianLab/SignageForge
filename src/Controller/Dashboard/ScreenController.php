@@ -64,7 +64,7 @@ final class ScreenController extends AbstractDashboardController
             default => null,
         };
         if (null === $session || null !== $error) {
-            $this->addFlash('error', $error);
+            $this->flash('error', $error);
 
             return $this->seeOther('app_dashboard');
         }
@@ -75,7 +75,7 @@ final class ScreenController extends AbstractDashboardController
         $session->claim($screen);
         $this->em->flush();
 
-        $this->addFlash('success', \sprintf('"%s" is paired. It will start playing in a few seconds.', $name));
+        $this->flash('success', '"%name%" is paired. It will start playing in a few seconds.', ['%name%' => $name]);
 
         return $this->seeOther('app_dashboard');
     }
@@ -100,7 +100,7 @@ final class ScreenController extends AbstractDashboardController
 
         $name = mb_substr(trim($payload->getString('name')), 0, 80);
         if ('' === $name) {
-            $this->addFlash('error', 'Give the screen a name.');
+            $this->flash('error', 'Give the screen a name.');
 
             return $this->seeOther('app_screens_edit', ['id' => $screen->getId()]);
         }
@@ -112,7 +112,7 @@ final class ScreenController extends AbstractDashboardController
         $screen->setOrientation($orientation);
         $this->em->flush();
         $this->notifier->notifyScreen($screen, ScreenNotifier::EVENT_SCREEN_UPDATED);
-        $this->addFlash('success', 'Screen saved.');
+        $this->flash('success', 'Screen saved.');
 
         return $this->seeOther('app_screens_edit', ['id' => $screen->getId()]);
     }
@@ -162,7 +162,7 @@ final class ScreenController extends AbstractDashboardController
         // The device falls back to its "not paired" state.
         $this->notifier->notifyDevice($deviceToken, ScreenNotifier::EVENT_RELOAD);
 
-        $this->addFlash('success', \sprintf('"%s" was removed.', $screen->getName()));
+        $this->flash('success', '"%name%" was removed.', ['%name%' => $screen->getName()]);
 
         return $this->seeOther('app_dashboard');
     }

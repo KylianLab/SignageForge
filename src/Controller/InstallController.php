@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * First-run setup in the browser: setup token, database, site, first admin.
@@ -30,6 +31,7 @@ final class InstallController extends AbstractController
     public function __construct(
         private readonly SetupToken $token,
         private readonly EnvFile $envFile,
+        private readonly TranslatorInterface $translator,
         #[Autowire('%kernel.project_dir%')] private readonly string $projectDir,
     ) {
     }
@@ -47,7 +49,7 @@ final class InstallController extends AbstractController
 
                 return $this->redirectToRoute('app_install_database', status: Response::HTTP_SEE_OTHER);
             }
-            $error = 'This is not the setup token.';
+            $error = $this->translator->trans('This is not the setup token.');
         }
 
         return $this->render('install/token.html.twig', [
@@ -89,7 +91,7 @@ final class InstallController extends AbstractController
 
                 return $this->redirectToRoute('app_install_site', status: Response::HTTP_SEE_OTHER);
             }
-            $error = 'Could not connect: '.$error;
+            $error = $this->translator->trans('Could not connect: %error%', ['%error%' => $error]);
         }
 
         return $this->render('install/database.html.twig', ['step' => 2, 'db' => $settings, 'error' => $error]);
@@ -124,7 +126,7 @@ final class InstallController extends AbstractController
             $urlRule = [new Assert\NotBlank(), new Assert\Url(protocols: ['http', 'https'], requireTld: false)];
             if (\count($validator->validate($site['public_url'], $urlRule)) > 0
                 || ('mercure' === $site['realtime'] && \count($validator->validate($site['mercure_url'], $urlRule)) > 0)) {
-                $error = 'Enter full addresses starting with http:// or https://.';
+                $error = $this->translator->trans('Enter full addresses starting with http:// or https://.');
             } else {
                 $this->save($request->getSession(), ['site' => $site]);
 
@@ -160,7 +162,9 @@ final class InstallController extends AbstractController
                 default => null,
             };
 
-            if (null === $error) {
+            if (null !== $error) {
+                $error = $this->translator->trans($error);
+            } else {
                 $database = new DatabaseSettings(...array_intersect_key($data['database'] ?? [], array_flip(['engine', 'host', 'port', 'name', 'user', 'password', 'serverVersion'])));
                 $site = $data['site'];
                 $settings = [
@@ -179,7 +183,8 @@ final class InstallController extends AbstractController
 
                     return $this->render('install/done.html.twig', ['step' => 5, 'done' => $done, 'email' => $email]);
                 } catch (\Throwable $e) {
-                    $error = $e->getMessage();
+                    $error = $this->translator->trans('The installation failed:')."
+".$e->getMessage();
                 }
             }
         }

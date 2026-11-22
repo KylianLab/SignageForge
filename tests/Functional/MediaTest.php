@@ -20,7 +20,7 @@ final class MediaTest extends FunctionalTestCase
         $this->client->submit($form);
         self::assertResponseStatusCodeSame(303);
         $this->client->followRedirect();
-        self::assertSelectorTextContains('[role=status]', 'File uploaded');
+        self::assertSelectorTextContains('[role=status]', '1 file uploaded');
 
         $media = $this->em()->getRepository(Media::class)->findOneBy([]);
         self::assertNotNull($media);

@@ -43,6 +43,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $externalId = null;
 
+    /** Interface language chosen by the user; null follows the browser. */
+    #[ORM\Column(length: 5, nullable: true)]
+    private ?string $locale = null;
+
     /** @var Collection<int, Membership> */
     #[ORM\OneToMany(targetEntity: Membership::class, mappedBy: 'user', cascade: ['persist'], orphanRemoval: true)]
     private Collection $memberships;
@@ -99,6 +103,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAuthSource(AuthSource $authSource): void
     {
         $this->authSource = $authSource;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(?string $locale): void
+    {
+        $this->locale = $locale;
     }
 
     public function getExternalId(): ?string

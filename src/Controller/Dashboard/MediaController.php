@@ -49,7 +49,7 @@ final class MediaController extends AbstractDashboardController
         $files = $request->files->all('files');
         if ([] === $files) {
             // PHP drops the whole body when it exceeds post_max_size.
-            $this->addFlash('error', \sprintf('No file received. Files must be smaller than %s.', self::maxUploadSize()));
+            $this->flash('error', 'No file received. Files must be smaller than %size%.', ['%size%' => self::maxUploadSize()]);
 
             return $this->seeOther('app_media');
         }
@@ -60,14 +60,14 @@ final class MediaController extends AbstractDashboardController
                 continue;
             }
             if (!$file->isValid()) {
-                $this->addFlash('error', \sprintf('%s: %s', $file->getClientOriginalName(), $file->getErrorMessage()));
+                $this->flash('error', '%file%: the upload failed (%reason%).', ['%file%' => $file->getClientOriginalName(), '%reason%' => $file->getErrorMessage()]);
                 continue;
             }
 
             $mimeType = $file->getMimeType();
             $type = MediaType::fromMimeType($mimeType);
             if (null === $type) {
-                $this->addFlash('error', \sprintf('%s: only images and videos are supported.', $file->getClientOriginalName()));
+                $this->flash('error', '%file%: only images and videos are supported.', ['%file%' => $file->getClientOriginalName()]);
                 continue;
             }
 
@@ -82,7 +82,7 @@ final class MediaController extends AbstractDashboardController
         $this->em->flush();
 
         if ($added > 0) {
-            $this->addFlash('success', 1 === $added ? 'File uploaded.' : \sprintf('%d files uploaded.', $added));
+            $this->flash('success', '%count% file uploaded.|%count% files uploaded.', ['%count%' => $added]);
         }
 
         return $this->seeOther('app_media');
@@ -104,7 +104,7 @@ final class MediaController extends AbstractDashboardController
             new Assert\Url(protocols: ['http', 'https'], requireTld: false),
         ]);
         if (\count($violations) > 0) {
-            $this->addFlash('error', 'Enter a valid http(s) address.');
+            $this->flash('error', 'Enter a valid http(s) address.');
 
             return $this->seeOther('app_media');
         }
@@ -113,7 +113,7 @@ final class MediaController extends AbstractDashboardController
         $media->setDurationMs(max(1, min(3600, $seconds)) * 1000);
         $this->em->persist($media);
         $this->em->flush();
-        $this->addFlash('success', 'Web page added.');
+        $this->flash('success', 'Web page added.');
 
         return $this->seeOther('app_media');
     }
@@ -137,7 +137,7 @@ final class MediaController extends AbstractDashboardController
         }
         $this->notifier->notifyDevices($deviceTokens);
 
-        $this->addFlash('success', \sprintf('"%s" was deleted.', $media->getName()));
+        $this->flash('success', '"%name%" was deleted.', ['%name%' => $media->getName()]);
 
         return $this->seeOther('app_media');
     }

@@ -1,0 +1,325 @@
+# French translations. Keys are the English texts of the interface;
+# keep %placeholders% as they are, and the | between singular and plural.
+'"%name%" is paired. It will start playing in a few seconds.': "«\_%name%\_» est associé. La lecture démarre dans quelques secondes."
+'"%name%" was deleted.': "«\_%name%\_» a été supprimé."
+'"%name%" was deleted. Its screens play their own playlist again.': "«\_%name%\_» a été supprimé. Ses écrans lisent à nouveau leur propre playlist."
+'"%name%" was removed.': "«\_%name%\_» a été retiré."
+'%count% file uploaded.|%count% files uploaded.': '%count% fichier envoyé.|%count% fichiers envoyés.'
+'%count% item|%count% items': '%count% élément|%count% éléments'
+'%count% migration(s) pending: run signageforge:upgrade': "%count% migration(s) en attente\_: lancez signageforge:upgrade"
+'%count% schedule rule|%count% schedule rules': '%count% règle de programmation|%count% règles de programmation'
+'%count% screen added to the group.|%count% screens added to the group.': '%count% écran ajouté au groupe.|%count% écrans ajoutés au groupe.'
+'%count% screen|%count% screens': '%count% écran|%count% écrans'
+'%email% can now sign in. Give them their password in person.': '%email% peut maintenant se connecter. Communiquez-lui son mot de passe de vive voix.'
+'%email% is now %role%.': '%email% est maintenant %role%.'
+'%email% was removed. With LDAP or Microsoft 365 they can still sign in again, as a new member.': '%email% a été retiré. Avec LDAP ou Microsoft 365, cette personne peut encore se reconnecter, comme nouveau membre.'
+'%file%: only images and videos are supported.': "%file%\_: seules les images et les vidéos sont acceptées."
+'%file%: the upload failed (%reason%).': "%file%\_: l'envoi a échoué (%reason%)."
+'%name% is ready': '%name% est prêt'
+'(now in %name%)': '(actuellement dans %name%)'
+(overnight): '(pendant la nuit)'
+(you): (vous)
+', with a schedule': ', avec une programmation'
+'Add URL': "Ajouter l'URL"
+'Add a local account': 'Ajouter un compte local'
+'Add a rule': 'Ajouter une règle'
+'Add a web page': 'Ajouter une page web'
+'Add media from the library.': 'Ajoutez des médias depuis la bibliothèque.'
+'Add rule': 'Ajouter la règle'
+'Add screen': 'Ajouter un écran'
+'Add screens': 'Ajouter des écrans'
+'Add to the group': 'Ajouter au groupe'
+Admin: Admin
+'Admin account %email% created': 'Compte administrateur %email% créé'
+'All day': 'Toute la journée'
+'An account with this email already exists.': 'Un compte existe déjà avec cette adresse e-mail.'
+'An end before the start runs overnight, e.g. 22:00 to 06:00.': 'Une fin avant le début passe la nuit, par ex. de 22:00 à 06:00.'
+'An update is already running.': 'Une mise à jour est déjà en cours.'
+'Assign a playlist from the dashboard to start playing.': 'Attribuez une playlist depuis le tableau de bord pour lancer la lecture.'
+'Bottom left': 'En bas à gauche'
+'Bottom right': 'En bas à droite'
+'Browser language': 'Langue du navigateur'
+'Change language': 'Changer de langue'
+'Check now': 'Vérifier maintenant'
+'City, Country (e.g. Brussels, Belgium)': 'Ville, pays (par ex. Bruxelles, Belgique)'
+'Click to choose files · up to %size% each': 'Cliquez pour choisir des fichiers · %size% maximum chacun'
+Clock: Horloge
+Continue: Continuer
+'Could not connect: %error%': "Connexion impossible\_: %error%"
+'Could not find "%place%". Try "City, Country".': "«\_%place%\_» introuvable. Essayez «\_Ville, pays\_»."
+'Could not reach GitHub: %error%': "GitHub injoignable\_: %error%"
+'Could not reach the server': 'Serveur injoignable'
+Create: Créer
+'Current temperature and sky, refreshed every 15 minutes (data: Open-Meteo).': "Température et ciel actuels, mis à jour toutes les 15 minutes (données\_: Open-Meteo)."
+Dashboard: 'Tableau de bord'
+Database: 'Base de données'
+'Database name': 'Nom de la base'
+'Database schema': 'Schéma de la base'
+'Database tables created': 'Tables de la base créées'
+'Default playlist': 'Playlist par défaut'
+Delete: Supprimer
+'Delete %name%': 'Supprimer %name%'
+'Delete %name%? It will also leave every playlist.': "Supprimer %name%\_? Il sera aussi retiré de toutes les playlists."
+'Delete %name%? Its screens go back to their own playlist and schedule.': "Supprimer %name%\_? Ses écrans reviennent à leur propre playlist et programmation."
+'Delete %name%? Screens playing it will show nothing.': "Supprimer %name%\_? Les écrans qui la lisent n'afficheront plus rien."
+'Delete group': 'Supprimer le groupe'
+'Delete playlist': 'Supprimer la playlist'
+Device: Appareil
+Done: Terminé
+'Drag to reorder': 'Glisser pour réordonner'
+Editor: Éditeur
+Email: E-mail
+'Enter a place for the weather.': 'Indiquez un lieu pour la météo.'
+'Enter a valid email address.': 'Saisissez une adresse e-mail valide.'
+'Enter a valid http(s) address.': 'Saisissez une adresse http(s) valide.'
+'Enter full addresses starting with http:// or https://.': 'Saisissez des adresses complètes commençant par http:// ou https://.'
+'Enter times as HH:MM, for example 08:30.': 'Saisissez les heures au format HH:MM, par exemple 08:30.'
+'Every day': 'Tous les jours'
+Fast: Rapide
+'First admin': 'Premier administrateur'
+'Free disk space': 'Espace disque libre'
+Fri: Ven
+From: De
+'Front-end assets NOT built: run "php bin/console tailwind:build --minify" and "php bin/console asset-map:compile" on the server': "Ressources front-end NON compilées\_: lancez «\_php bin/console tailwind:build --minify\_» et «\_php bin/console asset-map:compile\_» sur le serveur"
+'Front-end assets built': 'Ressources front-end compilées'
+'Give the group a name.': 'Donnez un nom au groupe.'
+'Give the playlist a name.': 'Donnez un nom à la playlist.'
+'Give the screen a name.': "Donnez un nom à l'écran."
+'Group name': 'Nom du groupe'
+'Group of %name%': "Groupe de l'écran %name%"
+Groups: Groupes
+Health: État
+Host: Hôte
+'How do screens learn about changes?': "Comment les écrans apprennent-ils les changements\_?"
+'How is the display mounted?': "Comment l'écran est-il monté\_?"
+Image: Image
+'In your Signage Forge dashboard, choose "Add screen" and enter this code.': "Dans le tableau de bord Signage Forge, choisissez «\_Ajouter un écran\_» et saisissez ce code."
+'Install %version%': 'Installer %version%'
+'Install %version% now? The site shows a maintenance page for a minute; screens keep playing.': "Installer %version% maintenant\_? Le site affiche une page de maintenance pendant une minute\_; les écrans continuent leur lecture."
+'Install Signage Forge': 'Installer Signage Forge'
+LDAP: LDAP
+Landscape: Paysage
+'Landscape, upside down': "Paysage, à l'envers"
+Language: Langue
+'Last update failed': 'La dernière mise à jour a échoué'
+'Last update finished': 'Dernière mise à jour terminée'
+Library: Bibliothèque
+Loading…: Chargement…
+'Lobby screen': 'Écran du hall'
+Location: Emplacement
+'Maintenance page': 'Page de maintenance'
+'MariaDB or MySQL': 'MariaDB ou MySQL'
+Media: Médias
+'Media folder': 'Dossier des médias'
+'Media library': Médiathèque
+'Mercure hub': 'Hub Mercure'
+'Mercure hub address (Mercure only)': 'Adresse du hub Mercure (Mercure uniquement)'
+'Mercure: instant updates through a Mercure hub you run on this server (see docs/deployment.md).': "Mercure\_: mises à jour instantanées via un hub Mercure installé sur ce serveur (voir docs/deployment.md)."
+'Microsoft 365': 'Microsoft 365'
+Mon: Lun
+'Move down': Descendre
+'Move up': Monter
+Name: Nom
+'Name (optional)': 'Nom (facultatif)'
+'Never connected': 'Jamais connecté'
+'New group name': 'Nom du nouveau groupe'
+'New group, e.g. Lobby screens': 'Nouveau groupe, par ex. Écrans du hall'
+'New playlist name': 'Nom de la nouvelle playlist'
+'News ticker': 'Bandeau défilant'
+'No file received. Files must be smaller than %size%.': 'Aucun fichier reçu. Les fichiers doivent faire moins de %size%.'
+'No group': 'Aucun groupe'
+'No groups yet.': "Aucun groupe pour l'instant."
+'No media yet.': "Aucun média pour l'instant."
+'No media yet. Upload images or videos, or add a web page.': "Aucun média pour l'instant. Envoyez des images ou des vidéos, ou ajoutez une page web."
+'No playlist': 'Aucune playlist'
+'No playlists yet.': "Aucune playlist pour l'instant."
+'No release published yet on %repository%.': "Aucune version publiée pour l'instant sur %repository%."
+'No rules: the default playlist always plays.': "Aucune règle\_: la playlist par défaut est toujours lue."
+'No screens yet.': "Aucun écran pour l'instant."
+'No screens yet. Open /pair on a display, then ask an admin to add it.': "Aucun écran pour l'instant. Ouvrez /pair sur un écran, puis demandez à un administrateur de l'ajouter."
+'No screens yet. Open /pair on a display, then enter its code above.': "Aucun écran pour l'instant. Ouvrez /pair sur un écran, puis saisissez son code ci-dessus."
+'No sign-in method is configured. Enable one in your environment (see .env).': "Aucune méthode de connexion n'est configurée. Activez-en une dans votre environnement (voir .env)."
+Normal: Normale
+OR: OU
+'Offline · last seen %date%': 'Hors ligne · vu pour la dernière fois %date%'
+'Offline, last seen %date%': 'Hors ligne, vu pour la dernière fois %date%'
+'On': Jours
+'One message per line': 'Un message par ligne'
+'One-click update unavailable: %reason%': "Mise à jour en un clic indisponible\_: %reason%"
+'One-click updates are off. Set SIGNAGEFORGE_WEB_UPDATES=true to allow them.': 'Les mises à jour en un clic sont désactivées. Définissez SIGNAGEFORGE_WEB_UPDATES=true pour les autoriser.'
+Online: 'En ligne'
+'Open /pair on this device to set it up.': 'Ouvrez /pair sur cet appareil pour le configurer.'
+'Open the dashboard': 'Ouvrir le tableau de bord'
+'Open the group': 'Ouvrir le groupe'
+"Open the group's widgets": 'Ouvrir les widgets du groupe'
+'Or with git:': "Ou avec git\_:"
+'Outside these rules the screen plays %playlist% (the default playlist, chosen on the Screens page).': "En dehors de ces règles, l'écran lit %playlist% (la playlist par défaut, choisie sur la page Écrans)."
+'Outside these rules the screens of this group play %playlist% (the default playlist, chosen on the group page).': 'En dehors de ces règles, les écrans de ce groupe lisent %playlist% (la playlist par défaut, choisie sur la page du groupe).'
+Owner: Propriétaire
+PHP: PHP
+'Pair this screen': 'Associer cet écran'
+Paired: 'Associé le'
+'Pairing code': "Code d'association"
+Password: 'Mot de passe'
+'Password (8 characters or more)': 'Mot de passe (8 caractères ou plus)'
+'Password again': 'Confirmer le mot de passe'
+'Pick a playlist.': 'Choisissez une playlist.'
+'Pick at least one day.': 'Choisissez au moins un jour.'
+Place: Lieu
+Play: Lire
+'Playing order': 'Ordre de lecture'
+'Playlist for %name%': "Playlist de l'écran %name%"
+'Playlist name': 'Nom de la playlist'
+'Playlist saved.': 'Playlist enregistrée.'
+Playlists: Playlists
+Plays: Lecture
+'Plays the group %name%': 'Lit le groupe %name%'
+'Polling: screens check every few seconds. Nothing else to install.': "Interrogation périodique\_: les écrans vérifient toutes les quelques secondes. Rien d'autre à installer."
+Port: Port
+'Portrait (turned left)': 'Portrait (tourné vers la gauche)'
+'Portrait (turned right)': 'Portrait (tourné vers la droite)'
+Position: Position
+PostgreSQL: PostgreSQL
+Preview: Aperçu
+'Preview in a new tab': 'Aperçu dans un nouvel onglet'
+'Prove you run this server': 'Prouvez que vous gérez ce serveur'
+'Public address of this site': 'Adresse publique de ce site'
+'QR code linking to %url%': 'QR code menant à %url%'
+'Real-time updates': 'Mises à jour en temps réel'
+Remove: Retirer
+'Remove %email%': 'Retirer %email%'
+'Remove %email%?': "Retirer %email%\_?"
+'Remove %name%': 'Retirer %name%'
+'Remove %name%? The device will need to be paired again.': "Retirer %name%\_? L'appareil devra être associé à nouveau."
+'Remove from group': 'Retirer du groupe'
+'Remove rule': 'Supprimer la règle'
+'Remove screen': "Retirer l'écran"
+Rename: Renommer
+'Requesting a code…': "Demande d'un code…"
+Role: Rôle
+'Role of %email%': 'Rôle de %email%'
+'SQLite: a file on this server, nothing to install. Fine for most sites.': "SQLite\_: un fichier sur ce serveur, rien à installer. Convient à la plupart des sites."
+Sat: Sam
+Save: Enregistrer
+Schedule: Programmation
+'Schedule of %name%': "Programmation de l'écran %name%"
+'Schedule of the group %name%': 'Programmation du groupe %name%'
+'Schedule rule added.': 'Règle de programmation ajoutée.'
+'Screen saved.': 'Écran enregistré.'
+Screens: Écrans
+"Screens in a group show the same content: the group's playlist and schedule.": "Les écrans d'un groupe affichent le même contenu\_: la playlist et la programmation du groupe."
+'Screens in this group': 'Écrans de ce groupe'
+'Seconds on screen': "Secondes à l'écran"
+'Seconds on screen (empty = %seconds%s)': "Secondes à l'écran (vide = %seconds% s)"
+'Server version': 'Version du serveur'
+'Set up': Installation
+'Settings saved to %file%': 'Paramètres enregistrés dans %file%'
+'Setup token': "Jeton d'installation"
+'Show the date': 'Afficher la date'
+'Shown over the content, on every screen of the group.': 'Affichés par-dessus le contenu, sur chaque écran du groupe.'
+'Shown over the content, on this screen.': 'Affichés par-dessus le contenu, sur cet écran.'
+'Sign in': 'Se connecter'
+'Sign in with LDAP': 'Se connecter avec LDAP'
+'Sign in with Microsoft 365': 'Se connecter avec Microsoft 365'
+'Sign out': 'Se déconnecter'
+'Sign-in failed. Check your credentials and try again.': 'La connexion a échoué. Vérifiez vos identifiants et réessayez.'
+'Signage Forge is being updated': 'Signage Forge est en cours de mise à jour'
+'Signage Forge is ready': 'Signage Forge est prêt'
+'Signage Forge player': 'Lecteur Signage Forge'
+'Signage Forge setup': 'Installation de Signage Forge'
+Site: Site
+Slow: Lente
+'So that nobody else can set up this site before you, a setup token was written on the server. Read it there and paste it below:': "Pour que personne d'autre ne puisse installer ce site avant vous, un jeton d'installation a été écrit sur le serveur. Lisez-le là-bas et collez-le ci-dessous\_:"
+'Something went wrong': "Une erreur s'est produite"
+Speed: Vitesse
+'Start and end are the same. Tick "All day" instead.': "Le début et la fin sont identiques. Cochez plutôt «\_Toute la journée\_»."
+Status: Statut
+Sun: Dim
+System: Système
+'Test the connection and continue': 'Tester la connexion et continuer'
+'The PHP zip extension is missing.': "L'extension PHP zip est absente."
+'The default playlist, unless a schedule rule says otherwise.': 'La playlist par défaut, sauf si une règle de programmation en décide autrement.'
+'The installation failed:': "L'installation a échoué\_:"
+'The password must have at least 8 characters.': 'Le mot de passe doit comporter au moins 8 caractères.'
+'The setup page is now closed. Sign in as %email%, then open /pair on a screen.': "La page d'installation est maintenant fermée. Connectez-vous en tant que %email%, puis ouvrez /pair sur un écran."
+'The two passwords differ.': 'Les deux mots de passe sont différents.'
+'The weather is turned off on this server (SIGNAGEFORGE_WEATHER=false).': 'La météo est désactivée sur ce serveur (SIGNAGEFORGE_WEATHER=false).'
+'The web server cannot write %file%, so the setup will fail at this step. Make the project folder writable, or use "php bin/console signageforge:install".': "Le serveur web ne peut pas écrire %file%, l'installation échouera donc à cette étape. Rendez le dossier du projet accessible en écriture, ou utilisez «\_php bin/console signageforge:install\_»."
+'The web server cannot write %file%. Make the project folder writable for the setup, or use "php bin/console signageforge:install" on the server instead.': "Le serveur web ne peut pas écrire %file%. Rendez le dossier du projet accessible en écriture pendant l'installation, ou utilisez plutôt «\_php bin/console signageforge:install\_» sur le serveur."
+'The web server cannot write the project folder.': 'Le serveur web ne peut pas écrire dans le dossier du projet.'
+'There is no update to install.': "Il n'y a aucune mise à jour à installer."
+'This code has expired. Reload /pair on the screen to get a new one.': "Ce code a expiré. Rechargez /pair sur l'écran pour en obtenir un nouveau."
+'This code was already used.': 'Ce code a déjà été utilisé.'
+"This creates the database tables and builds the site's styles; it can take a minute.": "Cette étape crée les tables de la base et compile les styles du site\_; cela peut prendre une minute."
+'This is not the setup token.': "Ce n'est pas le jeton d'installation."
+'This is the latest version.': "C'est la dernière version."
+'This playlist is empty.': 'Cette playlist est vide.'
+'This release has no ready-to-install package.': "Cette version n'a pas de paquet prêt à installer."
+"This screen is in the group %name% and plays the group's schedule. The rules below apply again if it leaves the group.": "Cet écran fait partie du groupe %name% et suit la programmation du groupe. Les règles ci-dessous s'appliquent à nouveau s'il quitte le groupe."
+"This screen is in the group %name% and shows the group's widgets. The settings below apply again if it leaves the group.": "Cet écran fait partie du groupe %name% et affiche les widgets du groupe. Les réglages ci-dessous s'appliquent à nouveau s'il quitte le groupe."
+'This screen isn’t paired': 'Cet écran n’est pas associé'
+'This takes a minute. The page reloads on its own. Screens keep playing in the meantime.': 'Cela prend une minute. La page se recharge toute seule. Les écrans continuent leur lecture en attendant.'
+Thu: Jeu
+'Ticker messages': 'Messages du bandeau'
+To: À
+'To add a screen, open /pair on that screen.': 'Pour ajouter un écran, ouvrez /pair sur cet écran.'
+'To update, run on the server:': "Pour mettre à jour, lancez sur le serveur\_:"
+'Top left': 'En haut à gauche'
+'Top right': 'En haut à droite'
+Tue: Mar
+'Unknown code. Check the code shown on the screen.': "Code inconnu. Vérifiez le code affiché sur l'écran."
+'Update checks are off (SIGNAGEFORGE_UPDATE_REPOSITORY is empty).': 'La recherche de mises à jour est désactivée (SIGNAGEFORGE_UPDATE_REPOSITORY est vide).'
+'Update in progress…': 'Mise à jour en cours…'
+Updating: 'Mise à jour'
+'Updating to %version%. Follow the progress below.': 'Mise à jour vers %version%. Suivez la progression ci-dessous.'
+Upload: Envoyer
+'Upload images / videos': 'Envoyer des images / vidéos'
+'Upload limit': "Limite d'envoi"
+'Upload some in Media.': 'Envoyez-en dans Médias.'
+Uploading…: Envoi…
+User: Utilisateur
+Username: "Nom d'utilisateur"
+Users: Utilisateurs
+'Version %version%': 'Version %version%'
+'Version %version% is available, published %date%.': 'La version %version% est disponible, publiée le %date%.'
+'Version %version% is available.': 'La version %version% est disponible.'
+Video: Vidéo
+'Videos play to the end': "Les vidéos sont lues jusqu'au bout"
+Viewer: Observateur
+'Viewers see everything; editors also manage media, playlists, schedules and widgets; admins also pair screens, manage groups and users; owners also manage admins and owners.': "Les observateurs voient tout\_; les éditeurs gèrent aussi les médias, les playlists, les programmations et les widgets\_; les admins associent aussi les écrans et gèrent les groupes et les utilisateurs\_; les propriétaires gèrent aussi les admins et les propriétaires."
+'Waiting for the network…': 'En attente du réseau…'
+'Waiting for the screen to connect': "En attente de la connexion de l'écran"
+Weather: Météo
+'Web page': 'Page web'
+'Web page added.': 'Page web ajoutée.'
+'Web page address': 'Adresse de la page web'
+Wed: Mer
+Weekdays: 'En semaine'
+Weekends: 'Le week-end'
+'What the group plays': 'Ce que lit le groupe'
+"What's new": Nouveautés
+'When a display is turned on its side but its device still sends a landscape picture, pick how it is turned and the content is rotated to read upright.': "Quand un écran est monté sur le côté mais que son appareil envoie encore une image en paysage, indiquez comment il est tourné et le contenu pivote pour se lire à l'endroit."
+'When several rules match, the first one wins.': "Quand plusieurs règles correspondent, la première l'emporte."
+'Where should Signage Forge keep its data?': "Où Signage Forge doit-il stocker ses données\_?"
+Widgets: Widgets
+'Widgets of %name%': "Widgets de l'écran %name%"
+'Widgets of the group %name%': 'Widgets du groupe %name%'
+'Widgets saved.': 'Widgets enregistrés.'
+'You cannot give this role.': 'Vous ne pouvez pas attribuer ce rôle.'
+'all day': 'toute la journée'
+default: 'par défaut'
+'e.g. K7P2QX': 'par ex. K7P2QX'
+'e.g. Main entrance, 1st floor': 'par ex. Entrée principale, 1er étage'
+full: entière
+'local account': 'compte local'
+'no playlist': 'aucune playlist'
+'not writable by the web server': 'non accessible en écriture par le serveur web'
+nothing: rien
+'off': désactivée
+'offline · playing cached content': 'hors ligne · lecture du contenu en cache'
+'on': activée
+polling: 'interrogation périodique'
+'the group': 'le groupe'
+unknown: inconnu
+'up to date': 'à jour'
+writable: 'accessible en écriture'

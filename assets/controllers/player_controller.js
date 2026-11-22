@@ -21,6 +21,7 @@ export default class extends Controller {
         serviceWorker: String,
         pollInterval: { type: Number, default: 15000 },
         hubUrl: String,
+        texts: { type: Object, default: {} },
     };
 
     connect() {
@@ -80,7 +81,7 @@ export default class extends Controller {
                 } else {
                     // Never played anything yet: wait for the network, but keep
                     // the pairing (an outage must not unpair the screen).
-                    this.showMessage('<p class="text-lg font-semibold">Waiting for the network…</p>');
+                    this.showMessage(`<p class="text-lg font-semibold">${escapeHtml(this.text('waiting', 'Waiting for the network…'))}</p>`);
                 }
             }
         }
@@ -97,7 +98,7 @@ export default class extends Controller {
             // The screen was removed from the dashboard: forget the token so
             // /pair starts a fresh pairing.
             localStorage.removeItem('signageforge.deviceToken');
-            this.showMessage('<p class="mb-2 text-lg font-semibold">This screen isn’t paired</p><p class="text-gray-400">Open <span class="font-mono">/pair</span> on this device to set it up.</p>');
+            this.showMessage(`<p class="mb-2 text-lg font-semibold">${escapeHtml(this.text('notPaired', 'This screen isn’t paired'))}</p><p class="text-gray-400">${escapeHtml(this.text('openPair', 'Open /pair on this device to set it up.'))}</p>`);
             return;
         }
 
@@ -121,7 +122,8 @@ export default class extends Controller {
         this.items = items;
 
         if (!items.length) {
-            this.showMessage(`<p class="text-lg font-semibold">${escapeHtml(config.screen?.name ?? 'Screen')} is ready</p><p class="text-gray-400">Assign a playlist from the dashboard to start playing.</p>`);
+            const ready = this.text('ready', '%name% is ready').replace('%name%', config.screen?.name ?? 'Screen');
+            this.showMessage(`<p class="text-lg font-semibold">${escapeHtml(ready)}</p><p class="text-gray-400">${escapeHtml(this.text('assignPlaylist', 'Assign a playlist from the dashboard to start playing.'))}</p>`);
             return;
         }
 
@@ -203,8 +205,9 @@ export default class extends Controller {
             const tick = () => {
                 const now = new Date();
                 const zone = { timeZone: overlays.timezone };
-                time.textContent = now.toLocaleTimeString(undefined, { ...zone, hour: '2-digit', minute: '2-digit' });
-                date.textContent = now.toLocaleDateString(undefined, { ...zone, weekday: 'long', day: 'numeric', month: 'long' });
+                const locale = document.documentElement.lang || undefined;
+                time.textContent = now.toLocaleTimeString(locale, { ...zone, hour: '2-digit', minute: '2-digit' });
+                date.textContent = now.toLocaleDateString(locale, { ...zone, weekday: 'long', day: 'numeric', month: 'long' });
             };
             tick();
             this.clockTimer = setInterval(tick, 1000);
@@ -236,6 +239,11 @@ export default class extends Controller {
                 text.style.animationDuration = `${Math.max(5, screens * overlays.ticker.secondsPerScreen)}s`;
             });
         }
+    }
+
+    /* A sentence in the screen's language (from the page), English otherwise. */
+    text(key, fallback) {
+        return this.textsValue[key] || fallback;
     }
 
     /* Turns the content for displays mounted on their side. */

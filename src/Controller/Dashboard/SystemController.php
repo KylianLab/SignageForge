@@ -19,6 +19,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Translation\TranslatableMessage;
+
+use function Symfony\Component\Translation\t;
 
 /** Version, updates and health of this installation, for admins. */
 #[Route('/dashboard/system')]
@@ -72,13 +75,13 @@ final class SystemController extends AbstractDashboardController
         $release = $this->checker->latest();
 
         if (null === $release || !$release->isNewerThan(Version::VERSION) || !$release->hasPackage()) {
-            $this->addFlash('error', 'There is no update to install.');
+            $this->flash('error', 'There is no update to install.');
         } else {
             try {
                 $this->webUpdater->start($release->version);
-                $this->addFlash('success', \sprintf('Updating to %s. Follow the progress below.', $release->version));
+                $this->flash('success', 'Updating to %version%. Follow the progress below.', ['%version%' => $release->version]);
             } catch (\Throwable $e) {
-                $this->addFlash('error', $e->getMessage());
+                $this->flash('error', $e->getMessage());
             }
         }
 
@@ -92,7 +95,7 @@ final class SystemController extends AbstractDashboardController
         return $this->json($this->status->read());
     }
 
-    /** @return list<array{label: string, value: string, ok: bool}> */
+    /** @return list<array{label: TranslatableMessage, value: string|TranslatableMessage, ok: bool}> */
     private function health(Connection $connection, DependencyFactory $migrations, MaintenanceMode $maintenance, ScreenNotifier $notifier, string $dataDir): array
     {
         $platform = (new \ReflectionClass($connection->getDatabasePlatform()))->getShortName();
@@ -102,20 +105,21 @@ final class SystemController extends AbstractDashboardController
             $pending = -1;
         }
         $free = @disk_free_space($dataDir);
+        $writable = is_writable($dataDir);
 
         return [
-            ['label' => 'PHP', 'value' => \PHP_VERSION, 'ok' => true],
-            ['label' => 'Database', 'value' => str_replace('Platform', '', $platform), 'ok' => true],
-            ['label' => 'Database schema', 'value' => match (true) {
-                0 === $pending => 'up to date',
-                $pending > 0 => $pending.' migration(s) pending: run signageforge:upgrade',
-                default => 'unknown',
+            ['label' => t('PHP'), 'value' => \PHP_VERSION, 'ok' => true],
+            ['label' => t('Database'), 'value' => str_replace('Platform', '', $platform), 'ok' => true],
+            ['label' => t('Database schema'), 'value' => match (true) {
+                0 === $pending => t('up to date'),
+                $pending > 0 => t('%count% migration(s) pending: run signageforge:upgrade', ['%count%' => $pending]),
+                default => t('unknown'),
             }, 'ok' => 0 === $pending],
-            ['label' => 'Media folder', 'value' => is_writable($dataDir) ? 'writable' : 'not writable by the web server', 'ok' => is_writable($dataDir)],
-            ['label' => 'Free disk space', 'value' => false === $free ? 'unknown' : round($free / 1024 ** 3, 1).' GB', 'ok' => false === $free || $free > 1024 ** 3],
-            ['label' => 'Real-time updates', 'value' => RealtimeMode::Mercure === $notifier->getMode() ? 'Mercure hub' : 'polling', 'ok' => true],
-            ['label' => 'Maintenance page', 'value' => $maintenance->isEnabled() ? 'on' : 'off', 'ok' => !$maintenance->isEnabled()],
-            ['label' => 'Upload limit', 'value' => MediaController::maxUploadSize(), 'ok' => true],
+            ['label' => t('Media folder'), 'value' => $writable ? t('writable') : t('not writable by the web server'), 'ok' => $writable],
+            ['label' => t('Free disk space'), 'value' => false === $free ? t('unknown') : round($free / 1024 ** 3, 1).' GB', 'ok' => false === $free || $free > 1024 ** 3],
+            ['label' => t('Real-time updates'), 'value' => RealtimeMode::Mercure === $notifier->getMode() ? t('Mercure hub') : t('polling'), 'ok' => true],
+            ['label' => t('Maintenance page'), 'value' => $maintenance->isEnabled() ? t('on') : t('off'), 'ok' => !$maintenance->isEnabled()],
+            ['label' => t('Upload limit'), 'value' => MediaController::maxUploadSize(), 'ok' => true],
         ];
     }
 }
