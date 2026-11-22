@@ -7,6 +7,7 @@ namespace App\Tests\Unit;
 use App\Entity\Organization;
 use App\Entity\Playlist;
 use App\Entity\Screen;
+use App\Repository\ScreenRepository;
 use App\Service\RealtimeMode;
 use App\Service\ScreenNotifier;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +28,7 @@ final class ScreenNotifierTest extends TestCase
 
             return 'id';
         });
-        $notifier = new ScreenNotifier($hub, new NullLogger(), 'mercure');
+        $notifier = new ScreenNotifier($hub, new NullLogger(), $this->createStub(ScreenRepository::class), 'mercure');
 
         $organization = new Organization('Org', 'org');
         $playlist = new Playlist($organization, 'Hall');
@@ -49,7 +50,7 @@ final class ScreenNotifierTest extends TestCase
     public function testPollingModePublishesNothing(): void
     {
         $hub = new MockHub('https://hub.test', new StaticTokenProvider('jwt'), static fn (): string => throw new \LogicException('Should not publish.'));
-        $notifier = new ScreenNotifier($hub, new NullLogger(), 'polling');
+        $notifier = new ScreenNotifier($hub, new NullLogger(), $this->createStub(ScreenRepository::class), 'polling');
 
         $notifier->notifyDevice('device-token-aaaaaaa1', ScreenNotifier::EVENT_RELOAD);
 
@@ -59,7 +60,7 @@ final class ScreenNotifierTest extends TestCase
     public function testAHubOutageDoesNotBreakTheDashboard(): void
     {
         $hub = new MockHub('https://hub.test', new StaticTokenProvider('jwt'), static fn (): string => throw new RuntimeException('Hub down'));
-        $notifier = new ScreenNotifier($hub, new NullLogger(), 'mercure');
+        $notifier = new ScreenNotifier($hub, new NullLogger(), $this->createStub(ScreenRepository::class), 'mercure');
 
         $notifier->notifyDevice('device-token-aaaaaaa1', ScreenNotifier::EVENT_RELOAD);
 

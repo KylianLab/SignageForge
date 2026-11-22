@@ -17,9 +17,10 @@ use Symfony\Component\Uid\Ulid;
 #[ORM\Entity(repositoryClass: ScreenRepository::class)]
 #[ORM\Table(name: 'screen')]
 #[ORM\HasLifecycleCallbacks]
-class Screen
+class Screen implements Scheduled
 {
     use TimestampableTrait;
+    use ScheduleTrait;
 
     /** A screen is shown as online if it checked in within this many seconds. */
     public const ONLINE_THRESHOLD_SECONDS = 150;
@@ -54,6 +55,11 @@ class Screen
     #[ORM\ManyToOne(inversedBy: 'screens')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Playlist $playlist = null;
+
+    /** When set, the screen plays what its group plays. */
+    #[ORM\ManyToOne(inversedBy: 'screens')]
+    #[ORM\JoinColumn(name: 'group_id', nullable: true, onDelete: 'SET NULL')]
+    private ?ScreenGroup $group = null;
 
     /** @var Collection<int, ScheduleRule> */
     #[ORM\OneToMany(targetEntity: ScheduleRule::class, mappedBy: 'screen', cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -155,38 +161,24 @@ class Screen
         $this->playlist = $playlist;
     }
 
-    /** @return Collection<int, ScheduleRule> */
-    public function getScheduleRules(): Collection
+    public function getGroup(): ?ScreenGroup
     {
-        return $this->scheduleRules;
+        return $this->group;
     }
 
-    public function addScheduleRule(Playlist $playlist, int $days, int $startMinute, int $endMinute): ScheduleRule
+    public function setGroup(?ScreenGroup $group): void
     {
-        $position = 0;
-        foreach ($this->scheduleRules as $rule) {
-            $position = max($position, $rule->getPosition() + 1);
-        }
-        $rule = new ScheduleRule($this, $playlist, $days, $startMinute, $endMinute, $position);
-        $this->scheduleRules->add($rule);
-
-        return $rule;
+        $this->group = $group;
     }
 
-    public function removeScheduleRule(ScheduleRule $rule): void
-    {
-        $this->scheduleRules->removeElement($rule);
-    }
-
-    /** The playlist to play now: the first matching schedule rule, else the default one. */
+    /**
+     * The playlist to play now. A screen in a group follows the group;
+     * otherwise its own schedule, then its own default playlist.
+     */
     public function playlistAt(\DateTimeImmutable $localTime): ?Playlist
     {
-        foreach ($this->scheduleRules as $rule) {
-            if ($rule->isActiveAt($localTime)) {
-                return $rule->getPlaylist();
-            }
-        }
-
-        return $this->playlist;
+        return null !== $this->group
+            ? $this->group->playlistAt($localTime)
+            : $this->scheduledPlaylistAt($localTime);
     }
 }

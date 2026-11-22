@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Organization;
 use App\Entity\Playlist;
+use App\Entity\Scheduled;
+use App\Entity\ScreenGroup;
 use App\Entity\Screen;
+use App\Repository\ScreenRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mercure\HubInterface;
@@ -27,6 +31,7 @@ final class ScreenNotifier
     public function __construct(
         private readonly HubInterface $hub,
         private readonly LoggerInterface $logger,
+        private readonly ScreenRepository $screens,
         #[Autowire('%signageforge.realtime%')] string $mode,
     ) {
         $this->mode = RealtimeMode::tryFrom($mode) ?? RealtimeMode::Polling;
@@ -69,10 +74,51 @@ final class ScreenNotifier
         $this->notifyDevice($screen->getDeviceToken(), $event);
     }
 
+    /**
+     * Device tokens of every screen of an organization (read before deleting
+     * something they might play).
+     *
+     * @return list<string>
+     */
+    public function deviceTokensOf(Organization $organization): array
+    {
+        if (RealtimeMode::Mercure !== $this->mode) {
+            return []; // polling screens find out on their own
+        }
+
+        return array_map(
+            static fn (Screen $screen): string => $screen->getDeviceToken(),
+            $this->screens->findBy(['organization' => $organization]),
+        );
+    }
+
+    /** @param iterable<string> $deviceTokens */
+    public function notifyDevices(iterable $deviceTokens, string $event = self::EVENT_PLAYLIST_CHANGED): void
+    {
+        foreach ($deviceTokens as $deviceToken) {
+            $this->notifyDevice($deviceToken, $event);
+        }
+    }
+
+    /** Every screen that may play this playlist, directly or through its group. */
     public function notifyPlaylist(Playlist $playlist): void
     {
         foreach ($playlist->getScreens() as $screen) {
             $this->notifyScreen($screen, self::EVENT_PLAYLIST_CHANGED);
+        }
+        foreach ($playlist->getGroups() as $group) {
+            $this->notifyScheduled($group);
+        }
+    }
+
+    /** A screen, or every screen of a group, after its playlist or schedule changed. */
+    public function notifyScheduled(Scheduled $owner): void
+    {
+        $screens = $owner instanceof ScreenGroup ? $owner->getScreens() : [$owner];
+        foreach ($screens as $screen) {
+            if ($screen instanceof Screen) {
+                $this->notifyScreen($screen, self::EVENT_PLAYLIST_CHANGED);
+            }
         }
     }
 }

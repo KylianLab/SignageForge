@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Dashboard;
 
+use App\Entity\Playlist;
 use App\Entity\Screen;
+use App\Entity\ScreenGroup;
 use App\Repository\PairingSessionRepository;
 use App\Repository\PlaylistRepository;
+use App\Repository\ScreenGroupRepository;
 use App\Repository\ScreenRepository;
 use App\Service\ScreenNotifier;
 use Doctrine\ORM\EntityManagerInterface;
@@ -93,6 +96,21 @@ final class ScreenController extends AbstractDashboardController
         return $this->seeOther('app_dashboard');
     }
 
+    #[Route('/screens/{id}/group', name: 'app_screens_group', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function assignGroup(#[MapEntity(id: 'id')] ?Screen $screen, Request $request, ScreenGroupRepository $groups): Response
+    {
+        $screen = $this->owned($screen);
+        $this->requireCsrf($request, 'screen-'.$screen->getId());
+
+        $groupId = $request->getPayload()->getString('group');
+        $screen->setGroup(Ulid::isValid($groupId) ? $this->owned($groups->find($groupId)) : null);
+        $this->em->flush();
+        $this->notifier->notifyScreen($screen, ScreenNotifier::EVENT_PLAYLIST_CHANGED);
+
+        return $this->seeOther('app_dashboard');
+    }
+
     #[Route('/screens/{id}/delete', name: 'app_screens_delete', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function delete(#[MapEntity(id: 'id')] ?Screen $screen, Request $request): Response
@@ -111,7 +129,7 @@ final class ScreenController extends AbstractDashboardController
         return $this->seeOther('app_dashboard');
     }
 
-    /** @return array{screens: list<Screen>, playlists: list<\App\Entity\Playlist>} */
+    /** @return array{screens: list<Screen>, playlists: list<Playlist>, groups: list<ScreenGroup>} */
     private function listData(): array
     {
         $organization = $this->organization();
@@ -119,6 +137,7 @@ final class ScreenController extends AbstractDashboardController
         return [
             'screens' => $this->screens->findBy(['organization' => $organization], ['createdAt' => 'ASC']),
             'playlists' => $this->playlists->findBy(['organization' => $organization], ['name' => 'ASC']),
+            'groups' => $this->em->getRepository(ScreenGroup::class)->findBy(['organization' => $organization], ['name' => 'ASC']),
         ];
     }
 }

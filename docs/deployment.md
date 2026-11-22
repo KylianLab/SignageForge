@@ -112,8 +112,8 @@ roles under **Users** in the dashboard:
 | Role | Can |
 | --- | --- |
 | Viewer | see screens, media and playlists |
-| Editor | also manage media and playlists, assign playlists to screens |
-| Admin | also pair and remove screens, manage users |
+| Editor | also manage media and playlists, choose what screens and groups play and when |
+| Admin | also pair and remove screens, manage screen groups and users |
 | Owner | also manage admins and owners |
 
 ## Real-time updates

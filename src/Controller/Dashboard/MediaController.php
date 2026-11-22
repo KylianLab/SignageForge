@@ -125,11 +125,9 @@ final class MediaController extends AbstractDashboardController
         $media = $this->owned($media);
         $this->requireCsrf($request, 'media-'.$media->getId());
 
-        // Screens playing a playlist that contains this media must reload.
-        $deviceTokens = $this->em->createQuery(
-            'SELECT DISTINCT s.deviceToken FROM App\Entity\Screen s
-             JOIN s.playlist p JOIN p.items i WHERE i.media = :media'
-        )->setParameter('media', $media->getId(), 'ulid')->getSingleColumnResult();
+        // It may play on screens directly, through groups or schedules:
+        // let every screen check again.
+        $deviceTokens = $this->notifier->deviceTokensOf($this->organization());
 
         $storageKey = $media->getType()->isFile() ? $media->getStorageKey() : null;
         $this->em->remove($media);
@@ -137,9 +135,7 @@ final class MediaController extends AbstractDashboardController
         if (null !== $storageKey) {
             $this->storage->delete($storageKey);
         }
-        foreach ($deviceTokens as $deviceToken) {
-            $this->notifier->notifyDevice($deviceToken, ScreenNotifier::EVENT_PLAYLIST_CHANGED);
-        }
+        $this->notifier->notifyDevices($deviceTokens);
 
         $this->addFlash('success', \sprintf('"%s" was deleted.', $media->getName()));
 

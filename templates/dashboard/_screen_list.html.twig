@@ -17,7 +17,24 @@
                         {% endif %}
                     </div>
                 </div>
-                {% if is_granted('ROLE_EDITOR') %}
+                {% if is_granted('ROLE_ADMIN') and groups is not empty %}
+                    <form method="post" action="{{ path('app_screens_group', {id: screen.id}) }}" data-controller="autosubmit" data-turbo-frame="_top">
+                        <input type="hidden" name="_token" value="{{ csrf_token('screen-' ~ screen.id) }}">
+                        <label class="sr-only" for="group-{{ screen.id }}">Group of {{ screen.name }}</label>
+                        <select id="group-{{ screen.id }}" name="group" class="input w-auto" data-action="autosubmit#submit">
+                            <option value="">No group</option>
+                            {% for group in groups %}
+                                <option value="{{ group.id }}" {{ screen.group and screen.group.id == group.id ? 'selected' }}>{{ group.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <noscript><button class="btn-secondary">Save</button></noscript>
+                    </form>
+                {% endif %}
+                {% if screen.group %}
+                    <a href="{{ path('app_groups_edit', {id: screen.group.id}) }}" data-turbo-frame="_top" class="text-sm text-gray-600 hover:text-brand">
+                        Plays the group {{ screen.group.name }}
+                    </a>
+                {% elseif is_granted('ROLE_EDITOR') %}
                 <form method="post" action="{{ path('app_screens_playlist', {id: screen.id}) }}" data-controller="autosubmit" data-turbo-frame="_top">
                     <input type="hidden" name="_token" value="{{ csrf_token('screen-' ~ screen.id) }}">
                     <label class="sr-only" for="playlist-{{ screen.id }}">Playlist for {{ screen.name }}</label>
@@ -32,9 +49,11 @@
                 {% else %}
                     <span class="text-sm text-gray-600">{{ screen.playlist ? screen.playlist.name : 'No playlist' }}</span>
                 {% endif %}
-                <a href="{{ path('app_schedule', {id: screen.id}) }}" data-turbo-frame="_top" class="btn-secondary" title="Schedule">
+                {% if not screen.group %}
+                <a href="{{ path('app_schedule', {kind: 'screens', id: screen.id}) }}" data-turbo-frame="_top" class="btn-secondary" title="Schedule">
                     {{ ui.icon('calendar') }} Schedule{% if screen.scheduleRules|length %} ({{ screen.scheduleRules|length }}){% endif %}
                 </a>
+                {% endif %}
                 <a href="{{ path('app_player', {token: screen.deviceToken}) }}" target="_blank" rel="noopener noreferrer"
                    title="Preview in a new tab" class="btn-secondary" data-turbo="false">
                     {{ ui.icon('external') }} Preview

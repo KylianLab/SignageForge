@@ -9,8 +9,8 @@ use Symfony\Bridge\Doctrine\Types\UlidType;
 use Symfony\Component\Uid\Ulid;
 
 /**
- * "On these days, between these times, play this playlist" for one screen.
- * Outside every rule the screen plays its default playlist. When several
+ * "On these days, between these times, play this playlist" for one screen or
+ * one group of screens. Outside every rule the default playlist plays. When several
  * rules match, the first one in the list wins. A range whose end is before
  * its start runs overnight (22:00-06:00); equal start and end mean all day.
  */
@@ -26,9 +26,15 @@ class ScheduleRule
     #[ORM\Column(type: UlidType::NAME, unique: true)]
     private Ulid $id;
 
+    /** Set for a screen's own schedule. */
     #[ORM\ManyToOne(inversedBy: 'scheduleRules')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private Screen $screen;
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?Screen $screen = null;
+
+    /** Set for a group's schedule. */
+    #[ORM\ManyToOne(inversedBy: 'scheduleRules')]
+    #[ORM\JoinColumn(name: 'group_id', nullable: true, onDelete: 'CASCADE')]
+    private ?ScreenGroup $group = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -48,7 +54,7 @@ class ScheduleRule
     #[ORM\Column]
     private int $position;
 
-    public function __construct(Screen $screen, Playlist $playlist, int $days, int $startMinute, int $endMinute, int $position = 0)
+    public function __construct(Scheduled $owner, Playlist $playlist, int $days, int $startMinute, int $endMinute, int $position = 0)
     {
         if ($days < 1 || $days > self::ALL_DAYS) {
             throw new \InvalidArgumentException('Pick at least one day.');
@@ -60,7 +66,13 @@ class ScheduleRule
         }
 
         $this->id = new Ulid();
-        $this->screen = $screen;
+        if ($owner instanceof Screen) {
+            $this->screen = $owner;
+        } elseif ($owner instanceof ScreenGroup) {
+            $this->group = $owner;
+        } else {
+            throw new \InvalidArgumentException('A schedule belongs to a screen or a group.');
+        }
         $this->playlist = $playlist;
         $this->days = $days;
         $this->startMinute = $startMinute;
@@ -73,9 +85,9 @@ class ScheduleRule
         return $this->id;
     }
 
-    public function getScreen(): Screen
+    public function getOwner(): Scheduled
     {
-        return $this->screen;
+        return $this->screen ?? $this->group ?? throw new \LogicException('Schedule rule without owner.');
     }
 
     public function getPlaylist(): Playlist

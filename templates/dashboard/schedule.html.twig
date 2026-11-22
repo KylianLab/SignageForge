@@ -1,20 +1,28 @@
 {% extends 'dashboard/layout.html.twig' %}
 {% import 'components/icons.html.twig' as ui %}
 
-{% block page_title %}Schedule · {{ screen.name }}{% endblock %}
+{% block page_title %}Schedule · {{ owner.name }}{% endblock %}
 
 {% block content %}
-    <a href="{{ path('app_dashboard') }}" class="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800">
-        {{ ui.icon('back') }} Screens
+    {% set is_group = kind == 'groups' %}
+    <a href="{{ is_group ? path('app_groups_edit', {id: owner.id}) : path('app_dashboard') }}" class="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800">
+        {{ ui.icon('back') }} {{ is_group ? owner.name : 'Screens' }}
     </a>
-    <h1 class="mb-2 text-2xl font-bold">Schedule of {{ screen.name }}</h1>
+    <h1 class="mb-2 text-2xl font-bold">Schedule of {{ is_group ? 'the group ' }}{{ owner.name }}</h1>
     <p class="mb-6 text-sm text-gray-500">
-        Outside these rules the screen plays <strong>{{ screen.playlist ? screen.playlist.name : 'nothing' }}</strong>
-        (its default playlist, chosen on the Screens page). When several rules match, the first one wins.
+        {% if not is_group and owner.group %}
+            <span class="mb-2 block rounded-lg bg-amber-50 px-3 py-2 text-amber-900">
+                This screen is in the group <a href="{{ path('app_groups_edit', {id: owner.group.id}) }}" class="underline">{{ owner.group.name }}</a>
+                and plays the group's schedule. The rules below apply again if it leaves the group.
+            </span>
+        {% endif %}
+        Outside these rules {{ is_group ? 'the screens of this group play' : 'the screen plays' }}
+        <strong>{{ owner.playlist ? owner.playlist.name : 'nothing' }}</strong>
+        (the default playlist, chosen on the {{ is_group ? 'group' : 'Screens' }} page). When several rules match, the first one wins.
     </p>
 
     <div class="card mb-8 divide-y divide-gray-100">
-        {% for rule in screen.scheduleRules %}
+        {% for rule in owner.scheduleRules %}
             <div class="flex flex-wrap items-center gap-4 p-4">
                 <span class="w-5 text-center text-xs text-gray-400">{{ loop.index }}</span>
                 <div class="min-w-0 flex-1">
@@ -23,25 +31,25 @@
                 </div>
                 {% if is_granted('ROLE_EDITOR') %}
                     {% if not loop.first %}
-                        <form method="post" action="{{ path('app_schedule_up', {id: screen.id, rule: rule.id}) }}">
-                            <input type="hidden" name="_token" value="{{ csrf_token('schedule-' ~ screen.id) }}">
+                        <form method="post" action="{{ path('app_schedule_up', {kind: kind, id: owner.id, rule: rule.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('schedule-' ~ owner.id) }}">
                             <button class="text-gray-400 hover:text-gray-800" title="Move up">{{ ui.icon('up') }}<span class="sr-only">Move up</span></button>
                         </form>
                     {% endif %}
-                    <form method="post" action="{{ path('app_schedule_delete', {id: screen.id, rule: rule.id}) }}">
-                        <input type="hidden" name="_token" value="{{ csrf_token('schedule-' ~ screen.id) }}">
+                    <form method="post" action="{{ path('app_schedule_delete', {kind: kind, id: owner.id, rule: rule.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('schedule-' ~ owner.id) }}">
                         <button class="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-600" title="Remove">{{ ui.icon('trash') }}<span class="sr-only">Remove rule</span></button>
                     </form>
                 {% endif %}
             </div>
         {% else %}
-            <p class="p-4 text-sm text-gray-500">No rules: the screen always plays its default playlist.</p>
+            <p class="p-4 text-sm text-gray-500">No rules: the default playlist always plays.</p>
         {% endfor %}
     </div>
 
     {% if is_granted('ROLE_EDITOR') %}
-        <form method="post" action="{{ path('app_schedule_add', {id: screen.id}) }}" class="card space-y-4 p-4">
-            <input type="hidden" name="_token" value="{{ csrf_token('schedule-' ~ screen.id) }}">
+        <form method="post" action="{{ path('app_schedule_add', {kind: kind, id: owner.id}) }}" class="card space-y-4 p-4">
+            <input type="hidden" name="_token" value="{{ csrf_token('schedule-' ~ owner.id) }}">
             <h2 class="font-semibold">Add a rule</h2>
             <div>
                 <label class="label" for="rule-playlist">Play</label>

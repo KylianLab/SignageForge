@@ -38,6 +38,10 @@ class Playlist
     #[ORM\OneToMany(targetEntity: Screen::class, mappedBy: 'playlist')]
     private Collection $screens;
 
+    /** @var Collection<int, ScreenGroup> */
+    #[ORM\OneToMany(targetEntity: ScreenGroup::class, mappedBy: 'playlist')]
+    private Collection $groups;
+
     public function __construct(Organization $organization, string $name)
     {
         $this->id = new Ulid();
@@ -45,6 +49,7 @@ class Playlist
         $this->name = $name;
         $this->items = new ArrayCollection();
         $this->screens = new ArrayCollection();
+        $this->groups = new ArrayCollection();
         $this->initTimestamps();
     }
 
@@ -78,6 +83,12 @@ class Playlist
     public function getScreens(): Collection
     {
         return $this->screens;
+    }
+
+    /** @return Collection<int, ScreenGroup> */
+    public function getGroups(): Collection
+    {
+        return $this->groups;
     }
 
     /**

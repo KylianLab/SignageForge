@@ -116,15 +116,18 @@ final class PlaylistController extends AbstractDashboardController
         $playlist = $this->owned($playlist);
         $this->requireCsrf($request, 'playlist-'.$playlist->getId());
 
-        $deviceTokens = array_map(static fn ($screen) => $screen->getDeviceToken(), $playlist->getScreens()->toArray());
+        // It may play on screens directly, through groups or schedules:
+        // let every screen check again.
+        $deviceTokens = $this->notifier->deviceTokensOf($this->organization());
         foreach ($playlist->getScreens() as $screen) {
             $screen->setPlaylist(null);
         }
+        foreach ($playlist->getGroups() as $group) {
+            $group->setPlaylist(null);
+        }
         $this->em->remove($playlist);
         $this->em->flush();
-        foreach ($deviceTokens as $deviceToken) {
-            $this->notifier->notifyDevice($deviceToken, ScreenNotifier::EVENT_PLAYLIST_CHANGED);
-        }
+        $this->notifier->notifyDevices($deviceTokens);
 
         $this->addFlash('success', \sprintf('"%s" was deleted.', $playlist->getName()));
 

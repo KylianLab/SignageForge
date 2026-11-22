@@ -46,7 +46,7 @@ yet.
 - [x] Scheduling: time-of-day and day-of-week playlists per screen
 - [ ] Scheduling while offline: today the server picks the playlist, so a screen
       without network keeps its current one until it reconnects
-- [ ] Screen groups
+- [x] Screen groups: a group's playlist and schedule apply to all its screens
 - [ ] Portrait / landscape orientation per screen (stored today, not used yet)
 - [ ] Widgets and overlays: clock, weather, news ticker
 
