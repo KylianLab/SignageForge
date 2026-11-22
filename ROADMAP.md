@@ -35,6 +35,8 @@ yet.
 - [x] **Web updates.** System page with the installed and available version;
       `signageforge:self-update` (also offline with `--package`); one-click
       install from the browser when `SIGNAGEFORGE_WEB_UPDATES=true`
+- [x] Real update of an installed site with a package from `bin/build-release`
+      (Windows, `--package`): code replaced, data and settings kept
 - [ ] Publish the first release (tag `v0.1.0`) so update checks have something
       to find
 - [x] **`signageforge:upgrade` command** doing the same from the terminal.

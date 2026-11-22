@@ -178,9 +178,12 @@ final class SelfUpdateCommand
             $output .= $buffer;
         });
         if (!$ok) {
-            $this->installer->rollback($replaced, $this->projectDir, $workDir.'/previous');
-            $this->console->run(['cache:clear']);
             $this->step($io, trim(strip_tags($output)));
+            $problems = $this->installer->rollback($replaced, $this->projectDir, $workDir.'/previous');
+            if ([] !== $problems) {
+                return $this->fail($io, 'The new version could not finish its upgrade, and putting the previous files back was incomplete ('.implode('; ', $problems).'). They are in var/update/previous. The site stays in maintenance.');
+            }
+            $this->console->run(['cache:clear']);
 
             return $this->fail($io, 'The new version could not finish its upgrade, so the previous files were put back. The site stays in maintenance: check the database (a backup is in var/backups), then run "php bin/console signageforge:upgrade".');
         }

@@ -13,7 +13,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  * variants), var/ (sessions, cache, backups) and data/ (media, SQLite).
  * Replaced entries are kept aside so a failed update can be rolled back.
  */
-final class PackageInstaller
+class PackageInstaller
 {
     /** Top-level entries an update must never replace. */
     public const PROTECTED = ['.env.local', '.env.local.php', '.env.prod.local', '.env.dev.local', 'var', 'data', '.git'];
@@ -100,48 +100,131 @@ final class PackageInstaller
     }
 
     /**
-     * Moves the new code in place. Each replaced entry goes to $backupDir
-     * first; on any error, everything moved so far is put back.
+     * Moves the new code in place, recording every move in a journal so the
+     * exact previous state can be put back.
      *
-     * @return list<string> the entries that were replaced
+     * Entries are moved whole when possible. When the system refuses (on
+     * Windows a file in use, such as the running bin/console, locks its
+     * folder), the folder is handled file by file instead, and a locked file
+     * that is identical in the new version is simply left where it is.
+     *
+     * @return list<array{string, bool}> journal: [relative path, true if it replaced something]
      */
     public function swap(string $newRoot, string $projectDir, string $backupDir): array
     {
         $this->filesystem->remove($backupDir);
         $this->filesystem->mkdir($backupDir);
-        $moved = [];
+        $journal = [];
 
         try {
-            foreach (array_diff(scandir($newRoot) ?: [], ['.', '..']) as $entry) {
-                if (\in_array($entry, self::PROTECTED, true)) {
-                    continue;
+            foreach (self::entries($newRoot) as $entry) {
+                if (!\in_array($entry, self::PROTECTED, true)) {
+                    $this->install($entry, $newRoot, $projectDir, $backupDir, $journal);
                 }
-                $current = $projectDir.'/'.$entry;
-                if (file_exists($current)) {
-                    $this->filesystem->rename($current, $backupDir.'/'.$entry);
-                }
-                $moved[] = $entry;
-                $this->filesystem->rename($newRoot.'/'.$entry, $current);
             }
         } catch (\Throwable $e) {
-            $this->rollback($moved, $projectDir, $backupDir);
-            throw new \RuntimeException('Installing the new files failed, the previous version was restored: '.$e->getMessage(), 0, $e);
+            $problems = $this->rollback($journal, $projectDir, $backupDir);
+            throw new \RuntimeException(
+                ([] === $problems
+                    ? 'Installing the new files failed and the previous version was restored: '
+                    : 'Installing the new files failed AND restoring the previous version was incomplete ('.implode('; ', $problems).'). The previous files are in '.$backupDir.': ')
+                .$e->getMessage(),
+                0,
+                $e,
+            );
         }
 
-        return $moved;
+        return $journal;
     }
 
-    /** @param list<string> $entries */
-    public function rollback(array $entries, string $projectDir, string $backupDir): void
+    /**
+     * Puts back what swap() moved, newest first.
+     *
+     * @param list<array{string, bool}> $journal
+     *
+     * @return list<string> what could not be restored (empty when all went well)
+     */
+    public function rollback(array $journal, string $projectDir, string $backupDir): array
     {
-        foreach (array_reverse($entries) as $entry) {
-            $current = $projectDir.'/'.$entry;
-            if (file_exists($backupDir.'/'.$entry)) {
-                $this->filesystem->remove($current);
-                $this->filesystem->rename($backupDir.'/'.$entry, $current);
-            } elseif (file_exists($current)) {
-                $this->filesystem->remove($current); // new in this release
+        $problems = [];
+        foreach (array_reverse($journal) as [$path, $replaced]) {
+            $current = $projectDir.'/'.$path;
+            try {
+                if (file_exists($current) || is_link($current)) {
+                    $this->filesystem->remove($current);
+                }
+                if ($replaced && !$this->move($backupDir.'/'.$path, $current)) {
+                    $problems[] = 'could not put back '.$path;
+                }
+            } catch (\Throwable $e) {
+                $problems[] = $path.': '.$e->getMessage();
             }
         }
+
+        return $problems;
+    }
+
+    /** @param list<array{string, bool}> $journal */
+    private function install(string $path, string $newRoot, string $projectDir, string $backupDir, array &$journal): void
+    {
+        $new = $newRoot.'/'.$path;
+        $current = $projectDir.'/'.$path;
+        $backup = $backupDir.'/'.$path;
+
+        if (!file_exists($current) && !is_link($current)) {
+            $this->moveOrFail($new, $current);
+            $journal[] = [$path, false];
+
+            return;
+        }
+        if (is_file($current) && is_file($new) && hash_file('sha256', $current) === hash_file('sha256', $new)) {
+            return; // unchanged
+        }
+
+        $this->filesystem->mkdir(\dirname($backup));
+        if ($this->move($current, $backup)) {
+            $journal[] = [$path, true];
+            $this->moveOrFail($new, $current);
+
+            return;
+        }
+
+        if (is_dir($current) && is_dir($new)) {
+            // Could not move the folder as a whole: go through its content.
+            $gone = array_diff(self::entries($current), self::entries($new));
+            foreach (self::entries($new) as $child) {
+                $this->install($path.'/'.$child, $newRoot, $projectDir, $backupDir, $journal);
+            }
+            foreach ($gone as $entry) {
+                // Removed in the new version: set aside when possible.
+                $this->filesystem->mkdir($backup);
+                if ($this->move($current.'/'.$entry, $backup.'/'.$entry)) {
+                    $journal[] = [$path.'/'.$entry, true];
+                }
+            }
+
+            return;
+        }
+
+        throw new \RuntimeException(\sprintf('Cannot replace %s (in use or not writable).', $path));
+    }
+
+    /** A plain rename: no copy-and-delete fallback that could leave half-moved folders. */
+    protected function move(string $from, string $to): bool
+    {
+        return @rename($from, $to);
+    }
+
+    private function moveOrFail(string $from, string $to): void
+    {
+        if (!$this->move($from, $to)) {
+            throw new \RuntimeException(\sprintf('Cannot move the new %s into place.', basename($to)));
+        }
+    }
+
+    /** @return list<string> */
+    private static function entries(string $dir): array
+    {
+        return array_values(array_diff(scandir($dir) ?: [], ['.', '..']));
     }
 }

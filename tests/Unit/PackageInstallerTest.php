@@ -76,6 +76,69 @@ final class PackageInstallerTest extends TestCase
         self::assertFileDoesNotExist($project.'/bin/console');
     }
 
+    public function testAFolderThatCannotMoveIsUpdatedFileByFile(): void
+    {
+        // Like Windows with the running bin/console: the bin folder and that
+        // file cannot be moved; the file is identical in the new version.
+        $project = $this->dir.'/project';
+        $this->fs->dumpFile($project.'/bin/console', 'same console');
+        $this->fs->dumpFile($project.'/bin/old-tool', 'removed in new version');
+        $this->fs->dumpFile($project.'/src/Kernel.php', 'old kernel');
+
+        $installer = new class(new MockHttpClient()) extends PackageInstaller {
+            protected function move(string $from, string $to): bool
+            {
+                $locked = strtr($from, DIRECTORY_SEPARATOR, '/');
+                if (str_ends_with($locked, 'project/bin') || str_ends_with($locked, 'project/bin/console')) {
+                    return false;
+                }
+
+                return parent::move($from, $to);
+            }
+        };
+        $zip = $this->makePackage(['bin/console' => 'same console', 'bin/new-tool' => 'new', 'src/Kernel.php' => 'new kernel']);
+        $root = $installer->extract($zip, $this->dir.'/extract');
+        $journal = $installer->swap($root, $project, $this->dir.'/previous');
+
+        self::assertStringEqualsFile($project.'/bin/console', 'same console');
+        self::assertFileExists($project.'/bin/new-tool');
+        self::assertFileDoesNotExist($project.'/bin/old-tool');
+        self::assertStringEqualsFile($project.'/src/Kernel.php', 'new kernel');
+
+        self::assertSame([], $installer->rollback($journal, $project, $this->dir.'/previous'));
+        self::assertStringEqualsFile($project.'/src/Kernel.php', 'old kernel');
+        self::assertFileExists($project.'/bin/old-tool');
+        self::assertFileDoesNotExist($project.'/bin/new-tool');
+        self::assertStringEqualsFile($project.'/bin/console', 'same console');
+    }
+
+    public function testALockedFileThatChangesFailsAndRollsBack(): void
+    {
+        $project = $this->dir.'/project';
+        $this->fs->dumpFile($project.'/bin/console', 'old console');
+        $this->fs->dumpFile($project.'/src/Kernel.php', 'old kernel');
+
+        $installer = new class(new MockHttpClient()) extends PackageInstaller {
+            protected function move(string $from, string $to): bool
+            {
+                $locked = strtr($from, DIRECTORY_SEPARATOR, '/');
+
+                return !str_ends_with($locked, 'project/bin') && !str_ends_with($locked, 'project/bin/console') && parent::move($from, $to);
+            }
+        };
+        $zip = $this->makePackage(['bin/console' => 'new console', 'src/Kernel.php' => 'new kernel']);
+        $root = $installer->extract($zip, $this->dir.'/extract');
+
+        try {
+            $installer->swap($root, $project, $this->dir.'/previous');
+            self::fail('The swap should fail.');
+        } catch (\RuntimeException $e) {
+            self::assertStringContainsString('previous version was restored', $e->getMessage());
+        }
+        self::assertStringEqualsFile($project.'/bin/console', 'old console');
+        self::assertStringEqualsFile($project.'/src/Kernel.php', 'old kernel');
+    }
+
     public function testPackagesWithUnsafePathsAreRefused(): void
     {
         $zip = $this->makePackage(['bin/console' => 'x', 'src/Kernel.php' => 'x', '../escape.php' => 'evil']);
