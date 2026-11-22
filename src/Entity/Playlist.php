@@ -31,7 +31,7 @@ class Playlist
 
     /** @var Collection<int, PlaylistItem> */
     #[ORM\OneToMany(targetEntity: PlaylistItem::class, mappedBy: 'playlist', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => \SortDirection::Ascending])]
     private Collection $items;
 
     /** @var Collection<int, Screen> */

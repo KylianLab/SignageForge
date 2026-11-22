@@ -12,6 +12,9 @@ needs them; open an issue to discuss one.
 Things that exist in the code but have not been checked against real systems
 yet.
 
+- [x] Fresh production install from a clean checkout: web installer, sign-in,
+      pairing, media, playlist, player and `signageforge:upgrade`, served by the
+      Symfony local server
 - [ ] Sign in with Microsoft 365 against a real Entra ID tenant
 - [x] Sign in against a real LDAP directory (public OpenLDAP test server)
 - [ ] Sign in against Active Directory

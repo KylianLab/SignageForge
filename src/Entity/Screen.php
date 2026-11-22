@@ -57,7 +57,7 @@ class Screen
 
     /** @var Collection<int, ScheduleRule> */
     #[ORM\OneToMany(targetEntity: ScheduleRule::class, mappedBy: 'screen', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => \SortDirection::Ascending])]
     private Collection $scheduleRules;
 
     public function __construct(Organization $organization, string $name, string $deviceToken)

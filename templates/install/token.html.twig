@@ -1,24 +1,24 @@
 {% extends 'install/layout.html.twig' %}
 
 {% block step %}
-    <h1 class="text-xl font-semibold">Prove you run this server</h1>
-    <p class="text-sm text-gray-600">
+    <h1>Prove you run this server</h1>
+    <p class="muted">
         So that nobody else can set up this site before you, a setup token was written on the server.
         Read it there and paste it below:
     </p>
-    <pre class="overflow-x-auto rounded-lg bg-gray-100 px-3 py-2 text-xs">cat {{ token_file }}</pre>
+    <pre>cat {{ token_file }}</pre>
     {% if not env_writable %}
-        <p class="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
+        <p class="alert alert-warning">
             The web server cannot write <code>{{ env_file }}</code>. Make the project folder writable for the setup,
             or use <code>php bin/console signageforge:install</code> on the server instead.
         </p>
     {% endif %}
-    <form method="post" class="space-y-3">
+    <form method="post" class="stack">
         <input type="hidden" name="_token" value="{{ csrf_token('install') }}">
         <div>
             <label class="label" for="token">Setup token</label>
             <input id="token" name="token" required autocomplete="off" class="input font-mono">
         </div>
-        <button class="btn-primary w-full">Continue</button>
+        <button class="btn-primary">Continue</button>
     </form>
 {% endblock %}

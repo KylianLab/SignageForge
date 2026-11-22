@@ -2,8 +2,15 @@
 framework:
     secret: '%env(APP_SECRET)%'
 
-    # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    # Sessions are kept inside the project with their own cookie name, so
+    # another PHP application on the same server (or the same host name) can
+    # never read or overwrite Signage Forge sessions.
+    session:
+        handler_id: session.handler.native_file
+        save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
+        name: signageforge_session
+        cookie_samesite: lax
+        cookie_secure: auto
 
     # Signage Forge usually sits behind the institution's reverse proxy.
     trusted_proxies: '%env(TRUSTED_PROXIES)%'

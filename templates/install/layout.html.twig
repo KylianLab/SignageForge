@@ -1,26 +1,69 @@
-{% extends 'base.html.twig' %}
-{% import 'components/icons.html.twig' as ui %}
-
-{% block title %}Set up · Signage Forge{% endblock %}
-
-{% block body %}
-    {% set steps = ['Setup token', 'Database', 'Site', 'Admin', 'Done'] %}
-    <main class="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-4 py-10" data-turbo="false">
-        <div class="mb-6 flex items-center justify-center gap-2 text-lg font-semibold">
-            {{ ui.icon('cast', 'h-6 w-6 text-brand') }} Signage Forge setup
-        </div>
-        <ol class="mb-6 flex justify-between text-xs text-gray-400">
-            {% for label in steps %}
-                <li class="{{ loop.index == step ? 'font-semibold text-brand' : (loop.index < step ? 'text-gray-600') }}">
-                    {{ loop.index }}. {{ label }}
-                </li>
-            {% endfor %}
-        </ol>
-        <div class="card space-y-5 p-6">
-            {% if error is defined and error %}
-                <p class="rounded-lg bg-red-50 px-3 py-2 text-sm whitespace-pre-line text-red-700" role="alert">{{ error }}</p>
-            {% endif %}
-            {% block step %}{% endblock %}
-        </div>
-    </main>
-{% endblock %}
+{#
+    The installer runs before the front-end assets are built (in production
+    they are compiled at the end of the setup), so these pages are
+    self-contained: inline styles and script, nothing from /assets.
+#}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noindex">
+        <title>Set up · Signage Forge</title>
+        <style>
+            *, *::before, *::after { box-sizing: border-box; }
+            body { margin: 0; background: #f9fafb; color: #111827; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+            main { max-width: 36rem; min-height: 100vh; margin: 0 auto; padding: 2.5rem 1rem; display: flex; flex-direction: column; justify-content: center; }
+            h1 { font-size: 1.25rem; margin: 0; }
+            p { margin: 0; }
+            code, pre, .font-mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+            .brand { display: flex; align-items: center; justify-content: center; gap: .5rem; margin-bottom: 1.5rem; font-size: 1.125rem; font-weight: 600; }
+            .brand svg { width: 1.5rem; height: 1.5rem; color: #6366f1; }
+            .steps { display: flex; justify-content: space-between; margin: 0 0 1.5rem; padding: 0; list-style: none; font-size: .75rem; color: #9ca3af; }
+            .steps .current { color: #6366f1; font-weight: 600; }
+            .steps .done { color: #4b5563; }
+            .card { background: #fff; border: 1px solid #e5e7eb; border-radius: .75rem; padding: 1.5rem; display: grid; gap: 1.25rem; }
+            .stack { display: grid; gap: .75rem; }
+            .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+            .hidden { display: none !important; }
+            .muted { color: #4b5563; font-size: .875rem; }
+            .hint { color: #6b7280; font-size: .75rem; }
+            .label { display: block; margin-bottom: .25rem; font-size: .75rem; font-weight: 500; color: #6b7280; }
+            .input { width: 100%; padding: .5rem .75rem; border: 1px solid #d1d5db; border-radius: .5rem; background: #fff; font: inherit; font-size: .875rem; }
+            .input:focus { outline: 2px solid rgba(99, 102, 241, .3); border-color: #6366f1; }
+            .choice { display: flex; align-items: flex-start; gap: .5rem; font-size: .875rem; }
+            .choice input { margin-top: .3rem; }
+            fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: .5rem; }
+            legend { padding: 0; }
+            .btn-primary { display: inline-flex; width: 100%; justify-content: center; padding: .6rem 1rem; border: 0; border-radius: .5rem; background: #6366f1; color: #fff; font: inherit; font-size: .875rem; font-weight: 500; text-decoration: none; cursor: pointer; }
+            .btn-primary:hover { background: #4f46e5; }
+            .alert { padding: .5rem .75rem; border-radius: .5rem; font-size: .875rem; white-space: pre-line; }
+            .alert-error { background: #fef2f2; color: #b91c1c; }
+            .alert-warning { background: #fffbeb; color: #78350f; }
+            pre { margin: 0; padding: .5rem .75rem; overflow-x: auto; border-radius: .5rem; background: #f3f4f6; font-size: .75rem; }
+            ul { margin: 0; padding-left: 1.25rem; font-size: .875rem; color: #374151; }
+            @media (max-width: 480px) { .grid-2 { grid-template-columns: 1fr; } .steps { flex-wrap: wrap; gap: .25rem .75rem; } }
+        </style>
+    </head>
+    <body>
+        {% set steps = ['Setup token', 'Database', 'Site', 'Admin', 'Done'] %}
+        <main>
+            <div class="brand">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"/><path d="M2 12a9 9 0 0 1 8 8"/><path d="M2 16a5 5 0 0 1 4 4"/><line x1="2" x2="2.01" y1="20" y2="20"/></svg>
+                Signage Forge setup
+            </div>
+            <ol class="steps">
+                {% for label in steps %}
+                    <li class="{{ loop.index == step ? 'current' : (loop.index < step ? 'done') }}">{{ loop.index }}. {{ label }}</li>
+                {% endfor %}
+            </ol>
+            <div class="card">
+                {% if error is defined and error %}
+                    <p class="alert alert-error" role="alert">{{ error }}</p>
+                {% endif %}
+                {% block step %}{% endblock %}
+            </div>
+        </main>
+        {% block scripts %}{% endblock %}
+    </body>
+</html>

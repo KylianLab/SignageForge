@@ -1,21 +1,21 @@
 {% extends 'install/layout.html.twig' %}
 
 {% block step %}
-    <h1 class="text-xl font-semibold">Site</h1>
-    <form method="post" class="space-y-4">
+    <h1>Site</h1>
+    <form method="post" class="stack">
         <input type="hidden" name="_token" value="{{ csrf_token('install') }}">
         <div>
             <label class="label" for="public_url">Public address of this site</label>
             <input id="public_url" name="public_url" type="url" required value="{{ site.public_url }}" class="input">
         </div>
-        <fieldset class="space-y-2">
+        <fieldset>
             <legend class="label">How do screens learn about changes?</legend>
-            <label class="flex items-start gap-2 text-sm">
-                <input type="radio" name="realtime" value="polling" {{ site.realtime == 'polling' ? 'checked' }} class="mt-1">
+            <label class="choice">
+                <input type="radio" name="realtime" value="polling" {{ site.realtime == 'polling' ? 'checked' }}>
                 <span><strong>Polling</strong>: screens check every few seconds. Nothing else to install.</span>
             </label>
-            <label class="flex items-start gap-2 text-sm">
-                <input type="radio" name="realtime" value="mercure" {{ site.realtime == 'mercure' ? 'checked' }} class="mt-1">
+            <label class="choice">
+                <input type="radio" name="realtime" value="mercure" {{ site.realtime == 'mercure' ? 'checked' }}>
                 <span><strong>Mercure</strong>: instant updates through a Mercure hub you run on this server (see docs/deployment.md).</span>
             </label>
         </fieldset>
@@ -23,6 +23,6 @@
             <label class="label" for="mercure_url">Mercure hub address (Mercure only)</label>
             <input id="mercure_url" name="mercure_url" type="url" value="{{ site.mercure_url }}" placeholder="{{ site.public_url }}/.well-known/mercure" class="input">
         </div>
-        <button class="btn-primary w-full">Continue</button>
+        <button class="btn-primary">Continue</button>
     </form>
 {% endblock %}
