@@ -17,7 +17,8 @@ yet.
 - [ ] Run the migrations on real MariaDB, MySQL and PostgreSQL servers
 - [ ] Build and run the `Containerfile` with Podman
 - [ ] Run a real Mercure hub behind Apache and nginx
-- [ ] Play videos and survive a network outage on a kiosk browser (Raspberry Pi,
+- [x] Play videos and survive a network outage, including a restart, in a desktop browser
+- [ ] Same on real kiosk devices (Raspberry Pi,
       Android TV)
 
 ## Installation and updates

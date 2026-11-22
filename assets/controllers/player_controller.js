@@ -69,7 +69,13 @@ export default class extends Controller {
             this.setOnline(false);
             if (!this.config) {
                 const cached = localStorage.getItem(this.cacheKeyValue);
-                this.apply(cached ? JSON.parse(cached) : { paired: false });
+                if (cached) {
+                    this.apply(JSON.parse(cached));
+                } else {
+                    // Never played anything yet: wait for the network, but keep
+                    // the pairing (an outage must not unpair the screen).
+                    this.showMessage('<p class="text-lg font-semibold">Waiting for the network…</p>');
+                }
             }
         }
     }
@@ -96,6 +102,7 @@ export default class extends Controller {
         this.messageTarget.hidden = true;
         this.index = 0;
         this.play();
+        this.preload(items);
     }
 
     play() {
@@ -131,6 +138,16 @@ export default class extends Controller {
         if (item.type !== 'VIDEO' && items.length > 1) {
             this.advanceTimer = setTimeout(() => this.next(), item.durationMs || 8000);
         }
+    }
+
+    /* Ask the service worker to cache every file of the playlist now, so an
+       outage does not hit items that have not been played yet. */
+    preload(items) {
+        if (!('serviceWorker' in navigator)) return;
+        const urls = items.filter((item) => item.type !== 'URL').map((item) => item.url);
+        navigator.serviceWorker.ready
+            .then((registration) => registration.active?.postMessage({ type: 'keep', urls }))
+            .catch(() => {});
     }
 
     next() {
