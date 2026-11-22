@@ -142,7 +142,9 @@ one-minute check.
 
 On each display, open `https://<your-host>/pair` in a browser in kiosk mode
 (Chromium: `--kiosk --autoplay-policy=no-user-gesture-required`). Claim the
-code from the dashboard. The device remembers its player URL; media is cached
+code from the dashboard. For a display mounted on its side whose device still
+sends a landscape picture, pick its orientation on the screen's page in the
+dashboard: the player rotates the content. The device remembers its player URL; media is cached
 so playback survives network outages.
 
 ## Upgrading

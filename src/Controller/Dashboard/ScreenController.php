@@ -7,6 +7,7 @@ namespace App\Controller\Dashboard;
 use App\Entity\Playlist;
 use App\Entity\Screen;
 use App\Entity\ScreenGroup;
+use App\Enum\Orientation;
 use App\Repository\PairingSessionRepository;
 use App\Repository\PlaylistRepository;
 use App\Repository\ScreenGroupRepository;
@@ -77,6 +78,43 @@ final class ScreenController extends AbstractDashboardController
         $this->addFlash('success', \sprintf('"%s" is paired. It will start playing in a few seconds.', $name));
 
         return $this->seeOther('app_dashboard');
+    }
+
+    #[Route('/screens/{id}', name: 'app_screens_edit', requirements: ['id' => Requirement::ULID], methods: ['GET'])]
+    public function edit(#[MapEntity(id: 'id')] ?Screen $screen): Response
+    {
+        return $this->render('dashboard/screen.html.twig', [
+            'screen' => $this->owned($screen),
+            'orientations' => Orientation::cases(),
+        ]);
+    }
+
+    /** Name, location and how the display is mounted. */
+    #[Route('/screens/{id}', name: 'app_screens_update', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function update(#[MapEntity(id: 'id')] ?Screen $screen, Request $request): Response
+    {
+        $screen = $this->owned($screen);
+        $this->requireCsrf($request, 'screen-'.$screen->getId());
+        $payload = $request->getPayload();
+
+        $name = mb_substr(trim($payload->getString('name')), 0, 80);
+        if ('' === $name) {
+            $this->addFlash('error', 'Give the screen a name.');
+
+            return $this->seeOther('app_screens_edit', ['id' => $screen->getId()]);
+        }
+        $location = mb_substr(trim($payload->getString('location')), 0, 120);
+        $orientation = Orientation::tryFrom($payload->getString('orientation')) ?? $screen->getOrientation();
+
+        $screen->setName($name);
+        $screen->setLocation('' !== $location ? $location : null);
+        $screen->setOrientation($orientation);
+        $this->em->flush();
+        $this->notifier->notifyScreen($screen, ScreenNotifier::EVENT_SCREEN_UPDATED);
+        $this->addFlash('success', 'Screen saved.');
+
+        return $this->seeOther('app_screens_edit', ['id' => $screen->getId()]);
     }
 
     #[Route('/screens/{id}/playlist', name: 'app_screens_playlist', requirements: ['id' => Requirement::ULID], methods: ['POST'])]

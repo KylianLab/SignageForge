@@ -33,3 +33,29 @@
     overflow: hidden;
     overscroll-behavior: none;
 }
+
+/*
+ * A display mounted on its side: turn the content so it reads upright. For a
+ * quarter turn the box takes the swapped size (100vh wide, 100vw high), then
+ * rotates around its top-left corner back onto the screen.
+ */
+.player-root.rotate-90,
+.player-root.rotate-270 {
+    inset: auto;
+    width: 100vh;
+    height: 100vw;
+    transform-origin: top left;
+}
+.player-root.rotate-90 {
+    top: 0;
+    left: 100vw;
+    transform: rotate(90deg);
+}
+.player-root.rotate-180 {
+    transform: rotate(180deg);
+}
+.player-root.rotate-270 {
+    top: 100vh;
+    left: 0;
+    transform: rotate(-90deg);
+}

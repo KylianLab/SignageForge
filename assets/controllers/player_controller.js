@@ -82,6 +82,7 @@ export default class extends Controller {
 
     apply(config) {
         this.config = config;
+        this.rotate(config.screen?.rotation ?? 0);
         const items = config.playlist?.items ?? [];
         const signature = JSON.stringify(items);
         if (signature === this.signature) return; // same content: don't interrupt playback
@@ -148,6 +149,13 @@ export default class extends Controller {
         navigator.serviceWorker.ready
             .then((registration) => registration.active?.postMessage({ type: 'keep', urls }))
             .catch(() => {});
+    }
+
+    /* Turns the content for displays mounted on their side. */
+    rotate(degrees) {
+        for (const angle of [90, 180, 270]) {
+            this.element.classList.toggle(`rotate-${angle}`, angle === degrees);
+        }
     }
 
     next() {

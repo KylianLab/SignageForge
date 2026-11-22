@@ -6,8 +6,10 @@
             <div class="card flex flex-wrap items-center gap-4 p-4">
                 <span class="h-3 w-3 shrink-0 rounded-full {{ online ? 'bg-green-500' : 'bg-gray-300' }}" aria-hidden="true"></span>
                 <div class="min-w-0 flex-1">
-                    <div class="truncate font-medium">{{ screen.name }}</div>
+                    <a href="{{ path('app_screens_edit', {id: screen.id}) }}" data-turbo-frame="_top" class="block truncate font-medium hover:text-brand">{{ screen.name }}</a>
                     <div class="text-xs text-gray-500">
+                        {% if screen.location %}{{ screen.location }} · {% endif %}
+                        {% if screen.orientation.rotation %}{{ screen.orientation.rotation }}° · {% endif %}
                         {% if online %}
                             Online
                         {% elseif screen.lastSeenAt %}

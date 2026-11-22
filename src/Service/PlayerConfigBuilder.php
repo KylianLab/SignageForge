@@ -24,7 +24,7 @@ final class PlayerConfigBuilder
     }
 
     /**
-     * @return array{paired: bool, screen?: array{name: string, orientation: string}, playlist?: array{id: string, name: string, items: list<array{id: string, type: string, url: string, durationMs: int}>}|null}
+     * @return array{paired: bool, screen?: array{name: string, orientation: string, rotation: int}, playlist?: array{id: string, name: string, items: list<array{id: string, type: string, url: string, durationMs: int}>}|null}
      */
     public function build(?Screen $screen): array
     {
@@ -53,6 +53,7 @@ final class PlayerConfigBuilder
             'screen' => [
                 'name' => $screen->getName(),
                 'orientation' => $screen->getOrientation()->value,
+                'rotation' => $screen->getOrientation()->rotation(),
             ],
             'playlist' => null === $playlist ? null : [
                 'id' => (string) $playlist->getId(),

@@ -106,7 +106,7 @@ docs/                     deployment guide
 
 This is an early MVP focused on the core loop: **pair → upload → playlist →
 play (offline-safe)**, with roles, schedules, screen groups, a web installer and
-updates. Next up: orientation, widgets and translations. The full list is in
+updates. Next up: widgets and translations. The full list is in
 [ROADMAP.md](ROADMAP.md).
 
 ## License
