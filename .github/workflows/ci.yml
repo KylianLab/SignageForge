@@ -1,0 +1,29 @@
+# Tests and static analysis on the oldest and the newest supported PHP.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.4']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: intl, ldap, pdo_sqlite, zip
+          tools: composer:v2
+
+      - run: composer install --no-interaction --no-progress
+
+      - run: php bin/phpunit
+
+      - run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress

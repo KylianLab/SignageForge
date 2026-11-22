@@ -33,7 +33,7 @@ final class PairingController extends AbstractController
     public function page(): Response
     {
         $dashboardUrl = $this->generateUrl('app_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $qr = (new Builder(writer: new SvgWriter(), data: $dashboardUrl, size: 120, margin: 4))->build();
+        $qr = Builder::create()->writer(new SvgWriter())->data($dashboardUrl)->size(120)->margin(4)->build();
 
         return $this->render('pairing/pair.html.twig', [
             'dashboard_url' => $dashboardUrl,

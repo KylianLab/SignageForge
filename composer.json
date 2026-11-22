@@ -9,10 +9,10 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "doctrine/doctrine-bundle": "^3.4",
-        "doctrine/doctrine-migrations-bundle": "^4.0",
+        "doctrine/doctrine-bundle": "^2.13",
+        "doctrine/doctrine-migrations-bundle": "^3.4",
         "doctrine/orm": "^3.8",
-        "endroid/qr-code": "^6.1",
+        "endroid/qr-code": "^5.1",
         "knpuniversity/oauth2-client-bundle": "^2.20",
         "symfony/asset-mapper": "7.4.*",
         "symfony/clock": "7.4.*",
@@ -29,11 +29,11 @@
         "symfony/process": "7.4.*",
         "symfony/runtime": "7.4.*",
         "symfony/security-bundle": "7.4.*",
-        "symfony/stimulus-bundle": "^3.7",
+        "symfony/stimulus-bundle": "^2.20",
         "symfony/translation": "7.4.*",
         "symfony/twig-bundle": "7.4.*",
         "symfony/uid": "7.4.*",
-        "symfony/ux-turbo": "^3.7",
+        "symfony/ux-turbo": "^2.20",
         "symfony/validator": "7.4.*",
         "symfony/yaml": "7.4.*",
         "symfonycasts/tailwind-bundle": "^1.0",
@@ -49,7 +49,10 @@
             "phpstan/extension-installer": true
         },
         "bump-after-update": true,
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "php": "8.2.0"
+        }
     },
     "autoload": {
         "psr-4": {
@@ -102,7 +105,7 @@
         "phpstan/phpstan": "^2.3",
         "phpstan/phpstan-doctrine": "^2.1",
         "phpstan/phpstan-symfony": "^2.1",
-        "phpunit/phpunit": "^13.4",
+        "phpunit/phpunit": "^11.5",
         "symfony/browser-kit": "7.4.*",
         "symfony/css-selector": "7.4.*",
         "symfony/debug-bundle": "7.4.*",
