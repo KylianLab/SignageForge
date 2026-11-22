@@ -10,6 +10,7 @@ parameters:
     signageforge.data_dir: '%env(resolve:SIGNAGEFORGE_DATA_DIR)%'
     signageforge.realtime: '%env(SIGNAGEFORGE_REALTIME)%'
     signageforge.poll_interval: '%env(int:SIGNAGEFORGE_POLL_INTERVAL)%'
+    signageforge.maintenance_flag: '%kernel.project_dir%/var/maintenance.flag'
 
 services:
     # default configuration for services in *this* file
@@ -32,6 +33,8 @@ services:
     # please note that last definitions always *replace* previous ones
 
 when@test:
+    parameters:
+        signageforge.maintenance_flag: '%kernel.project_dir%/var/maintenance-test.flag'
     services:
         App\Security\LdapDirectoryInterface:
             class: App\Tests\Double\FakeLdapDirectory

@@ -119,14 +119,21 @@ so playback survives network outages.
 
 ## Upgrading
 
+Get the new code, install its dependencies, then let the upgrade command do
+the rest:
+
 ```bash
-git pull
+git pull                     # or unpack the new release
 composer install --no-dev --optimize-autoloader
-php bin/console doctrine:migrations:migrate --no-interaction
-php bin/console tailwind:build --minify
-php bin/console asset-map:compile
-php bin/console cache:clear
+php bin/console signageforge:upgrade
 ```
+
+`signageforge:upgrade` puts up a maintenance page (screens keep playing from
+their cache), copies the SQLite database to `var/backups/`, runs the
+migrations, rebuilds the front-end assets in production and clears the cache.
+If a step fails, the site stays in maintenance: fix the problem and run the
+command again. With MariaDB/MySQL/PostgreSQL, back up the database with your
+usual tools first. Options: `--no-backup`, `--skip-assets`.
 
 ## Backups
 

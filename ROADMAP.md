@@ -30,7 +30,7 @@ yet.
 - [ ] **Web updates.** See the installed and the available version, then run
       the update from the admin area: maintenance mode, database backup,
       migrations, asset rebuild, cache clear.
-- [ ] **`signageforge:upgrade` command** doing the same from the terminal.
+- [x] **`signageforge:upgrade` command** doing the same from the terminal.
 
 ## Managing screens and content
 

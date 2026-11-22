@@ -129,12 +129,13 @@ async function keep(urls) {
   }
 }
 
-/** The player page: fresh when online, last good copy when offline. */
+/** The player page: fresh when online, last good copy when offline or during maintenance. */
 async function networkFirst(request) {
   const cache = await caches.open(SHELL_CACHE);
   try {
     const response = await fetch(request);
     if (response.ok) await cache.put(request, response.clone());
+    if (response.status >= 500) return (await cache.match(request)) || response;
     return response;
   } catch {
     return (await cache.match(request)) || new Response("Offline", { status: 503 });

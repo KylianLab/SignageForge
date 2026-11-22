@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Service\ConsoleRunner;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Process\PhpExecutableFinder;
-use Symfony\Component\Process\Process;
 
 /**
  * Guided setup: database, real-time mode, secrets, schema and first admin.
@@ -23,6 +22,7 @@ final class InstallCommand
 
     public function __construct(
         #[Autowire('%kernel.project_dir%')] private readonly string $projectDir,
+        private readonly ConsoleRunner $runner,
     ) {
     }
 
@@ -195,22 +195,13 @@ final class InstallCommand
     }
 
     /**
-     * @param list<string>               $arguments
+     * @param list<string>                $arguments
      * @param array<string, string|false> $env
      */
     private function console(SymfonyStyle $io, array $arguments, array $env, bool $quiet = false, bool $interactive = false): bool
     {
-        $php = (new PhpExecutableFinder())->find(false) ?: 'php';
-        $process = new Process([$php, $this->projectDir.'/bin/console', ...$arguments], $this->projectDir, $env, timeout: null);
-        if ($interactive && Process::isTtySupported()) {
-            $process->setTty(true);
-        }
-        $process->run(static function (string $type, string $buffer) use ($io, $quiet): void {
-            if (!$quiet || Process::ERR === $type) {
-                $io->write($buffer);
-            }
-        });
-
-        return $process->isSuccessful();
+        return $this->runner->run($arguments, $env, $quiet ? null : static function (string $buffer) use ($io): void {
+            $io->write($buffer);
+        }, $interactive);
     }
 }
