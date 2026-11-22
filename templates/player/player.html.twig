@@ -18,6 +18,7 @@
              {% if mercure_topic %}data-player-hub-url-value="{{ mercure(mercure_topic, {subscribe: mercure_topic}) }}"{% endif %}>
             <div class="text-center text-gray-400" data-player-target="message">Loading…</div>
             <div class="absolute inset-0 flex items-center justify-center" data-player-target="stage"></div>
+            <div class="overlay-layer" data-player-target="overlays" aria-hidden="true"></div>
             <div class="absolute right-3 bottom-3 hidden rounded-full bg-amber-500/90 px-3 py-1 text-xs font-medium text-black" data-player-target="offline">
                 offline · playing cached content
             </div>

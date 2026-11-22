@@ -48,7 +48,8 @@ yet.
       without network keeps its current one until it reconnects
 - [x] Screen groups: a group's playlist and schedule apply to all its screens
 - [x] Screen orientation (0°, 90°, 180°, 270°) and a settings page per screen
-- [ ] Widgets and overlays: clock, weather, news ticker
+- [x] Widgets over the content: clock, weather (Open-Meteo), news ticker
+- [ ] More widgets: RSS feeds, a QR code, a countdown
 
 ## Platform
 

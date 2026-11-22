@@ -1,0 +1,70 @@
+{% extends 'dashboard/layout.html.twig' %}
+{% import 'components/icons.html.twig' as ui %}
+
+{% block page_title %}Widgets · {{ owner.name }}{% endblock %}
+
+{% block content %}
+    {% set is_group = kind == 'groups' %}
+    {% set readonly = not is_granted('ROLE_EDITOR') %}
+    <a href="{{ is_group ? path('app_groups_edit', {id: owner.id}) : path('app_screens_edit', {id: owner.id}) }}" class="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800">
+        {{ ui.icon('back') }} {{ owner.name }}
+    </a>
+    <h1 class="mb-2 text-2xl font-bold">Widgets of {{ is_group ? 'the group ' }}{{ owner.name }}</h1>
+    <p class="mb-6 text-sm text-gray-500">Shown over the content, on {{ is_group ? 'every screen of the group' : 'this screen' }}.</p>
+
+    {% if not is_group and owner.group %}
+        <p class="mb-6 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            This screen is in the group <a href="{{ path('app_widgets', {kind: 'groups', id: owner.group.id}) }}" class="underline">{{ owner.group.name }}</a>
+            and shows the group's widgets. The settings below apply again if it leaves the group.
+        </p>
+    {% endif %}
+
+    {% macro position_select(name, value, positions, readonly) %}
+        <select name="{{ name }}" class="input w-auto" {{ readonly ? 'disabled' }} aria-label="Position">
+            {% for position in positions %}
+                <option value="{{ position }}" {{ value == position ? 'selected' }}>{{ position|replace({'-': ' '})|capitalize }}</option>
+            {% endfor %}
+        </select>
+    {% endmacro %}
+
+    <form method="post" action="{{ path('app_widgets_save', {kind: kind, id: owner.id}) }}" class="space-y-4">
+        <input type="hidden" name="_token" value="{{ csrf_token('widgets-' ~ owner.id) }}">
+
+        <fieldset class="card space-y-3 p-4" {{ readonly ? 'disabled' }}>
+            <label class="flex items-center gap-2 font-semibold"><input type="checkbox" name="clock" value="1" {{ overlays.clock ? 'checked' }}> Clock</label>
+            <div class="flex flex-wrap items-center gap-4 text-sm">
+                {{ _self.position_select('clock_position', overlays.clockPosition, positions, readonly) }}
+                <label class="flex items-center gap-2"><input type="checkbox" name="clock_show_date" value="1" {{ overlays.clockShowDate ? 'checked' }}> Show the date</label>
+            </div>
+        </fieldset>
+
+        <fieldset class="card space-y-3 p-4" {{ readonly ? 'disabled' }}>
+            <label class="flex items-center gap-2 font-semibold"><input type="checkbox" name="weather" value="1" {{ overlays.weather ? 'checked' }} {{ weather_enabled ? '' : 'disabled' }}> Weather</label>
+            {% if weather_enabled %}
+                <div class="flex flex-wrap items-center gap-4 text-sm">
+                    <input name="weather_place" value="{{ overlays.weatherLabel }}" placeholder="City, Country (e.g. Brussels, Belgium)" class="input w-72" aria-label="Place">
+                    {{ _self.position_select('weather_position', overlays.weatherPosition, positions, readonly) }}
+                </div>
+                <p class="text-xs text-gray-500">Current temperature and sky, refreshed every 15 minutes (data: Open-Meteo).</p>
+            {% else %}
+                <p class="text-xs text-gray-500">The weather is turned off on this server (SIGNAGEFORGE_WEATHER=false).</p>
+            {% endif %}
+        </fieldset>
+
+        <fieldset class="card space-y-3 p-4" {{ readonly ? 'disabled' }}>
+            <label class="flex items-center gap-2 font-semibold"><input type="checkbox" name="ticker" value="1" {{ overlays.ticker ? 'checked' }}> News ticker</label>
+            <textarea name="ticker_text" rows="4" maxlength="2000" placeholder="One message per line" class="input" aria-label="Ticker messages">{{ overlays.tickerText }}</textarea>
+            <label class="flex items-center gap-2 text-sm">Speed
+                <select name="ticker_speed" class="input w-auto">
+                    {% for speed in speeds %}
+                        <option value="{{ speed }}" {{ overlays.tickerSpeed == speed ? 'selected' }}>{{ speed|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </fieldset>
+
+        {% if not readonly %}
+            <button class="btn-primary">{{ ui.icon('save') }} Save</button>
+        {% endif %}
+    </form>
+{% endblock %}

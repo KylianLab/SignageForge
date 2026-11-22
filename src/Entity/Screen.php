@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Widget\Overlays;
 use App\Enum\Orientation;
 use App\Repository\ScreenRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -21,6 +22,7 @@ class Screen implements Scheduled
 {
     use TimestampableTrait;
     use ScheduleTrait;
+    use OverlaysTrait;
 
     /** A screen is shown as online if it checked in within this many seconds. */
     public const ONLINE_THRESHOLD_SECONDS = 150;
@@ -175,6 +177,12 @@ class Screen implements Scheduled
      * The playlist to play now. A screen in a group follows the group;
      * otherwise its own schedule, then its own default playlist.
      */
+    /** Widgets shown on this screen: its group's when it is in one. */
+    public function effectiveOverlays(): Overlays
+    {
+        return null !== $this->group ? $this->group->getOverlays() : $this->getOverlays();
+    }
+
     public function playlistAt(\DateTimeImmutable $localTime): ?Playlist
     {
         return null !== $this->group

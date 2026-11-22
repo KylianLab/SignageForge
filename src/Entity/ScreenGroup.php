@@ -22,6 +22,7 @@ class ScreenGroup implements Scheduled
 {
     use TimestampableTrait;
     use ScheduleTrait;
+    use OverlaysTrait;
 
     #[ORM\Id]
     #[ORM\Column(type: UlidType::NAME, unique: true)]

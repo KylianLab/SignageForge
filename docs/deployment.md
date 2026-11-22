@@ -86,7 +86,8 @@ composer dump-env prod
 | `TRUSTED_PROXIES` | IPs of your reverse proxy, so HTTPS and client IPs are right. |
 | `SIGNAGEFORGE_UPDATE_REPOSITORY` | GitHub repository checked for new releases; empty turns the check off. |
 | `SIGNAGEFORGE_WEB_UPDATES` | `true` allows one-click updates from the System page (off by default). |
-| `SIGNAGEFORGE_TIMEZONE` | Time zone of screen schedules, e.g. `Europe/Brussels` (default: PHP's `date.timezone`). |
+| `SIGNAGEFORGE_WEATHER` | `false` turns the weather widget off (the server then never calls Open-Meteo). |
+| `SIGNAGEFORGE_TIMEZONE` | Time zone of schedules and of the clock widget, e.g. `Europe/Brussels` (default: PHP's `date.timezone`). |
 | `SIGNAGEFORGE_NEW_USER_ROLE` | Role of people signing in for the first time: `VIEWER` (default), `EDITOR` or `ADMIN`. |
 | `AUTH_LOCAL_PASSWORD` | `false` hides email + password sign-in. |
 | `ENTRA_*` | Microsoft 365 sign-in. |

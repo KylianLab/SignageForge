@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit;
 
-use App\Tests\Double\FakeGitHub;
+use App\Tests\Double\FakeInternet;
 use App\Update\UpdateChecker;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -16,7 +16,7 @@ final class UpdateCheckerTest extends TestCase
 {
     public function testReadsTheLatestReleaseAndItsPackage(): void
     {
-        $checker = new UpdateChecker(new MockHttpClient(new FakeGitHub()), new ArrayAdapter(), new NullLogger(), 'example/signageforge');
+        $checker = new UpdateChecker(new MockHttpClient(new FakeInternet()), new ArrayAdapter(), new NullLogger(), 'example/signageforge');
 
         $release = $checker->latest();
 

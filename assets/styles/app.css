@@ -59,3 +59,58 @@
     left: 0;
     transform: rotate(-90deg);
 }
+
+/* Widgets over the player content. Sizes follow the shorter side of the
+   screen (vmin), so they read the same on a 1080p TV and a 4K wall. */
+.overlay-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+}
+.overlay-corner {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 1.2vmin;
+    padding: 1.2vmin 2vmin;
+    border-radius: 1.5vmin;
+    background: rgb(0 0 0 / 0.55);
+    color: #fff;
+    line-height: 1.1;
+    text-shadow: 0 0.2vmin 0.6vmin rgb(0 0 0 / 0.5);
+}
+.overlay-corner.top-left { top: 2.5vmin; left: 2.5vmin; }
+.overlay-corner.top-right { top: 2.5vmin; right: 2.5vmin; text-align: right; }
+.overlay-corner.bottom-left { bottom: 2.5vmin; left: 2.5vmin; }
+.overlay-corner.bottom-right { bottom: 2.5vmin; right: 2.5vmin; text-align: right; }
+.overlay-layer.has-ticker .overlay-corner.bottom-left,
+.overlay-layer.has-ticker .overlay-corner.bottom-right { bottom: 11vmin; }
+.overlay-clock-time { font-size: 6vmin; font-weight: 600; font-variant-numeric: tabular-nums; }
+.overlay-clock-date { font-size: 2.4vmin; opacity: 0.85; }
+.overlay-weather svg { width: 6vmin; height: 6vmin; }
+.overlay-weather-temp { font-size: 5vmin; font-weight: 600; }
+.overlay-weather-label { font-size: 2.2vmin; opacity: 0.85; }
+.overlay-ticker {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 8.5vmin;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: rgb(0 0 0 / 0.75);
+    color: #fff;
+    font-size: 4vmin;
+    font-weight: 500;
+}
+.overlay-ticker-text {
+    white-space: nowrap;
+    padding-left: 100%;
+    animation: overlay-ticker linear infinite;
+}
+@keyframes overlay-ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-100%); }
+}

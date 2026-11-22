@@ -6,8 +6,8 @@
 {% block body %}
     {% set route = app.current_route %}
     {% set nav = [
-        {route: 'app_dashboard', label: 'Screens', icon: 'monitor', active: route starts with 'app_dashboard' or route starts with 'app_screens' or (route starts with 'app_schedule' and app.request.attributes.get('kind') == 'screens')},
-        {route: 'app_groups', label: 'Groups', icon: 'group', active: route starts with 'app_groups' or (route starts with 'app_schedule' and app.request.attributes.get('kind') == 'groups')},
+        {route: 'app_dashboard', label: 'Screens', icon: 'monitor', active: route starts with 'app_dashboard' or route starts with 'app_screens' or ((route starts with 'app_schedule' or route starts with 'app_widgets') and app.request.attributes.get('kind') == 'screens')},
+        {route: 'app_groups', label: 'Groups', icon: 'group', active: route starts with 'app_groups' or ((route starts with 'app_schedule' or route starts with 'app_widgets') and app.request.attributes.get('kind') == 'groups')},
         {route: 'app_media', label: 'Media', icon: 'image', active: route starts with 'app_media'},
         {route: 'app_playlists', label: 'Playlists', icon: 'list', active: route starts with 'app_playlists'},
     ]|merge(is_granted('ROLE_ADMIN') ? [

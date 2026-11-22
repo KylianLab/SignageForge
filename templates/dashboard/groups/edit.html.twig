@@ -42,6 +42,7 @@
             <span class="text-sm text-gray-600">{{ group.playlist ? group.playlist.name : 'No playlist' }}</span>
         {% endif %}
         <a href="{{ path('app_schedule', {kind: 'groups', id: group.id}) }}" class="btn-secondary">{{ ui.icon('calendar') }} Schedule</a>
+        <a href="{{ path('app_widgets', {kind: 'groups', id: group.id}) }}" class="btn-secondary">{{ ui.icon('widgets') }} Widgets</a>
     </section>
 
     <section class="card mb-6">

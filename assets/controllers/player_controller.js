@@ -11,7 +11,7 @@ const HEARTBEAT_MS = 60_000;
  * config endpoint with an ETag, so an unchanged playlist costs a 304.
  */
 export default class extends Controller {
-    static targets = ['message', 'stage', 'offline'];
+    static targets = ['message', 'stage', 'offline', 'overlays'];
     static values = {
         configUrl: String,
         cacheKey: String,
@@ -40,6 +40,7 @@ export default class extends Controller {
     }
 
     disconnect() {
+        clearInterval(this.clockTimer);
         clearInterval(this.poller);
         clearTimeout(this.advanceTimer);
         this.events?.close();
@@ -83,6 +84,7 @@ export default class extends Controller {
     apply(config) {
         this.config = config;
         this.rotate(config.screen?.rotation ?? 0);
+        this.renderOverlays(config.paired ? config.overlays : null);
         const items = config.playlist?.items ?? [];
         const signature = JSON.stringify(items);
         if (signature === this.signature) return; // same content: don't interrupt playback
@@ -151,6 +153,66 @@ export default class extends Controller {
             .catch(() => {});
     }
 
+    /* Clock, weather and ticker over the content; redrawn only when they change. */
+    renderOverlays(overlays) {
+        const signature = JSON.stringify(overlays ?? null);
+        if (signature === this.overlaySignature) return;
+        this.overlaySignature = signature;
+        clearInterval(this.clockTimer);
+
+        const layer = this.overlaysTarget;
+        layer.replaceChildren();
+        layer.classList.toggle('has-ticker', Boolean(overlays?.ticker));
+        if (!overlays) return;
+
+        if (overlays.clock) {
+            const box = corner(overlays.clock.position, 'overlay-clock');
+            const text = document.createElement('div');
+            const time = div('overlay-clock-time');
+            const date = div('overlay-clock-date');
+            text.append(time);
+            if (overlays.clock.showDate) text.append(date);
+            box.append(text);
+            layer.append(box);
+
+            const tick = () => {
+                const now = new Date();
+                const zone = { timeZone: overlays.timezone };
+                time.textContent = now.toLocaleTimeString(undefined, { ...zone, hour: '2-digit', minute: '2-digit' });
+                date.textContent = now.toLocaleDateString(undefined, { ...zone, weekday: 'long', day: 'numeric', month: 'long' });
+            };
+            tick();
+            this.clockTimer = setInterval(tick, 1000);
+        }
+
+        if (overlays.weather) {
+            const w = overlays.weather;
+            const box = corner(w.position, 'overlay-weather');
+            box.innerHTML = weatherIcon(w.condition, w.isDay);
+            const text = document.createElement('div');
+            const temp = div('overlay-weather-temp');
+            temp.textContent = `${w.temperature}°`;
+            const label = div('overlay-weather-label');
+            label.textContent = w.label;
+            text.append(temp, label);
+            box.append(text);
+            layer.append(box);
+        }
+
+        if (overlays.ticker) {
+            const bar = div('overlay-ticker');
+            const text = div('overlay-ticker-text');
+            text.textContent = overlays.ticker.messages.join('   •   ');
+            bar.append(text);
+            layer.append(bar);
+            // Constant reading speed: a long message takes longer to cross.
+            requestAnimationFrame(() => {
+                const screens = text.scrollWidth / Math.max(1, bar.clientWidth);
+                text.style.animationDuration = `${Math.max(5, screens * overlays.ticker.secondsPerScreen)}s`;
+            });
+        }
+    }
+
     /* Turns the content for displays mounted on their side. */
     rotate(degrees) {
         for (const angle of [90, 180, 270]) {
@@ -174,6 +236,33 @@ export default class extends Controller {
     setOnline(online) {
         this.offlineTarget.classList.toggle('hidden', online);
     }
+}
+
+function div(className) {
+    const element = document.createElement('div');
+    element.className = className;
+    return element;
+}
+
+function corner(position, className) {
+    return div(`overlay-corner ${position} ${className}`);
+}
+
+/* A few simple pictures for the sky; no icon font or CDN on the screen. */
+function weatherIcon(condition, isDay) {
+    const sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+    const moon = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+    const cloud = '<path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9Z"/>';
+    const shapes = {
+        clear: isDay ? sun : moon,
+        'partly-cloudy': '<path d="M12 2v2M4.9 4.9l1.4 1.4M20 12h2M19.1 4.9l-1.4 1.4"/><path d="M15.9 13A4 4 0 0 0 8.1 10"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/>',
+        cloudy: cloud,
+        fog: '<path d="M4 14h16M4 18h16M6 10h12"/>',
+        rain: cloud.replace('19H9', '15H9').replace('a4.5 4.5 0 1 1 0 9Z', 'a4.5 4.5 0 1 1 0 5Z') + '<path d="M8 19v2M12 19v2M16 19v2"/>',
+        snow: cloud.replace('19H9', '15H9').replace('a4.5 4.5 0 1 1 0 9Z', 'a4.5 4.5 0 1 1 0 5Z') + '<path d="M8 19h.01M12 20h.01M16 19h.01"/>',
+        storm: cloud.replace('19H9', '15H9').replace('a4.5 4.5 0 1 1 0 9Z', 'a4.5 4.5 0 1 1 0 5Z') + '<path d="m13 16-3 4h4l-3 4"/>',
+    };
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${shapes[condition] ?? cloud}</svg>`;
 }
 
 function escapeHtml(text) {

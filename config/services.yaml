@@ -46,4 +46,4 @@ when@test:
     services:
         App\Security\LdapDirectoryInterface:
             class: App\Tests\Double\FakeLdapDirectory
-        App\Tests\Double\FakeGitHub: ~
+        App\Tests\Double\FakeInternet: ~

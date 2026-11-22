@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Widget\Overlays;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Uid\Ulid;
 
@@ -26,4 +27,8 @@ interface Scheduled
     public function addScheduleRule(Playlist $playlist, int $days, int $startMinute, int $endMinute): ScheduleRule;
 
     public function removeScheduleRule(ScheduleRule $rule): void;
+
+    public function getOverlays(): Overlays;
+
+    public function setOverlays(Overlays $overlays): void;
 }
