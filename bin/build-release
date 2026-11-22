@@ -81,7 +81,7 @@ $zip->open($package, ZipArchive::CREATE);
 $base = dirname($build);
 $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($build, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST);
 foreach ($files as $file) {
-    $name = str_replace('\', '/', substr($file->getPathname(), strlen($base) + 1));
+    $name = strtr(substr($file->getPathname(), strlen($base) + 1), DIRECTORY_SEPARATOR, '/');
     $file->isDir() ? $zip->addEmptyDir($name) : $zip->addFile($file->getPathname(), $name);
 }
 $zip->close();
