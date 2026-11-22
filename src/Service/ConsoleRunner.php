@@ -32,6 +32,11 @@ final class ConsoleRunner
         // Same environment as the caller unless told otherwise (the installer
         // unsets APP_ENV so the child reads the .env.local it just wrote).
         $env = array_merge(['APP_ENV' => $this->environment], $env);
+        if (false === $env['APP_ENV'] && !\array_key_exists('APP_DEBUG', $env)) {
+            // The child picks its own environment: let it pick debug too,
+            // instead of inheriting this process's.
+            $env['APP_DEBUG'] = false;
+        }
         $process = new Process([$php, $this->projectDir.'/bin/console', ...$arguments], $this->projectDir, $env, timeout: null);
         if ($tty && Process::isTtySupported()) {
             $process->setTty(true);

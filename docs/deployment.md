@@ -84,6 +84,8 @@ composer dump-env prod
 | `SIGNAGEFORGE_REALTIME` | `polling` (default) or `mercure`. |
 | `SIGNAGEFORGE_POLL_INTERVAL` | Seconds between checks in polling mode. |
 | `TRUSTED_PROXIES` | IPs of your reverse proxy, so HTTPS and client IPs are right. |
+| `SIGNAGEFORGE_UPDATE_REPOSITORY` | GitHub repository checked for new releases; empty turns the check off. |
+| `SIGNAGEFORGE_WEB_UPDATES` | `true` allows one-click updates from the System page (off by default). |
 | `SIGNAGEFORGE_TIMEZONE` | Time zone of screen schedules, e.g. `Europe/Brussels` (default: PHP's `date.timezone`). |
 | `SIGNAGEFORGE_NEW_USER_ROLE` | Role of people signing in for the first time: `VIEWER` (default), `EDITOR` or `ADMIN`. |
 | `AUTH_LOCAL_PASSWORD` | `false` hides email + password sign-in. |
@@ -145,21 +147,51 @@ so playback survives network outages.
 
 ## Upgrading
 
-Get the new code, install its dependencies, then let the upgrade command do
-the rest:
+The **System** page of the dashboard (admins) shows the installed version and
+whether a newer release exists on GitHub. It checks at most every six hours;
+set `SIGNAGEFORGE_UPDATE_REPOSITORY=` (empty) on servers that must not contact
+the internet.
+
+### From a release (recommended)
 
 ```bash
-git pull                     # or unpack the new release
+php bin/console signageforge:self-update
+```
+
+It downloads the ready-to-install package of the latest release, checks its
+SHA-256, puts up a maintenance page (screens keep playing from their cache),
+backs up the SQLite database, replaces the code, then runs the new version's
+`signageforge:upgrade`. Your settings (`.env.local`), `var/` and `data/` are
+never touched. If anything fails, the previous files are put back; they are
+also kept in `var/update/previous/` until the next update.
+
+**Servers without internet access:** download `signageforge-X.Y.Z.zip` and
+`signageforge-X.Y.Z.zip.sha256` from the release page, copy both to the
+server, then:
+
+```bash
+php bin/console signageforge:self-update --package=/tmp/signageforge-X.Y.Z.zip
+```
+
+**One click from the browser:** set `SIGNAGEFORGE_WEB_UPDATES=true` and the
+System page offers an **Install** button that runs the same update in the
+background. It is off by default because the web server user then needs write
+access to the whole project folder, which many IT departments rule out.
+
+### From git
+
+```bash
+git pull
 composer install --no-dev --optimize-autoloader
 php bin/console signageforge:upgrade
 ```
 
-`signageforge:upgrade` puts up a maintenance page (screens keep playing from
-their cache), copies the SQLite database to `var/backups/`, runs the
-migrations, rebuilds the front-end assets in production and clears the cache.
-If a step fails, the site stays in maintenance: fix the problem and run the
-command again. With MariaDB/MySQL/PostgreSQL, back up the database with your
-usual tools first. Options: `--no-backup`, `--skip-assets`.
+`signageforge:upgrade` puts up the maintenance page, copies the SQLite
+database to `var/backups/`, runs the migrations, rebuilds the front-end assets
+in production and clears the cache. If a step fails, the site stays in
+maintenance: fix the problem and run the command again. With
+MariaDB/MySQL/PostgreSQL, back up the database with your usual tools first.
+Options: `--no-backup`, `--skip-assets`.
 
 ## Backups
 
@@ -182,3 +214,14 @@ podman exec -it -u www-data signageforge php bin/console signageforge:user:creat
 Use `-e` for any other variable above. The container runs pending migrations on
 start. To run it as a systemd service, generate a Quadlet unit or use
 `podman generate systemd`.
+
+## Publishing a release (maintainers)
+
+1. Set the new version in `src/Version.php` and commit.
+2. Tag and push: `git tag v0.2.0 && git push origin v0.2.0`.
+
+The **Release** workflow (`.github/workflows/release.yml`) runs the tests,
+builds the package with `php bin/build-release` (production dependencies,
+compiled assets, no tests) and publishes it with its `.sha256` on the release
+page. You can run `php bin/build-release` locally to check the package; it
+writes to `var/release/`.

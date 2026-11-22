@@ -8,7 +8,7 @@
  *
  *   php bin/build-release
  *
- * COMPOSER (env) is the Composer command to use, "composer" by default.
+ * COMPOSER_BIN (env) is the Composer command to use, "composer" by default.
  * Used by .github/workflows/release.yml; works the same locally.
  */
 
@@ -17,7 +17,7 @@ declare(strict_types=1);
 $project = dirname(__DIR__);
 $out = $project.'/var/release';
 $build = $out.'/build/signageforge';
-$composer = getenv('COMPOSER') ?: 'composer';
+$composer = getenv('COMPOSER_BIN') ?: 'composer';
 
 function run(string $command, string $cwd, array $env = []): void
 {

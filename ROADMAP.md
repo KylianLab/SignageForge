@@ -32,9 +32,11 @@ yet.
       connection test, public URL, real-time mode, first admin. Protected by a
       one-time setup token and locked once done. The `signageforge:install`
       command stays for scripted installs.
-- [ ] **Web updates.** See the installed and the available version, then run
-      the update from the admin area: maintenance mode, database backup,
-      migrations, asset rebuild, cache clear.
+- [x] **Web updates.** System page with the installed and available version;
+      `signageforge:self-update` (also offline with `--package`); one-click
+      install from the browser when `SIGNAGEFORGE_WEB_UPDATES=true`
+- [ ] Publish the first release (tag `v0.1.0`) so update checks have something
+      to find
 - [x] **`signageforge:upgrade` command** doing the same from the terminal.
 
 ## Managing screens and content
