@@ -88,7 +88,10 @@
             "@auto-scripts"
         ],
         "phpstan": "phpstan analyse --memory-limit=1G",
-        "test": "phpunit"
+        "test": [
+            "@php bin/console tailwind:build --quiet",
+            "phpunit"
+        ]
     },
     "conflict": {
         "symfony/symfony": "*"

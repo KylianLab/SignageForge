@@ -24,6 +24,9 @@ jobs:
 
       - run: composer install --no-interaction --no-progress
 
+      # Pages include the compiled CSS, so build it once.
+      - run: php bin/console tailwind:build
+
       - run: php bin/phpunit
 
       - run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress

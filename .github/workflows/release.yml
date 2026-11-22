@@ -32,6 +32,7 @@ jobs:
       - name: Run the tests
         run: |
           composer install --no-interaction --no-progress
+          php bin/console tailwind:build
           php bin/phpunit
 
       - name: Build the package
