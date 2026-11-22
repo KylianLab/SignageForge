@@ -37,8 +37,7 @@ yet.
       install from the browser when `SIGNAGEFORGE_WEB_UPDATES=true`
 - [x] Real update of an installed site with a package from `bin/build-release`
       (Windows, `--package`): code replaced, data and settings kept
-- [ ] Publish the first release (tag `v0.1.0`) so update checks have something
-      to find
+- [x] First release published: v0.1.0, with its package and checksum
 - [x] **`signageforge:upgrade` command** doing the same from the terminal.
 
 ## Managing screens and content
