@@ -11,6 +11,9 @@ parameters:
     signageforge.realtime: '%env(SIGNAGEFORGE_REALTIME)%'
     signageforge.poll_interval: '%env(int:SIGNAGEFORGE_POLL_INTERVAL)%'
     signageforge.maintenance_flag: '%kernel.project_dir%/var/maintenance.flag'
+    signageforge.installed_flag: '%kernel.project_dir%/var/installed.flag'
+    signageforge.setup_token_file: '%kernel.project_dir%/var/setup-token.txt'
+    signageforge.env_local: '%kernel.project_dir%/.env.local'
 
 services:
     # default configuration for services in *this* file
@@ -35,6 +38,9 @@ services:
 when@test:
     parameters:
         signageforge.maintenance_flag: '%kernel.project_dir%/var/maintenance-test.flag'
+        signageforge.installed_flag: '%kernel.project_dir%/var/installed-test.flag'
+        signageforge.setup_token_file: '%kernel.project_dir%/var/setup-token-test.txt'
+        signageforge.env_local: '%kernel.project_dir%/var/test-env.local'
     services:
         App\Security\LdapDirectoryInterface:
             class: App\Tests\Double\FakeLdapDirectory

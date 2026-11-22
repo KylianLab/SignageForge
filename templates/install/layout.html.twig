@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+{% import 'components/icons.html.twig' as ui %}
+
+{% block title %}Set up · Signage Forge{% endblock %}
+
+{% block body %}
+    {% set steps = ['Setup token', 'Database', 'Site', 'Admin', 'Done'] %}
+    <main class="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-4 py-10" data-turbo="false">
+        <div class="mb-6 flex items-center justify-center gap-2 text-lg font-semibold">
+            {{ ui.icon('cast', 'h-6 w-6 text-brand') }} Signage Forge setup
+        </div>
+        <ol class="mb-6 flex justify-between text-xs text-gray-400">
+            {% for label in steps %}
+                <li class="{{ loop.index == step ? 'font-semibold text-brand' : (loop.index < step ? 'text-gray-600') }}">
+                    {{ loop.index }}. {{ label }}
+                </li>
+            {% endfor %}
+        </ol>
+        <div class="card space-y-5 p-6">
+            {% if error is defined and error %}
+                <p class="rounded-lg bg-red-50 px-3 py-2 text-sm whitespace-pre-line text-red-700" role="alert">{{ error }}</p>
+            {% endif %}
+            {% block step %}{% endblock %}
+        </div>
+    </main>
+{% endblock %}

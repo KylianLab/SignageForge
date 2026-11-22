@@ -45,7 +45,8 @@ composer install --no-dev --optimize-autoloader
 php bin/console signageforge:install   # database, real-time mode, first admin
 ```
 
-Then point Apache or nginx at `public/`. The full guide, with web server
+Then point Apache or nginx at `public/`. You can also skip the command and
+finish the setup in the browser at `/install`. The full guide, with web server
 configs, Mercure and Podman, is in [docs/deployment.md](docs/deployment.md).
 
 ## Quick start (development)

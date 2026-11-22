@@ -1,0 +1,10 @@
+{% extends 'install/layout.html.twig' %}
+
+{% block step %}
+    <h1 class="text-xl font-semibold">Signage Forge is ready</h1>
+    <ul class="list-disc space-y-1 pl-5 text-sm text-gray-700">
+        {% for line in done %}<li>{{ line }}</li>{% endfor %}
+    </ul>
+    <p class="text-sm text-gray-600">The setup page is now closed. Sign in as <strong>{{ email }}</strong>, then open <code>/pair</code> on a screen.</p>
+    <a href="{{ path('app_login') }}" class="btn-primary w-full">Sign in</a>
+{% endblock %}

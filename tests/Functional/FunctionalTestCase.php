@@ -7,6 +7,7 @@ namespace App\Tests\Functional;
 use App\Entity\User;
 use App\Enum\MembershipRole;
 use App\Service\TenantContext;
+use App\Setup\InstallState;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -28,6 +29,9 @@ abstract class FunctionalTestCase extends WebTestCase
         $schemaTool->createSchema($metadata);
 
         (new Filesystem())->remove((string) static::getContainer()->getParameter('signageforge.data_dir'));
+
+        // Most tests run against a set-up site; installer tests undo this.
+        static::getContainer()->get(InstallState::class)->markInstalled();
     }
 
     protected function em(): EntityManagerInterface

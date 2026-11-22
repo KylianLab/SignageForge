@@ -45,6 +45,9 @@ final class CreateUserCommand
             return Command::INVALID;
         }
 
+        // Lets the web installer pass the password without putting it on the
+        // command line, where other users of the server could see it.
+        $password ??= ($_SERVER['SIGNAGEFORGE_NEW_PASSWORD'] ?? getenv('SIGNAGEFORGE_NEW_PASSWORD')) ?: null;
         if (null === $password) {
             $password = $io->askHidden('Password (at least 8 characters)', static function (?string $value): string {
                 if (null === $value || mb_strlen($value) < 8) {

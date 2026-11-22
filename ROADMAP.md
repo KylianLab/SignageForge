@@ -14,7 +14,8 @@ yet.
 
 - [ ] Sign in with Microsoft 365 against a real Entra ID tenant
 - [ ] Sign in against a real LDAP directory and Active Directory
-- [ ] Run the migrations on real MariaDB, MySQL and PostgreSQL servers
+- [x] Run the migrations and the test suite on a real MariaDB server
+- [ ] Same on real MySQL and PostgreSQL servers
 - [ ] Build and run the `Containerfile` with Podman
 - [ ] Run a real Mercure hub behind Apache and nginx
 - [x] Play videos and survive a network outage, including a restart, in a desktop browser
@@ -23,7 +24,7 @@ yet.
 
 ## Installation and updates
 
-- [ ] **Web installer.** First-run setup in the browser: database with a
+- [x] **Web installer.** First-run setup in the browser: database with a
       connection test, public URL, real-time mode, first admin. Protected by a
       one-time setup token and locked once done. The `signageforge:install`
       command stays for scripted installs.

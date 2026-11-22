@@ -51,8 +51,10 @@ final class MaintenanceTest extends FunctionalTestCase
     public function testSqliteDatabasesAreCopiedBeforeAnUpdate(): void
     {
         $backup = static::getContainer()->get(DatabaseBackup::class);
+        if (!$backup->supported()) {
+            self::markTestSkipped('Only SQLite is backed up as a file.');
+        }
 
-        self::assertTrue($backup->supported());
         $copy = $backup->backup();
         self::assertNotNull($copy);
         self::assertFileExists($copy);

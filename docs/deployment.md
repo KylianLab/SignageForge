@@ -35,6 +35,20 @@ first admin, writes `.env.local`, creates the schema and builds the front-end
 assets. Every question has an option for scripted installs, see
 `php bin/console signageforge:install --help`.
 
+### Or set up from the browser
+
+Skip `signageforge:install`, configure the web server (below), and open the
+site: every page leads to `/install` until setup is done. The first step asks
+for a setup token, which proves you have access to the server; read it with
+
+```bash
+cat var/setup-token.txt
+```
+
+The browser setup writes `.env.local`, so the web server user needs write
+access to the project folder during setup (you can take it back afterwards).
+Once an admin exists, `/install` is closed for good.
+
 Then:
 
 ```bash

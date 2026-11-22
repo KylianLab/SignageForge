@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Service\ConsoleRunner;
+use App\Setup\DatabaseSettings;
+use App\Setup\EnvFile;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Guided setup: database, real-time mode, secrets, schema and first admin.
@@ -21,7 +22,7 @@ final class InstallCommand
     private const ENGINES = ['sqlite', 'mysql', 'postgresql'];
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%')] private readonly string $projectDir,
+        private readonly EnvFile $envFile,
         private readonly ConsoleRunner $runner,
     ) {
     }
@@ -89,9 +90,8 @@ final class InstallCommand
         }
 
         // --- Write .env.local ----------------------------------------------
-        $envFile = $this->projectDir.'/.env.local';
-        $this->writeEnvFile($envFile, $values);
-        $io->success('Wrote '.$envFile);
+        $this->envFile->write($values);
+        $io->success('Wrote '.$this->envFile->path());
 
         // --- Schema, assets, admin (in child processes, so they read the new settings)
         $childEnv = array_fill_keys(array_keys($values), false);
@@ -139,59 +139,24 @@ final class InstallCommand
     private function askDatabaseUrl(SymfonyStyle $io, string $engine): string
     {
         if ('sqlite' === $engine) {
-            return 'sqlite:///%kernel.project_dir%/data/signageforge.db';
+            return DatabaseSettings::SQLITE_URL;
         }
 
         $isMysql = 'mysql' === $engine;
-        $host = (string) $io->ask('Database host', '127.0.0.1');
-        $port = (string) $io->ask('Database port', $isMysql ? '3306' : '5432');
-        $name = (string) $io->ask('Database name', 'signageforge');
-        $user = (string) $io->ask('Database user', 'signageforge');
-        $password = (string) $io->askHidden('Database password');
-        $version = (string) $io->ask(
-            $isMysql ? 'Server version (e.g. 10.11.2-MariaDB or 8.0.36)' : 'Server version (e.g. 16)',
-            $isMysql ? '10.11.2-MariaDB' : '16',
+        $settings = new DatabaseSettings(
+            engine: $engine,
+            host: (string) $io->ask('Database host', '127.0.0.1'),
+            port: (string) $io->ask('Database port', $isMysql ? '3306' : '5432'),
+            name: (string) $io->ask('Database name', 'signageforge'),
+            user: (string) $io->ask('Database user', 'signageforge'),
+            password: (string) $io->askHidden('Database password'),
+            serverVersion: (string) $io->ask(
+                $isMysql ? 'Server version (e.g. 10.11.2-MariaDB or 8.0.36)' : 'Server version (e.g. 16)',
+                $isMysql ? '10.11.2-MariaDB' : '16',
+            ),
         );
 
-        return \sprintf(
-            '%s://%s:%s@%s:%s/%s?serverVersion=%s&charset=%s',
-            $engine,
-            rawurlencode($user),
-            rawurlencode($password),
-            $host,
-            $port,
-            rawurlencode($name),
-            rawurlencode($version),
-            $isMysql ? 'utf8mb4' : 'utf8',
-        );
-    }
-
-    /** @param array<string, string> $values */
-    private function writeEnvFile(string $path, array $values): void
-    {
-        $lines = is_file($path) ? (file($path, \FILE_IGNORE_NEW_LINES) ?: []) : ['# Local settings written by "php bin/console signageforge:install". Not committed.'];
-
-        foreach ($values as $key => $value) {
-            $line = $key.'='.self::quote($value);
-            $replaced = false;
-            foreach ($lines as $i => $existing) {
-                if (preg_match('/^\s*'.preg_quote($key, '/').'\s*=/', $existing)) {
-                    $lines[$i] = $line;
-                    $replaced = true;
-                }
-            }
-            if (!$replaced) {
-                $lines[] = $line;
-            }
-        }
-
-        file_put_contents($path, implode("\n", $lines)."\n");
-        @chmod($path, 0600);
-    }
-
-    private static function quote(string $value): string
-    {
-        return preg_match('/^[A-Za-z0-9_.:\/@%-]*$/', $value) ? $value : '"'.addcslashes($value, '"\\$').'"';
+        return $settings->url();
     }
 
     /**
