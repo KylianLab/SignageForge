@@ -6,13 +6,21 @@ namespace App\Service;
 
 use App\Entity\Screen;
 use App\Enum\MediaType;
+use Psr\Clock\ClockInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /** Builds what a player needs to know to play its content. */
 final class PlayerConfigBuilder
 {
-    public function __construct(private readonly UrlGeneratorInterface $urls)
-    {
+    private readonly \DateTimeZone $timezone;
+
+    public function __construct(
+        private readonly UrlGeneratorInterface $urls,
+        private readonly ClockInterface $clock,
+        #[Autowire('%env(SIGNAGEFORGE_TIMEZONE)%')] string $timezone = '',
+    ) {
+        $this->timezone = new \DateTimeZone('' !== $timezone ? $timezone : date_default_timezone_get());
     }
 
     /**
@@ -24,7 +32,8 @@ final class PlayerConfigBuilder
             return ['paired' => false];
         }
 
-        $playlist = $screen->getPlaylist();
+        // Schedules use the site's local time, not the server's.
+        $playlist = $screen->playlistAt($this->clock->now()->setTimezone($this->timezone));
         $items = [];
         foreach ($playlist?->getItems() ?? [] as $item) {
             $media = $item->getMedia();

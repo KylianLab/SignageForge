@@ -84,6 +84,7 @@ composer dump-env prod
 | `SIGNAGEFORGE_REALTIME` | `polling` (default) or `mercure`. |
 | `SIGNAGEFORGE_POLL_INTERVAL` | Seconds between checks in polling mode. |
 | `TRUSTED_PROXIES` | IPs of your reverse proxy, so HTTPS and client IPs are right. |
+| `SIGNAGEFORGE_TIMEZONE` | Time zone of screen schedules, e.g. `Europe/Brussels` (default: PHP's `date.timezone`). |
 | `SIGNAGEFORGE_NEW_USER_ROLE` | Role of people signing in for the first time: `VIEWER` (default), `EDITOR` or `ADMIN`. |
 | `AUTH_LOCAL_PASSWORD` | `false` hides email + password sign-in. |
 | `ENTRA_*` | Microsoft 365 sign-in. |

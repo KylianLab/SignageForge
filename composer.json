@@ -15,6 +15,7 @@
         "endroid/qr-code": "^6.1",
         "knpuniversity/oauth2-client-bundle": "^2.20",
         "symfony/asset-mapper": "7.4.*",
+        "symfony/clock": "7.4.*",
         "symfony/console": "7.4.*",
         "symfony/dotenv": "7.4.*",
         "symfony/flex": "^2",

@@ -12,7 +12,7 @@ use Doctrine\DBAL\Platforms\SQLitePlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
-use DoctrineMigrations\Version20261120000000;
+use Doctrine\Migrations\AbstractMigration;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use Psr\Log\NullLogger;
@@ -25,6 +25,20 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  */
 final class MigrationPortabilityTest extends KernelTestCase
 {
+    /** @return list<class-string<AbstractMigration>> every migration, oldest first */
+    private static function migrations(): array
+    {
+        $files = glob(\dirname(__DIR__, 2).'/migrations/Version*.php') ?: [];
+        sort($files);
+
+        return array_map(static function (string $file): string {
+            $class = 'DoctrineMigrations\\'.basename($file, '.php');
+            \assert(is_subclass_of($class, AbstractMigration::class));
+
+            return $class;
+        }, $files);
+    }
+
     /** @return iterable<string, array{AbstractPlatform}> */
     public static function platforms(): iterable
     {
@@ -46,7 +60,9 @@ final class MigrationPortabilityTest extends KernelTestCase
 
         // Migrations get a schema configured like the connection (table options).
         $fromMigrations = new Schema(schemaConfig: $em->getConnection()->createSchemaManager()->createSchemaConfig());
-        (new Version20261120000000($em->getConnection(), new NullLogger()))->up($fromMigrations);
+        foreach (self::migrations() as $class) {
+            (new $class($em->getConnection(), new NullLogger()))->up($fromMigrations);
+        }
 
         $expected = $fromEntities->toSql($platform);
         $actual = $fromMigrations->toSql($platform);

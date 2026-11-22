@@ -32,6 +32,9 @@
                 {% else %}
                     <span class="text-sm text-gray-600">{{ screen.playlist ? screen.playlist.name : 'No playlist' }}</span>
                 {% endif %}
+                <a href="{{ path('app_schedule', {id: screen.id}) }}" data-turbo-frame="_top" class="btn-secondary" title="Schedule">
+                    {{ ui.icon('calendar') }} Schedule{% if screen.scheduleRules|length %} ({{ screen.scheduleRules|length }}){% endif %}
+                </a>
                 <a href="{{ path('app_player', {token: screen.deviceToken}) }}" target="_blank" rel="noopener noreferrer"
                    title="Preview in a new tab" class="btn-secondary" data-turbo="false">
                     {{ ui.icon('external') }} Preview

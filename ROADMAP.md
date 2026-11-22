@@ -37,7 +37,9 @@ yet.
 ## Managing screens and content
 
 - [x] Per-user roles enforced in the UI (owner, admin, editor, viewer), with a Users page
-- [ ] Scheduling: time-of-day and day-of-week playlists
+- [x] Scheduling: time-of-day and day-of-week playlists per screen
+- [ ] Scheduling while offline: today the server picks the playlist, so a screen
+      without network keeps its current one until it reconnects
 - [ ] Screen groups
 - [ ] Portrait / landscape orientation per screen (stored today, not used yet)
 - [ ] Widgets and overlays: clock, weather, news ticker

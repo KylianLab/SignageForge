@@ -6,6 +6,8 @@ namespace App\Entity;
 
 use App\Enum\Orientation;
 use App\Repository\ScreenRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UlidType;
@@ -53,12 +55,18 @@ class Screen
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Playlist $playlist = null;
 
+    /** @var Collection<int, ScheduleRule> */
+    #[ORM\OneToMany(targetEntity: ScheduleRule::class, mappedBy: 'screen', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $scheduleRules;
+
     public function __construct(Organization $organization, string $name, string $deviceToken)
     {
         $this->id = new Ulid();
         $this->organization = $organization;
         $this->name = $name;
         $this->deviceToken = $deviceToken;
+        $this->scheduleRules = new ArrayCollection();
         $this->initTimestamps();
     }
 
@@ -145,5 +153,40 @@ class Screen
     public function setPlaylist(?Playlist $playlist): void
     {
         $this->playlist = $playlist;
+    }
+
+    /** @return Collection<int, ScheduleRule> */
+    public function getScheduleRules(): Collection
+    {
+        return $this->scheduleRules;
+    }
+
+    public function addScheduleRule(Playlist $playlist, int $days, int $startMinute, int $endMinute): ScheduleRule
+    {
+        $position = 0;
+        foreach ($this->scheduleRules as $rule) {
+            $position = max($position, $rule->getPosition() + 1);
+        }
+        $rule = new ScheduleRule($this, $playlist, $days, $startMinute, $endMinute, $position);
+        $this->scheduleRules->add($rule);
+
+        return $rule;
+    }
+
+    public function removeScheduleRule(ScheduleRule $rule): void
+    {
+        $this->scheduleRules->removeElement($rule);
+    }
+
+    /** The playlist to play now: the first matching schedule rule, else the default one. */
+    public function playlistAt(\DateTimeImmutable $localTime): ?Playlist
+    {
+        foreach ($this->scheduleRules as $rule) {
+            if ($rule->isActiveAt($localTime)) {
+                return $rule->getPlaylist();
+            }
+        }
+
+        return $this->playlist;
     }
 }

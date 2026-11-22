@@ -1,0 +1,73 @@
+{% extends 'dashboard/layout.html.twig' %}
+{% import 'components/icons.html.twig' as ui %}
+
+{% block page_title %}Schedule · {{ screen.name }}{% endblock %}
+
+{% block content %}
+    <a href="{{ path('app_dashboard') }}" class="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800">
+        {{ ui.icon('back') }} Screens
+    </a>
+    <h1 class="mb-2 text-2xl font-bold">Schedule of {{ screen.name }}</h1>
+    <p class="mb-6 text-sm text-gray-500">
+        Outside these rules the screen plays <strong>{{ screen.playlist ? screen.playlist.name : 'nothing' }}</strong>
+        (its default playlist, chosen on the Screens page). When several rules match, the first one wins.
+    </p>
+
+    <div class="card mb-8 divide-y divide-gray-100">
+        {% for rule in screen.scheduleRules %}
+            <div class="flex flex-wrap items-center gap-4 p-4">
+                <span class="w-5 text-center text-xs text-gray-400">{{ loop.index }}</span>
+                <div class="min-w-0 flex-1">
+                    <div class="font-medium">{{ rule.playlist.name }}</div>
+                    <div class="text-xs text-gray-500">{{ rule.describeDays }} · {{ rule.describeTimes }}</div>
+                </div>
+                {% if is_granted('ROLE_EDITOR') %}
+                    {% if not loop.first %}
+                        <form method="post" action="{{ path('app_schedule_up', {id: screen.id, rule: rule.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('schedule-' ~ screen.id) }}">
+                            <button class="text-gray-400 hover:text-gray-800" title="Move up">{{ ui.icon('up') }}<span class="sr-only">Move up</span></button>
+                        </form>
+                    {% endif %}
+                    <form method="post" action="{{ path('app_schedule_delete', {id: screen.id, rule: rule.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('schedule-' ~ screen.id) }}">
+                        <button class="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-600" title="Remove">{{ ui.icon('trash') }}<span class="sr-only">Remove rule</span></button>
+                    </form>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="p-4 text-sm text-gray-500">No rules: the screen always plays its default playlist.</p>
+        {% endfor %}
+    </div>
+
+    {% if is_granted('ROLE_EDITOR') %}
+        <form method="post" action="{{ path('app_schedule_add', {id: screen.id}) }}" class="card space-y-4 p-4">
+            <input type="hidden" name="_token" value="{{ csrf_token('schedule-' ~ screen.id) }}">
+            <h2 class="font-semibold">Add a rule</h2>
+            <div>
+                <label class="label" for="rule-playlist">Play</label>
+                <select id="rule-playlist" name="playlist" required class="input">
+                    {% for playlist in playlists %}
+                        <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <fieldset>
+                <legend class="label">On</legend>
+                <div class="flex flex-wrap gap-3">
+                    {% for number, name in day_names %}
+                        <label class="flex items-center gap-1 text-sm">
+                            <input type="checkbox" name="days[]" value="{{ number }}" {{ number <= 5 ? 'checked' }}> {{ name }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+            <div class="flex flex-wrap items-end gap-3">
+                <div><label class="label" for="rule-start">From</label><input id="rule-start" name="start" type="time" value="08:00" class="input w-32"></div>
+                <div><label class="label" for="rule-end">To</label><input id="rule-end" name="end" type="time" value="12:00" class="input w-32"></div>
+                <label class="flex items-center gap-2 pb-2 text-sm"><input type="checkbox" name="all_day" value="1"> All day</label>
+            </div>
+            <p class="text-xs text-gray-500">An end before the start runs overnight, e.g. 22:00 to 06:00.</p>
+            <button class="btn-primary">{{ ui.icon('plus') }} Add rule</button>
+        </form>
+    {% endif %}
+{% endblock %}
