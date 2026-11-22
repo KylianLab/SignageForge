@@ -15,6 +15,6 @@ final class HomeTest extends FunctionalTestCase
         $this->client->followRedirect();
         self::assertResponseRedirects('/login');
         $this->client->followRedirect();
-        self::assertSelectorExists('a[href="/pair"]');
+        self::assertSelectorTextContains('main', 'open /pair on that screen');
     }
 }

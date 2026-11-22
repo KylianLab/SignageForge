@@ -68,12 +68,11 @@
                         No sign-in method is configured. Enable one in your environment (see <code>.env</code>).
                     </p>
                 {% endif %}
+
+                <p class="border-t border-gray-100 pt-4 text-center text-xs text-gray-500">
+                    To add a screen, open <code class="rounded bg-gray-100 px-1 py-0.5 text-gray-700">/pair</code> on that screen.
+                </p>
             </div>
-            <p class="mt-6 text-center text-sm text-gray-500">
-                Setting up a display? Open
-                <a href="{{ path('app_pair') }}" class="font-mono text-brand hover:underline" data-turbo="false">/pair</a>
-                on the screen itself.
-            </p>
         </div>
     </main>
 {% endblock %}
