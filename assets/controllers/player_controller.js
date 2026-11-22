@@ -1,6 +1,9 @@
 import { Controller } from '@hotwired/stimulus';
+import { activePlaylist, allItems } from '../player/schedule.js';
 
 const HEARTBEAT_MS = 60_000;
+/* How often the screen checks its schedule against its own clock. */
+const SCHEDULE_CHECK_MS = 15_000;
 
 /*
  * The fullscreen player. Loads its playlist from the config endpoint, loops
@@ -31,6 +34,7 @@ export default class extends Controller {
         }
 
         this.load();
+        this.scheduleTimer = setInterval(() => this.choosePlaylist(), SCHEDULE_CHECK_MS);
         if (this.hasHubUrlValue && this.hubUrlValue) {
             this.listen();
             this.poller = setInterval(() => this.load(), HEARTBEAT_MS);
@@ -40,6 +44,7 @@ export default class extends Controller {
     }
 
     disconnect() {
+        clearInterval(this.scheduleTimer);
         clearInterval(this.clockTimer);
         clearInterval(this.poller);
         clearTimeout(this.advanceTimer);
@@ -85,18 +90,36 @@ export default class extends Controller {
         this.config = config;
         this.rotate(config.screen?.rotation ?? 0);
         this.renderOverlays(config.paired ? config.overlays : null);
-        const items = config.playlist?.items ?? [];
-        const signature = JSON.stringify(items);
-        if (signature === this.signature) return; // same content: don't interrupt playback
-        this.signature = signature;
 
         if (!config.paired) {
+            if (this.signature === 'unpaired') return;
+            this.signature = 'unpaired';
             // The screen was removed from the dashboard: forget the token so
             // /pair starts a fresh pairing.
             localStorage.removeItem('signageforge.deviceToken');
             this.showMessage('<p class="mb-2 text-lg font-semibold">This screen isn’t paired</p><p class="text-gray-400">Open <span class="font-mono">/pair</span> on this device to set it up.</p>');
             return;
         }
+
+        this.preload(config.schedule ? allItems(config.schedule) : (config.playlist?.items ?? []));
+        this.choosePlaylist();
+    }
+
+    /*
+     * Plays what the schedule says for now, using this screen's own clock, so
+     * playlists change on time even without network. Older configurations
+     * without a schedule use the server's choice.
+     */
+    choosePlaylist() {
+        const config = this.config;
+        if (!config?.paired) return;
+        const playlist = config.schedule ? activePlaylist(config.schedule) : config.playlist;
+        const items = playlist?.items ?? [];
+        const signature = JSON.stringify(items);
+        if (signature === this.signature) return; // same content: don't interrupt playback
+        this.signature = signature;
+        this.items = items;
+
         if (!items.length) {
             this.showMessage(`<p class="text-lg font-semibold">${escapeHtml(config.screen?.name ?? 'Screen')} is ready</p><p class="text-gray-400">Assign a playlist from the dashboard to start playing.</p>`);
             return;
@@ -105,12 +128,11 @@ export default class extends Controller {
         this.messageTarget.hidden = true;
         this.index = 0;
         this.play();
-        this.preload(items);
     }
 
     play() {
         clearTimeout(this.advanceTimer);
-        const items = this.config?.playlist?.items ?? [];
+        const items = this.items ?? [];
         if (!items.length) return;
         if (this.index >= items.length) this.index = 0;
         const item = items[this.index];
@@ -147,7 +169,10 @@ export default class extends Controller {
        outage does not hit items that have not been played yet. */
     preload(items) {
         if (!('serviceWorker' in navigator)) return;
-        const urls = items.filter((item) => item.type !== 'URL').map((item) => item.url);
+        const urls = [...new Set(items.filter((item) => item.type !== 'URL').map((item) => item.url))];
+        const signature = urls.join('|');
+        if (signature === this.preloadSignature) return; // the service worker already has this list
+        this.preloadSignature = signature;
         navigator.serviceWorker.ready
             .then((registration) => registration.active?.postMessage({ type: 'keep', urls }))
             .catch(() => {});
@@ -221,7 +246,7 @@ export default class extends Controller {
     }
 
     next() {
-        const count = this.config?.playlist?.items?.length ?? 0;
+        const count = this.items?.length ?? 0;
         this.index = count ? (this.index + 1) % count : 0;
         this.play();
     }

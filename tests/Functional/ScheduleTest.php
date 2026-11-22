@@ -44,6 +44,13 @@ final class ScheduleTest extends FunctionalTestCase
         self::mockTime('2026-11-23 12:15'); // a Monday
         self::assertSame('Lunch menu', $this->playingNow());
 
+        // The screen also gets the whole schedule, to switch on time offline.
+        $schedule = $this->json()['schedule'];
+        self::assertSame('UTC', $schedule['timezone']);
+        self::assertSame((string) $default->getId(), $schedule['default']);
+        self::assertSame([['days' => 31, 'start' => 690, 'end' => 840, 'playlist' => (string) $lunch->getId()]], $schedule['rules']);
+        self::assertSame(['Default', 'Lunch menu'], array_column(array_values($schedule['playlists']), 'name'));
+
         self::mockTime('2026-11-23 15:00');
         self::assertSame('Default', $this->playingNow());
 

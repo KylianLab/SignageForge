@@ -145,8 +145,12 @@ On each display, open `https://<your-host>/pair` in a browser in kiosk mode
 (Chromium: `--kiosk --autoplay-policy=no-user-gesture-required`). Claim the
 code from the dashboard. For a display mounted on its side whose device still
 sends a landscape picture, pick its orientation on the screen's page in the
-dashboard: the player rotates the content. The device remembers its player URL; media is cached
-so playback survives network outages.
+dashboard: the player rotates the content.
+
+The device remembers its player URL, and caches the media of every playlist
+in its schedule: playback survives network outages, even a restart, and
+playlists still change on time because the screen follows its schedule with
+its own clock. Keep the displays' clocks right (NTP).
 
 ## Upgrading
 

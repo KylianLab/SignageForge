@@ -44,8 +44,8 @@ yet.
 
 - [x] Per-user roles enforced in the UI (owner, admin, editor, viewer), with a Users page
 - [x] Scheduling: time-of-day and day-of-week playlists per screen
-- [ ] Scheduling while offline: today the server picks the playlist, so a screen
-      without network keeps its current one until it reconnects
+- [x] Scheduling while offline: screens get their whole schedule and switch
+      playlists on time with their own clock
 - [x] Screen groups: a group's playlist and schedule apply to all its screens
 - [x] Screen orientation (0°, 90°, 180°, 270°) and a settings page per screen
 - [x] Widgets over the content: clock, weather (Open-Meteo), news ticker

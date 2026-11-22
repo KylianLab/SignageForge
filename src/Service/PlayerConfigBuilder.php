@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Playlist;
+use App\Entity\Scheduled;
 use App\Entity\Screen;
 use App\Enum\MediaType;
 use App\Widget\Overlays;
@@ -58,7 +60,7 @@ final class PlayerConfigBuilder
     }
 
     /**
-     * @return array{paired: bool, screen?: array{name: string, orientation: string, rotation: int}, playlist?: array{id: string, name: string, items: list<array{id: string, type: string, url: string, durationMs: int}>}|null, overlays?: array<string, mixed>}
+     * @return array{paired: bool, screen?: array{name: string, orientation: string, rotation: int}, playlist?: array{id: string, name: string, items: list<array{id: string, type: string, url: string, durationMs: int}>}|null, overlays?: array<string, mixed>, schedule?: array<string, mixed>}
      */
     public function build(?Screen $screen): array
     {
@@ -68,8 +70,59 @@ final class PlayerConfigBuilder
 
         // Schedules use the site's local time, not the server's.
         $playlist = $screen->playlistAt($this->clock->now()->setTimezone($this->timezone));
+
+        return [
+            'paired' => true,
+            'screen' => [
+                'name' => $screen->getName(),
+                'orientation' => $screen->getOrientation()->value,
+                'rotation' => $screen->getOrientation()->rotation(),
+            ],
+            'overlays' => $this->overlays($screen->effectiveOverlays()),
+            // What plays right now, as the server sees it.
+            'playlist' => null === $playlist ? null : $this->playlist($playlist),
+            // The whole schedule, so the screen can switch playlists on time
+            // by itself, even without network.
+            'schedule' => $this->schedule($screen->getGroup() ?? $screen),
+        ];
+    }
+
+    /**
+     * @return array{timezone: string, default: string|null, rules: list<array{days: int, start: int, end: int, playlist: string}>, playlists: array<string, array{id: string, name: string, items: list<array{id: string, type: string, url: string, durationMs: int}>}>}
+     */
+    private function schedule(Scheduled $owner): array
+    {
+        $playlists = [];
+        $default = $owner->getPlaylist();
+        if (null !== $default) {
+            $playlists[(string) $default->getId()] = $this->playlist($default);
+        }
+
+        $rules = [];
+        foreach ($owner->getScheduleRules() as $rule) {
+            $playlist = $rule->getPlaylist();
+            $playlists[(string) $playlist->getId()] ??= $this->playlist($playlist);
+            $rules[] = [
+                'days' => $rule->getDays(),
+                'start' => $rule->getStartMinute(),
+                'end' => $rule->getEndMinute(),
+                'playlist' => (string) $playlist->getId(),
+            ];
+        }
+
+        return [
+            'timezone' => $this->timezone->getName(),
+            'default' => null === $default ? null : (string) $default->getId(),
+            'rules' => $rules,
+            'playlists' => $playlists,
+        ];
+    }
+
+    /** @return array{id: string, name: string, items: list<array{id: string, type: string, url: string, durationMs: int}>} */
+    private function playlist(Playlist $playlist): array
+    {
         $items = [];
-        foreach ($playlist?->getItems() ?? [] as $item) {
+        foreach ($playlist->getItems() as $item) {
             $media = $item->getMedia();
             $items[] = [
                 'id' => (string) $item->getId(),
@@ -82,19 +135,6 @@ final class PlayerConfigBuilder
             ];
         }
 
-        return [
-            'paired' => true,
-            'screen' => [
-                'name' => $screen->getName(),
-                'orientation' => $screen->getOrientation()->value,
-                'rotation' => $screen->getOrientation()->rotation(),
-            ],
-            'overlays' => $this->overlays($screen->effectiveOverlays()),
-            'playlist' => null === $playlist ? null : [
-                'id' => (string) $playlist->getId(),
-                'name' => $playlist->getName(),
-                'items' => $items,
-            ],
-        ];
+        return ['id' => (string) $playlist->getId(), 'name' => $playlist->getName(), 'items' => $items];
     }
 }

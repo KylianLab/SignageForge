@@ -30,3 +30,10 @@ jobs:
       - run: php bin/phpunit
 
       - run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+
+      # The player picks playlists from the schedule by itself (offline);
+      # it must agree with the server on every case.
+      - name: Player and server agree on schedules
+        run: |
+          php tests/Player/schedule-cases.php > var/schedule-cases.json
+          node tests/Player/schedule-parity.mjs var/schedule-cases.json
