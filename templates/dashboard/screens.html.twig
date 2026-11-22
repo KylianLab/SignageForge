@@ -6,6 +6,7 @@
 {% block content %}
     <h1 class="mb-6 text-2xl font-bold">Screens</h1>
 
+    {% if is_granted('ROLE_ADMIN') %}
     <form method="post" action="{{ path('app_screens_claim') }}" class="card mb-8 flex flex-wrap items-end gap-3 p-4">
         <input type="hidden" name="_token" value="{{ csrf_token('screen-claim') }}">
         <div>
@@ -19,6 +20,7 @@
         </div>
         <button class="btn-primary">{{ ui.icon('plus') }} Add screen</button>
     </form>
+    {% endif %}
 
     <turbo-frame id="screen-list" data-controller="refresh" data-refresh-url-value="{{ path('app_screens_list') }}" data-refresh-interval-value="15000">
         {{ include('dashboard/_screen_list.html.twig') }}

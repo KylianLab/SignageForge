@@ -36,7 +36,8 @@ final class CreateUserCommand
         #[Argument('Email address used to sign in')] string $email,
         #[Option('Password (asked for when omitted)')] ?string $password = null,
         #[Option('Display name')] ?string $name = null,
-        #[Option('Give the user admin rights')] bool $admin = false,
+        #[Option('Give the user admin rights (same as --role=admin)')] bool $admin = false,
+        #[Option('Role: viewer, editor or admin (default: editor)')] ?string $role = null,
     ): int {
         $email = mb_strtolower(trim($email));
         if (\count($this->validator->validate($email, [new Assert\NotBlank(), new Assert\Email()])) > 0) {
@@ -72,9 +73,17 @@ final class CreateUserCommand
         $user->setPasswordHash($this->hasher->hashPassword($user, $password));
         $this->em->persist($user);
 
-        $membership = $this->tenant->ensureMembership($user, $admin ? MembershipRole::Admin : MembershipRole::Editor);
-        if ($admin && MembershipRole::Owner !== $membership->getRole()) {
-            $membership->setRole(MembershipRole::Admin);
+        $wanted = $admin ? MembershipRole::Admin : MembershipRole::tryFrom(strtoupper($role ?? 'editor'));
+        if (null === $wanted || MembershipRole::Owner === $wanted) {
+            $io->error('--role must be viewer, editor or admin.');
+
+            return Command::INVALID;
+        }
+        $membership = $this->tenant->ensureMembership($user, $wanted);
+        if (null !== $role || $admin) {
+            if (MembershipRole::Owner !== $membership->getRole()) {
+                $membership->setRole($wanted);
+            }
         }
         $this->em->flush();
 

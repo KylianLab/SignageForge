@@ -13,9 +13,10 @@ Things that exist in the code but have not been checked against real systems
 yet.
 
 - [ ] Sign in with Microsoft 365 against a real Entra ID tenant
-- [ ] Sign in against a real LDAP directory and Active Directory
-- [x] Run the migrations and the test suite on a real MariaDB server
-- [ ] Same on real MySQL and PostgreSQL servers
+- [x] Sign in against a real LDAP directory (public OpenLDAP test server)
+- [ ] Sign in against Active Directory
+- [x] Run the migrations and the test suite on real MariaDB 11.2 and MySQL 8.2 servers
+- [ ] Same on a real PostgreSQL server
 - [ ] Build and run the `Containerfile` with Podman
 - [ ] Run a real Mercure hub behind Apache and nginx
 - [x] Play videos and survive a network outage, including a restart, in a desktop browser
@@ -35,7 +36,7 @@ yet.
 
 ## Managing screens and content
 
-- [ ] Per-user roles enforced in the UI (owner, admin, editor, viewer)
+- [x] Per-user roles enforced in the UI (owner, admin, editor, viewer), with a Users page
 - [ ] Scheduling: time-of-day and day-of-week playlists
 - [ ] Screen groups
 - [ ] Portrait / landscape orientation per screen (stored today, not used yet)

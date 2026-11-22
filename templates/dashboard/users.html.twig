@@ -1,0 +1,61 @@
+{% extends 'dashboard/layout.html.twig' %}
+{% import 'components/icons.html.twig' as ui %}
+
+{% block page_title %}Users{% endblock %}
+
+{% block content %}
+    <h1 class="mb-2 text-2xl font-bold">Users</h1>
+    <p class="mb-6 text-sm text-gray-500">
+        Viewers see everything; editors also manage media and playlists; admins also pair screens and manage users;
+        owners also manage admins and owners.
+    </p>
+
+    {% if local_accounts %}
+        <form method="post" action="{{ path('app_users_create') }}" class="card mb-8 grid gap-3 p-4 sm:grid-cols-5 sm:items-end">
+            <input type="hidden" name="_token" value="{{ csrf_token('user-create') }}">
+            <div class="sm:col-span-2"><label class="label" for="new-email">Email</label><input id="new-email" name="email" type="email" required class="input"></div>
+            <div><label class="label" for="new-name">Name</label><input id="new-name" name="name" maxlength="120" class="input"></div>
+            <div><label class="label" for="new-password">Password</label><input id="new-password" name="password" type="password" minlength="8" required autocomplete="new-password" class="input"></div>
+            <div>
+                <label class="label" for="new-role">Role</label>
+                <select id="new-role" name="role" class="input">
+                    {% for role in assignable %}
+                        <option value="{{ role.value }}" {{ role.value == 'EDITOR' ? 'selected' }}>{{ role.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button class="btn-primary sm:col-span-5 sm:justify-self-start">{{ ui.icon('plus') }} Add a local account</button>
+        </form>
+    {% endif %}
+
+    <div class="card divide-y divide-gray-100">
+        {% for member in members %}
+            <div class="flex flex-wrap items-center gap-4 p-4">
+                <div class="min-w-0 flex-1">
+                    <div class="truncate font-medium">{{ member.displayName }}{% if member == app.user %} <span class="text-xs font-normal text-gray-400">(you)</span>{% endif %}</div>
+                    <div class="truncate text-xs text-gray-500">{{ member.email }} · {{ {local: 'local account', ldap: 'LDAP', microsoft: 'Microsoft 365'}[member.authSource.value] }}</div>
+                </div>
+                {% if manageable[loop.index0] %}
+                    <form method="post" action="{{ path('app_users_role', {id: member.id}) }}" data-controller="autosubmit">
+                        <input type="hidden" name="_token" value="{{ csrf_token('user-' ~ member.id) }}">
+                        <label class="sr-only" for="role-{{ member.id }}">Role of {{ member.email }}</label>
+                        <select id="role-{{ member.id }}" name="role" class="input w-auto" data-action="autosubmit#submit">
+                            {% for role in assignable %}
+                                <option value="{{ role.value }}" {{ member.role == role ? 'selected' }}>{{ role.label }}</option>
+                            {% endfor %}
+                        </select>
+                        <noscript><button class="btn-secondary">Save</button></noscript>
+                    </form>
+                    <form method="post" action="{{ path('app_users_delete', {id: member.id}) }}" data-turbo-confirm="Remove {{ member.email }}?">
+                        <input type="hidden" name="_token" value="{{ csrf_token('user-' ~ member.id) }}">
+                        <button class="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-600" title="Remove">
+                            {{ ui.icon('trash') }}<span class="sr-only">Remove {{ member.email }}</span>
+                        </button>
+                    </form>
+                {% else %}
+                    <span class="rounded bg-gray-100 px-2 py-1 text-xs text-gray-600">{{ member.role ? member.role.label : '-' }}</span>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

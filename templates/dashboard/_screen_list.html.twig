@@ -17,6 +17,7 @@
                         {% endif %}
                     </div>
                 </div>
+                {% if is_granted('ROLE_EDITOR') %}
                 <form method="post" action="{{ path('app_screens_playlist', {id: screen.id}) }}" data-controller="autosubmit" data-turbo-frame="_top">
                     <input type="hidden" name="_token" value="{{ csrf_token('screen-' ~ screen.id) }}">
                     <label class="sr-only" for="playlist-{{ screen.id }}">Playlist for {{ screen.name }}</label>
@@ -28,10 +29,14 @@
                     </select>
                     <noscript><button class="btn-secondary">Save</button></noscript>
                 </form>
+                {% else %}
+                    <span class="text-sm text-gray-600">{{ screen.playlist ? screen.playlist.name : 'No playlist' }}</span>
+                {% endif %}
                 <a href="{{ path('app_player', {token: screen.deviceToken}) }}" target="_blank" rel="noopener noreferrer"
                    title="Preview in a new tab" class="btn-secondary" data-turbo="false">
                     {{ ui.icon('external') }} Preview
                 </a>
+                {% if is_granted('ROLE_ADMIN') %}
                 <form method="post" action="{{ path('app_screens_delete', {id: screen.id}) }}" data-turbo-frame="_top"
                       data-turbo-confirm="Remove {{ screen.name }}? The device will need to be paired again.">
                     <input type="hidden" name="_token" value="{{ csrf_token('screen-' ~ screen.id) }}">
@@ -39,11 +44,12 @@
                         {{ ui.icon('trash') }}<span class="sr-only">Remove {{ screen.name }}</span>
                     </button>
                 </form>
+                {% endif %}
             </div>
         {% else %}
             <p class="text-gray-500">
                 No screens yet. Open <a href="{{ path('app_pair') }}" class="font-mono text-brand" data-turbo="false">/pair</a>
-                on a display, then enter its code above.
+                on a display, then {{ is_granted('ROLE_ADMIN') ? 'enter its code above' : 'ask an admin to add it' }}.
             </p>
         {% endfor %}
     </div>

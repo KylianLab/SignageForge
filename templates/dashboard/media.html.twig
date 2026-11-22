@@ -6,6 +6,7 @@
 {% block content %}
     <h1 class="mb-6 text-2xl font-bold">Media library</h1>
 
+    {% if is_granted('ROLE_EDITOR') %}
     <div class="mb-8 grid gap-4 sm:grid-cols-2">
         <form method="post" action="{{ path('app_media_upload') }}" enctype="multipart/form-data"
               data-controller="upload" class="contents">
@@ -31,6 +32,7 @@
             <button class="btn-primary">Add URL</button>
         </form>
     </div>
+    {% endif %}
 
     <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
         {% for item in media %}
@@ -46,6 +48,7 @@
                 </div>
                 <div class="flex items-center justify-between gap-2 p-2">
                     <span class="truncate text-xs" title="{{ item.type.value == 'URL' ? item.storageKey : item.name }}">{{ item.name }}</span>
+                    {% if is_granted('ROLE_EDITOR') %}
                     <form method="post" action="{{ path('app_media_delete', {id: item.id}) }}"
                           data-turbo-confirm="Delete {{ item.name }}? It will also leave every playlist.">
                         <input type="hidden" name="_token" value="{{ csrf_token('media-' ~ item.id) }}">
@@ -53,6 +56,7 @@
                             {{ ui.icon('trash', 'h-3.5 w-3.5') }}<span class="sr-only">Delete {{ item.name }}</span>
                         </button>
                     </form>
+                    {% endif %}
                 </div>
             </div>
         {% else %}

@@ -6,11 +6,13 @@
 {% block content %}
     <h1 class="mb-6 text-2xl font-bold">Playlists</h1>
 
+    {% if is_granted('ROLE_EDITOR') %}
     <form method="post" action="{{ path('app_playlists_create') }}" class="mb-8 flex gap-3">
         <input type="hidden" name="_token" value="{{ csrf_token('playlist-create') }}">
         <input name="name" required maxlength="80" placeholder="New playlist name" class="input flex-1" aria-label="New playlist name">
         <button class="btn-primary">{{ ui.icon('plus') }} Create</button>
     </form>
+    {% endif %}
 
     <div class="grid gap-3">
         {% for playlist in playlists %}

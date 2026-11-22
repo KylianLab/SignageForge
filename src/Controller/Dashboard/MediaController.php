@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -40,6 +41,7 @@ final class MediaController extends AbstractDashboardController
     }
 
     #[Route('/upload', name: 'app_media_upload', methods: ['POST'])]
+    #[IsGranted('ROLE_EDITOR')]
     public function upload(Request $request): Response
     {
         $this->requireCsrf($request, 'media-upload');
@@ -87,6 +89,7 @@ final class MediaController extends AbstractDashboardController
     }
 
     #[Route('/url', name: 'app_media_url', methods: ['POST'])]
+    #[IsGranted('ROLE_EDITOR')]
     public function addUrl(Request $request, ValidatorInterface $validator): Response
     {
         $this->requireCsrf($request, 'media-url');
@@ -116,6 +119,7 @@ final class MediaController extends AbstractDashboardController
     }
 
     #[Route('/{id}/delete', name: 'app_media_delete', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
+    #[IsGranted('ROLE_EDITOR')]
     public function delete(#[MapEntity(id: 'id')] ?Media $media, Request $request): Response
     {
         $media = $this->owned($media);

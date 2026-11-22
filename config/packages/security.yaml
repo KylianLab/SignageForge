@@ -28,7 +28,7 @@ security:
     # Screens have no login: pairing, the player and media bytes stay public.
     # Only the first matching rule applies.
     access_control:
-        - { path: ^/dashboard, roles: ROLE_USER }
+        - { path: ^/dashboard, roles: ROLE_VIEWER }
 
 when@test:
     security:

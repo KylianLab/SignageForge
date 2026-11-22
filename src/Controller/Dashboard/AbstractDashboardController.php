@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Service\Attribute\Required;
 
-#[IsGranted('ROLE_USER')]
+#[IsGranted('ROLE_VIEWER')]
 abstract class AbstractDashboardController extends AbstractController
 {
     protected TenantContext $tenant;

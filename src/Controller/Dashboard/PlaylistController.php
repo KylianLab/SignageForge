@@ -14,6 +14,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Routing\Requirement\Requirement;
 
 #[Route('/dashboard/playlists')]
@@ -36,6 +37,7 @@ final class PlaylistController extends AbstractDashboardController
     }
 
     #[Route('', name: 'app_playlists_create', methods: ['POST'])]
+    #[IsGranted('ROLE_EDITOR')]
     public function create(Request $request): Response
     {
         $this->requireCsrf($request, 'playlist-create');
@@ -67,6 +69,7 @@ final class PlaylistController extends AbstractDashboardController
 
     /** Saves the name and the whole ordered item list at once. */
     #[Route('/{id}', name: 'app_playlists_update', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
+    #[IsGranted('ROLE_EDITOR')]
     public function update(#[MapEntity(id: 'id')] ?Playlist $playlist, Request $request): Response
     {
         $playlist = $this->owned($playlist);
@@ -107,6 +110,7 @@ final class PlaylistController extends AbstractDashboardController
     }
 
     #[Route('/{id}/delete', name: 'app_playlists_delete', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
+    #[IsGranted('ROLE_EDITOR')]
     public function delete(#[MapEntity(id: 'id')] ?Playlist $playlist, Request $request): Response
     {
         $playlist = $this->owned($playlist);

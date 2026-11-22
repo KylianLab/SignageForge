@@ -135,12 +135,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = ['ROLE_USER'];
         foreach ($this->memberships as $membership) {
-            if (\in_array($membership->getRole(), [MembershipRole::Owner, MembershipRole::Admin], true)) {
-                $roles[] = 'ROLE_ADMIN';
-            }
+            $roles = [...$roles, ...$membership->getRole()->securityRoles()];
         }
 
         return array_values(array_unique($roles));
+    }
+
+    /** The user's role in their organization (single-organization for now). */
+    public function getRole(): ?MembershipRole
+    {
+        $membership = $this->memberships->first();
+
+        return false === $membership ? null : $membership->getRole();
     }
 
     public function eraseCredentials(): void

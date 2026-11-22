@@ -84,6 +84,7 @@ composer dump-env prod
 | `SIGNAGEFORGE_REALTIME` | `polling` (default) or `mercure`. |
 | `SIGNAGEFORGE_POLL_INTERVAL` | Seconds between checks in polling mode. |
 | `TRUSTED_PROXIES` | IPs of your reverse proxy, so HTTPS and client IPs are right. |
+| `SIGNAGEFORGE_NEW_USER_ROLE` | Role of people signing in for the first time: `VIEWER` (default), `EDITOR` or `ADMIN`. |
 | `AUTH_LOCAL_PASSWORD` | `false` hides email + password sign-in. |
 | `ENTRA_*` | Microsoft 365 sign-in. |
 | `LDAP_*` | LDAP / Active Directory sign-in. |
@@ -100,7 +101,17 @@ composer dump-env prod
   `https://<your-host>/login/microsoft/check`, then set `ENTRA_CLIENT_ID`,
   `ENTRA_CLIENT_SECRET` and `ENTRA_TENANT` (your tenant id).
 
-The first person to sign in becomes the owner of the organization.
+The first person to sign in becomes the owner of the organization. Everyone
+after that starts with `SIGNAGEFORGE_NEW_USER_ROLE` (viewer by default: with
+LDAP or Microsoft 365, anyone in the directory can sign in). Admins change
+roles under **Users** in the dashboard:
+
+| Role | Can |
+| --- | --- |
+| Viewer | see screens, media and playlists |
+| Editor | also manage media and playlists, assign playlists to screens |
+| Admin | also pair and remove screens, manage users |
+| Owner | also manage admins and owners |
 
 ## Real-time updates
 

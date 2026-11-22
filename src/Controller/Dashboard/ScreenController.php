@@ -14,6 +14,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Uid\Ulid;
 
@@ -42,6 +43,7 @@ final class ScreenController extends AbstractDashboardController
     }
 
     #[Route('/screens/claim', name: 'app_screens_claim', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function claim(Request $request, PairingSessionRepository $sessions): Response
     {
         $this->requireCsrf($request, 'screen-claim');
@@ -75,6 +77,7 @@ final class ScreenController extends AbstractDashboardController
     }
 
     #[Route('/screens/{id}/playlist', name: 'app_screens_playlist', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
+    #[IsGranted('ROLE_EDITOR')]
     public function assignPlaylist(#[MapEntity(id: 'id')] ?Screen $screen, Request $request): Response
     {
         $screen = $this->owned($screen);
@@ -91,6 +94,7 @@ final class ScreenController extends AbstractDashboardController
     }
 
     #[Route('/screens/{id}/delete', name: 'app_screens_delete', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(#[MapEntity(id: 'id')] ?Screen $screen, Request $request): Response
     {
         $screen = $this->owned($screen);

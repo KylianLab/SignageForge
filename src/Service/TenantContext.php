@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Enum\MembershipRole;
 use App\Repository\OrganizationRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * MVP tenancy: one organization, created automatically on first use. When
@@ -19,10 +20,14 @@ final class TenantContext
 {
     private ?Organization $organization = null;
 
+    private readonly MembershipRole $newMemberRole;
+
     public function __construct(
         private readonly OrganizationRepository $organizations,
         private readonly EntityManagerInterface $em,
+        #[Autowire('%env(SIGNAGEFORGE_NEW_USER_ROLE)%')] string $newMemberRole = 'VIEWER',
     ) {
+        $this->newMemberRole = MembershipRole::tryFrom(strtoupper($newMemberRole)) ?? MembershipRole::Viewer;
     }
 
     public function getOrganization(): Organization
@@ -43,10 +48,11 @@ final class TenantContext
 
     /**
      * Make sure the user belongs to the organization. The very first member
-     * becomes OWNER; later members get $role (EDITOR by default). Idempotent.
-     * Does not flush.
+     * becomes OWNER; later members get $role, or SIGNAGEFORGE_NEW_USER_ROLE
+     * (VIEWER by default: with LDAP or Microsoft 365, anyone in the directory
+     * can sign in, so they start read-only). Idempotent. Does not flush.
      */
-    public function ensureMembership(User $user, MembershipRole $role = MembershipRole::Editor): Membership
+    public function ensureMembership(User $user, ?MembershipRole $role = null): Membership
     {
         $organization = $this->getOrganization();
         foreach ($user->getMemberships() as $membership) {
@@ -56,7 +62,7 @@ final class TenantContext
         }
 
         $memberCount = $this->em->getRepository(Membership::class)->count(['organization' => $organization]);
-        $membership = new Membership($user, $organization, 0 === $memberCount ? MembershipRole::Owner : $role);
+        $membership = new Membership($user, $organization, 0 === $memberCount ? MembershipRole::Owner : ($role ?? $this->newMemberRole));
         $this->em->persist($membership);
 
         return $membership;
