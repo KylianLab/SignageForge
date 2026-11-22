@@ -14,6 +14,7 @@ parameters:
     signageforge.installed_flag: '%kernel.project_dir%/var/installed.flag'
     signageforge.setup_token_file: '%kernel.project_dir%/var/setup-token.txt'
     signageforge.env_local: '%kernel.project_dir%/.env.local'
+    signageforge.update_status_file: '%kernel.project_dir%/var/update/status.json'
 
 services:
     # default configuration for services in *this* file
@@ -41,6 +42,8 @@ when@test:
         signageforge.installed_flag: '%kernel.project_dir%/var/installed-test.flag'
         signageforge.setup_token_file: '%kernel.project_dir%/var/setup-token-test.txt'
         signageforge.env_local: '%kernel.project_dir%/var/test-env.local'
+        signageforge.update_status_file: '%kernel.project_dir%/var/update-test/status.json'
     services:
         App\Security\LdapDirectoryInterface:
             class: App\Tests\Double\FakeLdapDirectory
+        App\Tests\Double\FakeGitHub: ~

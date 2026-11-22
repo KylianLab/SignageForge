@@ -22,5 +22,8 @@ framework:
 when@test:
     framework:
         test: true
+        # Tests never call GitHub.
+        http_client:
+            mock_response_factory: App\Tests\Double\FakeGitHub
         session:
             storage_factory_id: session.storage.factory.mock_file

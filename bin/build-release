@@ -1,0 +1,91 @@
+#!/usr/bin/env php
+<?php
+
+/*
+ * Builds the ready-to-install package of the committed code (HEAD):
+ * dependencies without dev tools, compiled CSS/JS, no tests. Writes
+ * var/release/signageforge-<version>.zip and its .sha256 next to it.
+ *
+ *   php bin/build-release
+ *
+ * COMPOSER (env) is the Composer command to use, "composer" by default.
+ * Used by .github/workflows/release.yml; works the same locally.
+ */
+
+declare(strict_types=1);
+
+$project = dirname(__DIR__);
+$out = $project.'/var/release';
+$build = $out.'/build/signageforge';
+$composer = getenv('COMPOSER') ?: 'composer';
+
+function run(string $command, string $cwd, array $env = []): void
+{
+    fwrite(STDOUT, "> {$command}\n");
+    $process = proc_open($command, [1 => STDOUT, 2 => STDERR], $pipes, $cwd, $env + getenv());
+    if (!is_resource($process) || 0 !== proc_close($process)) {
+        fwrite(STDERR, "Failed: {$command}\n");
+        exit(1);
+    }
+}
+
+function remove(string $path): void
+{
+    if (is_dir($path) && !is_link($path)) {
+        foreach (array_diff(scandir($path) ?: [], ['.', '..']) as $entry) {
+            remove($path.'/'.$entry);
+        }
+        rmdir($path);
+    } elseif (file_exists($path) || is_link($path)) {
+        unlink($path);
+    }
+}
+
+preg_match("/VERSION = '([^']+)'/", (string) file_get_contents($project.'/src/Version.php'), $m);
+$version = $m[1] ?? exit("Cannot read the version from src/Version.php\n");
+
+remove($out.'/build');
+@mkdir($out.'/build', 0777, true);
+
+// 1. The committed files only.
+run('git archive --format=zip --prefix=signageforge/ -o '.escapeshellarg($out.'/source.zip').' HEAD', $project);
+$zip = new ZipArchive();
+$zip->open($out.'/source.zip');
+$zip->extractTo($out.'/build');
+$zip->close();
+unlink($out.'/source.zip');
+
+// 2. Production dependencies and compiled assets.
+run($composer.' install --no-dev --no-scripts --no-interaction --no-progress --optimize-autoloader --classmap-authoritative', $build);
+if (is_dir($project.'/var/tailwind')) {
+    // Reuse the Tailwind binary already downloaded here, if any.
+    @mkdir($build.'/var', 0777, true);
+    run((PHP_OS_FAMILY === 'Windows' ? 'xcopy /E /I /Q ' : 'cp -r ').escapeshellarg($project.'/var/tailwind').' '.escapeshellarg($build.'/var/tailwind'), $project);
+}
+$env = ['APP_ENV' => 'prod', 'APP_DEBUG' => '0', 'APP_SECRET' => 'release-build'];
+run(escapeshellarg(PHP_BINARY).' bin/console tailwind:build --minify', $build, $env);
+run(escapeshellarg(PHP_BINARY).' bin/console asset-map:compile', $build, $env);
+
+// 3. Nothing a server does not need.
+foreach (['var', 'tests', '.github', 'phpunit.dist.xml', 'phpstan.dist.neon', '.claude', 'bin/phpunit', 'bin/build-release'] as $entry) {
+    remove($build.'/'.$entry);
+}
+@mkdir($build.'/var', 0775);
+@mkdir($build.'/data/uploads', 0775, true);
+
+// 4. Zip and checksum.
+$package = "{$out}/signageforge-{$version}.zip";
+@unlink($package);
+$zip = new ZipArchive();
+$zip->open($package, ZipArchive::CREATE);
+$base = dirname($build);
+$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($build, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST);
+foreach ($files as $file) {
+    $name = str_replace('\', '/', substr($file->getPathname(), strlen($base) + 1));
+    $file->isDir() ? $zip->addEmptyDir($name) : $zip->addFile($file->getPathname(), $name);
+}
+$zip->close();
+file_put_contents($package.'.sha256', hash_file('sha256', $package).'  '.basename($package)."\n");
+remove($out.'/build');
+
+fwrite(STDOUT, sprintf("\nBuilt %s (%.1f MB)\n", $package, filesize($package) / 1048576));

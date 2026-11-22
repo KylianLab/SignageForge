@@ -1,0 +1,45 @@
+# Publishes a release when a version tag is pushed:
+#   1. set the version in src/Version.php and commit
+#   2. git tag v0.2.0 && git push origin v0.2.0
+# The release gets the ready-to-install package and its checksum, which the
+# admin "System" page and `bin/console signageforge:self-update` use.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: intl, ldap, pdo_sqlite, zip
+          tools: composer:v2
+
+      - name: Check the tag matches src/Version.php
+        run: |
+          version=$(grep -oP "VERSION = '\K[^']+" src/Version.php)
+          test "v${version}" = "${GITHUB_REF_NAME}" || { echo "Tag ${GITHUB_REF_NAME} but src/Version.php says ${version}"; exit 1; }
+
+      - name: Run the tests
+        run: |
+          composer install --no-interaction --no-progress
+          php bin/phpunit
+
+      - name: Build the package
+        run: php bin/build-release
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" var/release/signageforge-*.zip var/release/signageforge-*.zip.sha256 \
+            --title "Signage Forge ${GITHUB_REF_NAME}" --generate-notes

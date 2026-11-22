@@ -15,7 +15,8 @@ use Twig\Environment;
 #[AsEventListener(event: KernelEvents::REQUEST, priority: 512)]
 final class MaintenanceListener
 {
-    private const ALWAYS_SERVED = ['/api/media/file/', '/assets/', '/sw.js'];
+    // Screens keep playing; the admin page keeps following the update.
+    private const ALWAYS_SERVED = ['/api/media/file/', '/assets/', '/sw.js', '/dashboard/system/update/status'];
 
     public function __construct(
         private readonly MaintenanceMode $maintenance,
